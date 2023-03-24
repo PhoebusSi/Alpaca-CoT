@@ -5,3 +5,6 @@
 2. Data resource, proportion and Figure 
 
 3. Case Study
+  3.1 using different instruction data
+  3.2 using different sizes of models
+  3.3 comparison with Alpaca and LLaMA
