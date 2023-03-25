@@ -13,7 +13,7 @@ To this end, we propose this project, which leverages various improvements that 
 - This repo contains code, modified from [here](https://github.com/tloen/alpaca-lora), which can **_finetune LLaMA cheaply and efficiently_** (without performance degradation compared to [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca)) by using [low-rank adaptation (LoRA)](https://arxiv.org/pdf/2106.09685.pdf) [4], [PEFT](https://github.com/huggingface/peft) and [bitsandbytes](https://github.com/TimDettmers/bitsandbytes). The `7b`, `13b` and `30b` versions of LLaMA models can be easily trained on a single 80G A100. 
 - The models published in this repo significantly **_improve the ability to follow Chinese instructions_**, with the help of Chinese instruction datasets published by [BELLE](https://github.com/LianjiaTech/BELLE) [5].
 - The models published in this repo significantly **_improve the CoT (reasoning) capability_**, using CoT datasets published by [FLAN] [6].
-- This repo contains **a [collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT) of instruction-finetuning datasets that are continuously collected**, which so far includes English, Chinese and CoT instructions. In addition, a collection of checkpoints trained with various instruction datasets is also provided.
+- This repo contains **_a [collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT) of instruction-finetuning datasets that are continuously collected_**, which so far includes English, Chinese and CoT instructions. In addition, a collection of checkpoints trained with various instruction datasets is also provided.
 - This repo contains **_extensive empirical studies and qualitative analysis_**, which may provide valuable findings and promote the exploration of LLM in the future.
 
 
@@ -34,7 +34,24 @@ To this end, we propose this project, which leverages various improvements that 
 ## Data Collection 
 ### Statistics
 ![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
+The current collection of instruction-finetuning datasets consists mainly of three parts:
+- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
+- `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. 
+- `CoT_data.json`: 9 CoT datasets involving about 75k samples.
 
+More details on the usage and sources of different datasets can be found [here](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data). 
+## Download
+You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+## Fomatting
+All data in our collection is formatted into the same templates, where each sample is as follows:
+```
+[
+{"instruction": instruction string,
+"input": input string, # (may be empty)
+"output": output string}
+]
+```
+Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format.
 
 
 ## Quantitative Analysis
