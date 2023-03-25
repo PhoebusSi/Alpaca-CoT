@@ -75,7 +75,7 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
 ### Inference
 For example, to load the Alpaca-7b checkpoint trained with CoT data:
 ```
-python3 finetune.py --size 7 --data cot
+python3 generate.py --size 7 --data cot
 ```
 More training details can be found [here](https://github.com/tloen/alpaca-lora) where we modified from.
 
