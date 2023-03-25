@@ -4,7 +4,7 @@ All data in this folder is formatted into the same templates, where each sample 
 ```
 [
 {"instruction": instruction string,
-"input": input string (may be empty),
+"input": input string, # (may be empty)
 "output": output string}
 ]
 ```
