@@ -1,3 +1,4 @@
+![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/alpaca-cot.jpg)
 # Alpaca-CoT
 
 1. Motivation
@@ -8,3 +9,4 @@
   3.1 using different instruction data
   3.2 using different sizes of models
   3.3 comparison with Alpaca and LLaMA
+
