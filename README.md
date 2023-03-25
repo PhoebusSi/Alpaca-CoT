@@ -53,19 +53,43 @@ All data in our collection is formatted into the same templates, where each samp
 ```
 Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format.
 
-
-## Quantitative Analysis
-  3.1 using different instruction data
-  3.2 using different sizes of models
-  3.3 Comparison with Alpaca and LLaMA
-
-
 ## Instruction Finetuning Based on LLaMA
 ### Setup
+```
+pip install -r requirements.txt
+```
+### Instruction Tuning
+For example, to finetune the 7b version of LLaMA with CoT data:
 
-### Training
+**Single GPU**
+
+```
+python3 finetune.py --size 7 --data cot
+```
+**Multiple GPUs**
+```
+python3 -m torch.distributed.launch --nproc_per_node 4  \
+    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data cot
+```
 
 ### Inference
+For example, to load the Alpaca-7b checkpoint trained with CoT data:
+```
+python3 finetune.py --size 7 --data cot
+```
+More training details can be found [here](https://github.com/tloen/alpaca-lora) where we modified from.
 
+## Quantitative Analysis
+### The effect of 0.5M Chinese instruction data
+
+### The effect of CoT data
+  
+
+
+## Future Work
+  3.2 using different sizes of models
+  3.3 Comparison with Alpaca and LLaMA
+  3.4 
+  
 ## Citation
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
