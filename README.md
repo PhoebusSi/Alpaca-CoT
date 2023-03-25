@@ -51,9 +51,9 @@ All data in our collection is formatted into the same templates, where each samp
 "output": output string}
 ]
 ```
-Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format.
+Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format. The formatting script can be found [here](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py).
 
-## Instruction Finetuning Based on LLaMA
+## Instruction Finetuning
 ### Setup
 ```
 pip install -r requirements.txt
@@ -80,16 +80,29 @@ python3 generate.py --size 7 --data cot
 More training details can be found [here](https://github.com/tloen/alpaca-lora) where we modified from.
 
 ## Quantitative Analysis
-### The effect of 0.5M Chinese instruction data
 
-### The effect of CoT data
+### The Effect of 0.5M Chinese Instruction Data
+
+### The Effect of CoT Data
   
 
 
 ## Future Work
-  3.2 using different sizes of models
-  3.3 Comparison with Alpaca and LLaMA
-  3.4 
+- Exploration of few-shot ability.
+- Ablation study of various sizes of models.
+- Evaluate on instruction-following evaluation suite.
+- Collect more instruction finetuning datasets.
+
   
 ## Citation
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
+```
+@misc{alpaca-cot,
+  author = {Qingyi Si },
+  title = {Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models},
+  year = {2023},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
+}
+```
