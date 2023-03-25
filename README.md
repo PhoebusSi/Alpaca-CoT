@@ -40,9 +40,9 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 - `CoT_data.json`: 9 CoT datasets involving about 75k samples.
 
 More details on the usage and sources of different datasets can be found [here](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data). 
-## Download
+### Data Download
 You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
-## Fomatting
+### Data Fomatting
 All data in our collection is formatted into the same templates, where each sample is as follows:
 ```
 [
