@@ -94,8 +94,9 @@ From the above table, we find that:
 
 
 ### The Effect of Chinese Instruction Data
-- Quantitative comparison of responses to Chinese instructions. 
+
 ![CN_compare_CN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareCN.png)
+- Quantitative comparison of responses to Chinese instructions. 
 
 Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions. 
 
@@ -104,11 +105,11 @@ From the above table, several observations can be found:
 - Chinese instruction finetuning data can significant enhance the ability to interact in Chinese. For the second example, `ours (w/ CN)` not only provides the correct code, but also provides the corresponding Chinese annotation, while Alcapa does not. In addition, as shown in the 3-5 examples, Alcapa can only respond to Chinese instruction with an English response. 
 - Compared to BELLE, `ours (w/ CN)`'s performance on instructions requiring an open response (as shown in last two examples) still needs to be improved. BELLE's outstanding performance against such instructions is due to: 1. Its BLOOM backbone model encounters much more multilingual data during pre-training; 2. Its Chinese instruction finetuning data is more than ours, that is, 2M vs 0.5M.
 
-- Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca. 
+
 
 
 ![CN_compare_EN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN_compareEN.png)
-
+- Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca. 
 
 From the above table, we find that: 
 - Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English intructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.  
