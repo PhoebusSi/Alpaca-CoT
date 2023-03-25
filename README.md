@@ -83,6 +83,12 @@ More training details can be found [here](https://github.com/tloen/alpaca-lora) 
 ## Quantitative Analysis
 
 ### The Effect of 0.5M Chinese Instruction Data
+- Quantitative comparison of responses to Chinese instructions.
+![CN_compare_CN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareCN.png)
+
+Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions. 
+
+From the 
 
 ### The Effect of CoT Data
   
