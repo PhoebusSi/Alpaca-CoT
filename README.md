@@ -11,8 +11,8 @@ LLaMA [1] is a great work that demonstrates the amazing zero-shot and few-shot a
 
 To this end, we propose this project, which leverages various improvements that were subsequently proposed, with the following advantages:
 - This repo contains code, modified from [here](https://github.com/tloen/alpaca-lora), which can **_finetune LLaMA cheaply and efficiently_** (without performance degradation compared to Stanford Alpaca) by using [low-rank adaptation (LoRA)](https://arxiv.org/pdf/2106.09685.pdf) [4], [PEFT](https://github.com/huggingface/peft) and [bitsandbytes](https://github.com/TimDettmers/bitsandbytes). The `7b`, `13b` and `30b` versions of LLaMA models can be easily trained on a single 80G A100. 
-- The models published in this repo significantly **_improve the ability to follow Chinese instructions_**, with the help of Chinese instruction datasets published by BELLE [5].
-- The models published in this repo significantly **_improve the CoT (reasoning) capability_**, using CoT datasets published by FLAN [6].
+- The models published in this repo significantly **_improve the CoT (reasoning) capability_**, using CoT datasets published by FLAN [5].
+- The models published in this repo significantly **_improve the ability to follow Chinese instructions_**, with the help of Chinese instruction datasets published by BELLE [6].
 - This repo contains **_a [collection of instruction-finetuning datasets](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT) that are continuously collected_**, which so far includes English, Chinese and CoT instructions. In addition, a collection of checkpoints trained with various instruction datasets is also provided.
 - This repo contains **_extensive empirical studies and qualitative analysis_**, which may provide valuable findings and promote the exploration of LLM in the future.
 
@@ -28,9 +28,9 @@ To this end, we propose this project, which leverages various improvements that 
 
 [4]: [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/pdf/2106.09685.pdf)
 
-[5]: [BELLE: Bloom-Enhanced Large Language model Engine](https://github.com/LianjiaTech/BELLE)
+[5]: [FLAN: Scaling Instruction-Finetuned Language Models](https://arxiv.org/abs/2210.11416)
 
-[6]: [FLAN: Scaling Instruction-Finetuned Language Models](https://arxiv.org/abs/2210.11416)
+[6]: [BELLE: Bloom-Enhanced Large Language model Engine](https://github.com/LianjiaTech/BELLE)
 
 ## Data Collection 
 ### Statistics
