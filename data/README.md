@@ -9,7 +9,7 @@ All data in this folder is formatted into the same templates, where each sample 
 ]
 ```
 ## CoT_data.json
-This dataset is obtained by formatting the combination of 9 CoT datasets published by [FLAN](https://github.com/google-research/FLAN). It contains 9 CoT tasks involving 74771 samples.
+This dataset is obtained by formatting the combination of 9 CoT datasets published by [FLAN](https://github.com/google-research/FLAN). It contains 9 CoT tasks involving 74771 samples. Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format.
 
 ## alpaca_data.json
 This dataset is published by [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca). It contains 52K English instruction-following samples obtained by [Self-Instruction](https://github.com/yizhongw/self-instruct) techniques.
