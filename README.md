@@ -1,4 +1,4 @@
-![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/alpaca-cot-2.jpg)
+![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/Alpaca-CoT-2.jpg)
 # Alpaca-CoT
 
 1. Motivation
