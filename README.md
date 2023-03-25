@@ -41,7 +41,7 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 
 More details on the usage and sources of different datasets can be found [here](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data). 
 ### Data Download
-You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder. 
 ### Data Fomatting
 All data in our collection is formatted into the same templates, where each sample is as follows:
 ```
