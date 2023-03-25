@@ -82,7 +82,18 @@ More training details can be found [here](https://github.com/tloen/alpaca-lora) 
 
 ## Quantitative Analysis
 
-### The Effect of 0.5M Chinese Instruction Data
+### The Effect of CoT Data
+  
+![CoT-comparison](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CoT-comparison.png)
+Samples of each odd number of rows do not apply the CoT prompt, such as "step-by-step reasoning." Both `Ours(w/CoT)` and Alpaca are based on LLaMA-7B, and the only difference between them two is that the instruction-finetuning data of `Ours(w/CoT)` has a extra CoT data than that of Alpaca. 
+
+From the above table, we find that:
+- `Ours(w/CoT)` always generates the correct rationale before the answer, while Alpaca fails to generate any reasonable rationale, as shown in the first 4 examples (commonsense questions). This shows that using CoT data for finetuning can significantly improve reasoning ability. 
+- For `Ours(w/CoT)`, the CoT prompt (e.g., concatenate 'step-by-step' with the input question) has little effect on easy examples (e.g., commonsense questions) and has an important effect on challenging questions (e.g., questions requiring reasoning, like the last four examples). 
+- For Alpaca, CoT prompt always has little effect or even negative impact. For the last two examples, after adding CoT prompt, Aplpaca changes the correct generated answer to the wrong one. This may be due to the inconsistency between the input forms of finetuning and inference. 
+
+
+### The Effect of Chinese Instruction Data
 - Quantitative comparison of responses to Chinese instructions. 
 ![CN_compare_CN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareCN.png)
 
@@ -104,8 +115,6 @@ From the above table, we find that:
 
 
 
-### The Effect of CoT Data
-  
 
 
 ## Future Work
