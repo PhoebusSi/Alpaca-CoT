@@ -88,7 +88,9 @@ More training details can be found [here](https://github.com/tloen/alpaca-lora) 
 
 Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions. 
 
-From the 
+From the above table, several observations can be found:
+- Compared to Alcapa, `ours (w/ CN)` has a stronger ability to understand Chinese instructions. For example, in the first example, Alcapa fails to detect the ``
+
 
 ### The Effect of CoT Data
   
