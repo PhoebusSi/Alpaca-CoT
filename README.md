@@ -95,8 +95,8 @@ From the above table, we find that:
 
 ### The Effect of Chinese Instruction Data
 
+_Quantitative comparison of responses to Chinese instructions._
 ![CN_compare_CN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareCN.png)
-- Quantitative comparison of responses to Chinese instructions. 
 
 Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions. 
 
@@ -107,9 +107,9 @@ From the above table, several observations can be found:
 
 
 
-
+ _Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca._ 
 ![CN_compare_EN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN_compareEN.png)
-- Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca. 
+
 
 From the above table, we find that: 
 - Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English intructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.  
