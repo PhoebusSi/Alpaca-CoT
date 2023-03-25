@@ -1,4 +1,4 @@
-# alcapa-CoT
+# Alpaca-CoT
 
 1. Motivation
 
