@@ -94,7 +94,8 @@ From the above table, several observations can be found:
 - Compared to BELLE, `ours (w/ CN)`'s performance on instructions requiring an open response (as shown in last two examples) still needs to be improved. BELLE's outstanding performance against such instructions is due to: 1. Its BLOOM backbone model encounters much more multilingual data during pre-training; 2. Its Chinese instruction finetuning data is more than ours, that is, 2M vs 0.5M.
 
 - Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca. 
-![CN_compare_CN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareEN.png)
+![CN_compare_EN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareEN.png)
+From the above table, we find that: Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English intructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the 3rd example, `ours (w/ CN)` list three more provices than Alpaca.  
 
 
 
