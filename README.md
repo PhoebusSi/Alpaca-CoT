@@ -78,7 +78,7 @@ For example, to load the Alpaca-7b checkpoint trained with CoT data:
 ```
 python3 generate.py --size 7 --data cot
 ```
-More training details can be found [here](https://github.com/tloen/alpaca-lora) where we modified from.
+More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
 
 ## Quantitative Analysis
 
