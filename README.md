@@ -82,6 +82,24 @@ More details of instruction finetuing and inference can be found [here](https://
 
 ## Quantitative Analysis
 
+### Ablation of CoT and Chinese Instructions
+
+
+![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-cot.png)
+"w/o CoT" and "w/o CN" denote models that exclude CoT data and Chinese instructions from their instruction finetuning data, respectively.  
+
+From the table above, we find that: 
+
+![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-cn.png)
+
+From the table above, we find that: 
+
+![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-all.png)
+
+From the table above, we find that: 
+
+
+
 ### The Effect of CoT Data
   
 ![CoT-comparison](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CoT-comparison.png)
