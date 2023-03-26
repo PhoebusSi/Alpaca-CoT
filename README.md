@@ -88,17 +88,21 @@ More details of instruction finetuing and inference can be found [here](https://
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-cot.png)
 "w/o CoT" and "w/o CN" denote models that exclude CoT data and Chinese instructions from their instruction finetuning data, respectively.  
 
-From the table above, we find that: 
+The above table shows two examples (invoving with numerical calculations) that require a certain amount of reasoning ability to respond correctly. 
+As shown in the middle column, `Ours w/o CoT` fails to generate the correct response, which shows that once the finetuning data does not contain CoT data, the model's reasoning ability significantly decreases. This further demonstrates that CoT data is essential for LLM models. 
 
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-cn.png)
 
-From the table above, we find that: 
-
-![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-all.png)
-
-From the table above, we find that: 
+The above table shows two examples that require the ability to respond to Chinese instructions. 
+As shown in the right column, either the generated content of `Ours w/o CN` is unreasonable, or the Chinese instructions are answered in English by `Ours w/o CN`. This shows that removing Chinese data during finetuning will cause the model to be unable to handle Chinese instructions, and further demonstrates the need to collect Chinese instruction finetuning data.
 
 
+![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-both.png)
+
+The above table shows a relatively difficult example, which requires both a certain accumulation of knowledge of Chinese history and a logical and complete ability to state historical events. As shown in this table, `Ours w/o CN` can only generate a short and erroneous response, because due to the lack of Chinese finetuning data, the corresponding knowledge of Chinese history is naturally lacking.  Although `Ours w/o CoT` lists some relevant Chinese historical events, its logic of expression is self-contradictory, which is caused by the lack of CoT data.
+`
+
+**In summary, the models finetuned from our complete dataset (English, Chinese, and CoT instruction data) can significantly improve model reasoning and Chinese instruction following abilities.**
 
 ### The Effect of CoT Data
   
