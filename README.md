@@ -129,7 +129,7 @@ From the above table, we find that:
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
 ```
 @misc{alpaca-cot,
-  author = {Qingyi Si },
+  author = {Qingyi Si, Zheng Lin },
   title = {Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models},
   year = {2023},
   publisher = {GitHub},
