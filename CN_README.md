@@ -2,7 +2,7 @@
 # Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models (**Alpaca-CoT**)
  `Evolving` is used to describe the continuous expansion of our instruction-tuning data collection, which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s instruction-following capabilities.
 
-## 1. 项目定位
+## 1. 定位
 
 ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的潜力。基于LLaMA[1]等Large Language Models(LLMs)的instruction-tuning研究(如，Alpaca[2])大幅度加速了复现ChatGPT的进程。**Alpaca-CoT**希望在这个研究方向上做出适度的贡献，以推进LLMs的开源进程、降低LLMs研究和使用成本。
 
@@ -44,7 +44,7 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 
 [6]: [BELLE: Bloom-Enhanced Large Language model Engine](https://github.com/LianjiaTech/BELLE)
 
-## 数据集合 (Data Collection)  
+## 3. 数据集合 (Data Collection)  
 该集合仍在不断更新和扩增中。
 ### 数据统计
 ![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
@@ -70,7 +70,7 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 注意，对于CoT数据集,我们首先使用FLAN提供的[template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py)将其从原数据转化成Chain-of-Thought的形式，之后再统一成以上格式。格式统一化的脚本可以在[这里](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py)找到。 
 
 
-## Instruction Finetuning
+## 4. Instruction Finetuning
 ### 环境配置
 ```
 pip install -r requirements.txt
@@ -117,7 +117,7 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 ```
 注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
-## Quantitative Analysis
+## 5. Quantitative Analysis
 ### 关于CoT和Chinese Instructions的消融
 
 <figure>
@@ -151,13 +151,13 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图8.png)
 
 
-## 未来工作
+## 6. 未来工作
 - 探究模型的few-shot能力
 - 对不同大小的模型进行细致探究
 - 在instruction-following evaluation suite上评估
 - 收集更多的instruction-finetuning数据集.
 
-## ToDo
+## 7. ToDo
 - 合并GLM-6B
 - 合并BLOOM-7B
 - 在hugging face上开放接口
