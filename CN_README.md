@@ -32,9 +32,6 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 - 该项目提供了 **详尽透彻的实证学习和定性分析**，这里的findings可能会对促进未来LLM探索有一定的参考价值。
 
 
-
-
-
 [1]: [LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971v1)
 
 [2]: [Stanford Alpaca: An Instruction-following LLaMA model](https://github.com/tatsu-lab/stanford_alpaca)
@@ -46,3 +43,70 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 [5]: [FLAN: Scaling Instruction-Finetuned Language Models](https://arxiv.org/abs/2210.11416)
 
 [6]: [BELLE: Bloom-Enhanced Large Language model Engine](https://github.com/LianjiaTech/BELLE)
+
+## 数据集合 (Data Collection)  
+该集合仍在不断更新和扩增中。
+### 数据统计
+![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
+当前的instruction-finetuning数据集合主要包含以下三个部分：
+- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
+- `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. 
+- `CoT_data.json`: 9 CoT datasets involving about 75k samples.
+
+关于不同数据集的使用和来源的更多细节可以参考[这里](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data)。
+
+### 数据下载
+你可以在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main)下载所有我们已经统一格式后的formatted数据。然后，将下载到的文件全部放到[data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder。
+
+### 数据格式
+我们集合中的所有数据均已被转化成相同的格式，每个样本的格式如下：
+```
+[
+{"instruction": instruction string,
+"input": input string, # (may be empty)
+"output": output string}
+]
+```
+注意，对于CoT数据集,我们首先使用FLAN提供的[template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py)将其从原数据转化成Chain-of-Thought的形式，之后再统一成以上格式。格式统一化的脚本可以在[这里](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py)找到。 
+
+
+## Instruction Finetuning
+### Setup
+```
+pip install -r requirements.txt
+```
+### Instruction Tuning
+For example, to finetune the 7b version of LLaMA with CoT data:
+
+**Single GPU**
+
+```
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+
+python3 finetune.py --size 7 --data alpaca-belle-cot
+```
+**Multiple GPUs**
+```
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+
+python3 -m torch.distributed.launch --nproc_per_node 4  \
+    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
+```
+
+### Inference
+For example, to load the Alpaca-7b checkpoint trained with CoT data:
+```
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+
+python3 generate.py --size 7 --data alpaca-belle-cot
+
+```
+More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
+
+## Quantitative Analysis
