@@ -65,18 +65,25 @@ For example, to finetune the 7b version of LLaMA with CoT data:
 **Single GPU**
 
 ```
-python3 finetune.py --size 7 --data cot
+python3 finetune.py --size 7 --data alpaca-belle-cot
 ```
 **Multiple GPUs**
 ```
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
 python3 -m torch.distributed.launch --nproc_per_node 4  \
-    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data cot
+    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
 ```
 
 ### Inference
 For example, to load the Alpaca-7b checkpoint trained with CoT data:
 ```
-python3 generate.py --size 7 --data cot
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+python3 generate.py --size 7 --data alpaca-belle-cot
+
 ```
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
 
