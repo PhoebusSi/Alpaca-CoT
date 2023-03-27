@@ -103,7 +103,7 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
 ```
 
-### Inference
+### 模型推理
 ```
 ## --data
 # alpaca-cot: reasoning-enhanced version
@@ -118,4 +118,61 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 ## Quantitative Analysis
+### 关于CoT和Chinese Instructions的消融
 
+<figure>
+     <img src="https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图3.png"
+          alt="404"
+          style="width:60%">
+     <figcaption align = "center"><b> "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。</b></figcaption>
+</figure>
+
+<figure>
+     <img src="https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图4.png"
+          alt="404"
+          style="width:60%">
+     <figcaption align = "center"><b> "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。</b></figcaption>
+</figure>
+
+<figure>
+     <img src="https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图5.png"
+          alt="404"
+          style="width:60%">
+     <figcaption align = "center"><b> "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。</b></figcaption>
+</figure>
+
+**In summary, the models finetuned from our complete dataset (English, Chinese, and CoT instruction data) can significantly improve model reasoning and Chinese instruction following abilities.**
+
+### 更多能力展示
+
+![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图6.png)
+"
+
+![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图8.png)
+
+
+## 未来工作
+- 探究模型的few-shot能力
+- 对不同大小的模型进行细致探究
+- 在instruction-following evaluation suite上评估
+- 收集更多的instruction-finetuning数据集.
+
+## ToDo
+- 合并GLM-6B
+- 合并BLOOM-7B
+- 在hugging face上开放接口
+
+  
+## Citation
+Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
+```
+@misc{alpaca-cot,
+  author = {Qingyi Si, Zheng Lin },
+  school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
+  title = {Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models},
+  year = {2023},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
+}
+```
