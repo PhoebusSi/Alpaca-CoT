@@ -120,17 +120,26 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 ## 5. Quantitative Analysis
 ### 关于CoT和Chinese Instructions的消融
 "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。
+
+需要推理能力的问题上的表现
 ![f3](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图3.png)
+ 
+需要遵循中文指令的问题上的表现
 ![f4](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图4.png)
+ 中文instruction
+ 
+在较复杂问题上的表现
 ![f5](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图5.png)
+
           
 
 **In summary, the models finetuned from our complete dataset (English, Chinese, and CoT instruction data) can significantly improve model reasoning and Chinese instruction following abilities.**
 
+
 ### 更多能力展示
 
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图6.png)
-"
+
 
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图8.png)
 
@@ -142,8 +151,8 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 - 收集更多的instruction-finetuning数据集.
 
 ## 7. ToDo
-- 合并GLM-6B
-- 合并BLOOM-7B
+- 集成进来GLM-6B
+- 集成进来BLOOM-7B
 - 在hugging face上开放接口
 
   
