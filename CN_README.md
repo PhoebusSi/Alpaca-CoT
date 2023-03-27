@@ -1,8 +1,6 @@
-![](./figures/宣传0.jpg)
-
-# 项目简称：Alpaca-CoT
-
-# 项目标题：Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models
+# Alpaca-CoT
+![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/Alpaca-CoT-2.jpg)
+# Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models (**Alpaca-CoT**)
 
 ## 1. 项目定位
 
