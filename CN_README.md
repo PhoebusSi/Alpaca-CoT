@@ -71,42 +71,51 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 
 
 ## Instruction Finetuning
-### Setup
+### 环境配置
 ```
 pip install -r requirements.txt
 ```
-### Instruction Tuning
-For example, to finetune the 7b version of LLaMA with CoT data:
+### 模型微调
 
 **Single GPU**
 
 ```
+## --data
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
+
 
 python3 finetune.py --size 7 --data alpaca-belle-cot
 ```
 **Multiple GPUs**
 ```
+## --data
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
 
 python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
 ```
 
 ### Inference
-For example, to load the Alpaca-7b checkpoint trained with CoT data:
 ```
+## --data
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
 
 python3 generate.py --size 7 --data alpaca-belle-cot
 
 ```
-More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
+注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 ## Quantitative Analysis
+
