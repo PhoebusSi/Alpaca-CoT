@@ -119,27 +119,11 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 
 ## 5. Quantitative Analysis
 ### 关于CoT和Chinese Instructions的消融
-
-<figure>
-     <img src="https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图3.png"
-          alt="404"
-          style="width:60%">
-     <figcaption align = "center"><b> "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。</b></figcaption>
-</figure>
-
-<figure>
-     <img src="https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图4.png"
-          alt="404"
-          style="width:60%">
-     <figcaption align = "center"><b> "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。</b></figcaption>
-</figure>
-
-<figure>
-     <img src="https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图5.png"
-          alt="404"
-          style="width:60%">
-     <figcaption align = "center"><b> "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。</b></figcaption>
-</figure>
+"w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。
+![f3](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图3.png)
+![f4](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图4.png)
+![f5](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图5.png)
+          
 
 **In summary, the models finetuned from our complete dataset (English, Chinese, and CoT instruction data) can significantly improve model reasoning and Chinese instruction following abilities.**
 
