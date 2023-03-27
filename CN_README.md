@@ -29,7 +29,7 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 - 该项目中开源的模型 **_显著提升了模型的CoT(reasoning)能力_**。（相关的CoT数据集由FLAN[5]发布）
 - 该项目中开源的模型 **_显著提升了对中文指令的响应能力_**。（相关的中文instruction数据由BELLE[6]发布）
 - 该项目维护了一个仍在不断扩大规模的 **_[intruction-finetuning的数据集集合](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)_**。该集合包含了中文、英文和CoT的instruction数据。同时，我们也维护了一个训练自各种instruction数据集的模型checkpoint集合。
-- 该项目提供了 **详尽透彻的实证学习和定性分析**，这里的findings可能会对促进未来LLM探索有一定的参考价值。
+- 该项目提供了 **_详尽透彻的实证学习和定性分析_**，这里的findings可能会对促进未来LLM探索有一定的参考价值。
 
 
 [1]: [LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971v1)
