@@ -126,7 +126,6 @@ python3 generate.py --size 7 --data alpaca-belle-cot
  
 需要遵循中文指令的问题上的表现
 ![f4](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图4.png)
- 中文instruction
  
 在较复杂问题上的表现
 ![f5](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图5.png)
