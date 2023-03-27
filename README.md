@@ -62,33 +62,41 @@ Note that, for CoT datasets, we first use the [template](https://github.com/goog
 pip install -r requirements.txt
 ```
 ### Instruction Tuning
-For example, to finetune the 7b version of LLaMA with CoT data:
 
 **Single GPU**
 
 ```
+## --data
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
+
 
 python3 finetune.py --size 7 --data alpaca-belle-cot
 ```
 **Multiple GPUs**
 ```
+## --data
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
 
 python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
 ```
 
 ### Inference
-For example, to load the Alpaca-7b checkpoint trained with CoT data:
 ```
+## --data
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
 
 python3 generate.py --size 7 --data alpaca-belle-cot
 
