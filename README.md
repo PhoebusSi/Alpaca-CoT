@@ -65,6 +65,10 @@ For example, to finetune the 7b version of LLaMA with CoT data:
 **Single GPU**
 
 ```
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+
 python3 finetune.py --size 7 --data alpaca-belle-cot
 ```
 **Multiple GPUs**
@@ -72,6 +76,7 @@ python3 finetune.py --size 7 --data alpaca-belle-cot
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+
 python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
 ```
@@ -82,6 +87,7 @@ For example, to load the Alpaca-7b checkpoint trained with CoT data:
 # alpaca-cot: reasoning-enhanced version
 # alpaca-belle: Chinese-enhanced version
 # alpaca-belle-cot: full-data version 
+
 python3 generate.py --size 7 --data alpaca-belle-cot
 
 ```
