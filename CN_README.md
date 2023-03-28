@@ -172,4 +172,7 @@ Please cite the repo if you use the data collection, code, and experimental find
   howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
 }
 ```
-Cite the original LLaMA, Stanford Alpaca, Self-Instruct and LoRA papers as well, please.
+For data, please cite the original Stanford Alpaca, BELLE and FLAN papers as well.
+
+For models, please cite the original LLaMA, Stanford Alpaca, Self-Instruct and LoRA papers as well.
+
