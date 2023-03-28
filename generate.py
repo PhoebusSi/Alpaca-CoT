@@ -21,8 +21,8 @@ from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig
 tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+"b-hf")
 
 LOAD_8BIT = False
-BASE_MODEL = "decapoda-research/llama-"+args.size+"b-hf"
-LORA_WEIGHTS = "saved-"+args.data+args.size+"b"
+BASE_MODEL = "decapoda-research/llama-{0}b-hf".format(args.size)
+LORA_WEIGHTS = "saved-{0}{1}b".format(args.data, args.size)
 
 if torch.cuda.is_available():
     device = "cuda"
