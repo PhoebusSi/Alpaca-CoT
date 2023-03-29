@@ -3,6 +3,7 @@
  `Evolving` is used to describe the continuous expansion of our instruction-tuning data collection, which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s instruction-following capabilities.
 
 ## News
+- 3.29: LLM BLOOM (bloomz-7b1-mt)已经集成进来。（相关模型的运行命令稍后发布）
 - 3.28: 为了方便下载，所有的模型权重均已上传到[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)。
 - 3.28: BELLE发布的1M中文指令数据（与原来的0.5M不重复）已被统一格式化，并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)。(相关的模型稍后发布）
 
