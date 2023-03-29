@@ -22,6 +22,8 @@ tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+
 
 LOAD_8BIT = False
 BASE_MODEL = "decapoda-research/llama-"+args.size+"b-hf"
+
+# your own local path for LoRA weights (savded by fientune.py)
 LORA_WEIGHTS = "saved-"+args.data+args.size+"b"
 
 if torch.cuda.is_available():
