@@ -21,8 +21,10 @@ from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig
 tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+"b-hf")
 
 LOAD_8BIT = False
-BASE_MODEL = "decapoda-research/llama-{0}b-hf".format(args.size)
-LORA_WEIGHTS = "saved-{0}{1}b".format(args.data, args.size)
+BASE_MODEL = "decapoda-research/llama-"+args.size+"b-hf"
+
+# your own local path for LoRA weights (savded by fientune.py)
+LORA_WEIGHTS = "saved-"+args.data+args.size+"b"
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -35,7 +37,7 @@ try:
 except:
     pass
 
-#
+
 
 if device == "cuda":
     model = LlamaForCausalLM.from_pretrained(
@@ -106,7 +108,7 @@ def evaluate(
     top_p=0.75,
     top_k=40,
     num_beams=4,
-    max_new_tokens=128,
+    max_new_tokens=512,
     **kwargs,
 ):
     prompt = generate_prompt(instruction, input)

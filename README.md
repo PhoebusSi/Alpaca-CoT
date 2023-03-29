@@ -1,9 +1,15 @@
 ![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/Alpaca-CoT-2.jpg)
 # Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models (**Alpaca-CoT**)
 
-This is the repository for the `Evolving Alpaca` project, which aims to extensively collect instruction-tuning datasets (especially the CoT datasets) and conduct an in-depth empirical study based on [LLaMA](https://arxiv.org/abs/2302.13971v1) model [1].  `Evolving` is used to describe the continuous expansion of our instruction-tuning data collection, which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s [2] instruction-following capabilities.
+中文README，请看[这里](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)。(Chinese READEME can be found [here](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md).)
 
-You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the model checkpoints, and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
+This is the repository for the `Evolving Alpaca` project, which aims to extensively collect instruction-tuning datasets (especially the CoT datasets) and conduct an in-depth empirical study based on [LLaMA](https://arxiv.org/abs/2302.13971v1) model [1].  `Evolving` is used to describe the continuous expansion of our [instruction-tuning data collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/), which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s [2] instruction-following capabilities.
+
+You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the [model checkpoints](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main), and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
+
+## News
+- 3.28: To facilitate downloading, all model(LoRA) weights have been uploaded [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
+- 3.28: Chinese instruction dataset(1M, Does not contain the original 0.5M ones) published by BELLE has been formatted and collected [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). (The model will be released later.)
 
 ## Overview
 
@@ -41,8 +47,12 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 - `CoT_data.json`: 9 CoT datasets involving about 75k samples.
 
 More details on the usage and sources of different datasets can be found [here](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data). 
-### Data Download
+### Download
 You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder. 
+
+You can download all checkpoints trained on various types of instruction data from [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main). Then, after setting `LoRA_Weights` (in `generate.py`) to the local path, you can directly execute the model inference. 
+
+
 ### Data Fomatting
 All data in our collection is formatted into the same templates, where each sample is as follows:
 ```
@@ -60,23 +70,44 @@ Note that, for CoT datasets, we first use the [template](https://github.com/goog
 pip install -r requirements.txt
 ```
 ### Instruction Tuning
-For example, to finetune the 7b version of LLaMA with CoT data:
 
 **Single GPU**
 
 ```
-python3 finetune.py --size 7 --data cot
+## --data
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
+
+
+python3 finetune.py --size 7 --data alpaca-belle-cot
 ```
 **Multiple GPUs**
 ```
+## --data
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
+
 python3 -m torch.distributed.launch --nproc_per_node 4  \
-    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data cot
+    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy finetune.py  --size 7 --data alpaca-belle-cot
 ```
 
 ### Inference
-For example, to load the Alpaca-7b checkpoint trained with CoT data:
 ```
-python3 generate.py --size 7 --data cot
+## --data
+# alpaca-cot: reasoning-enhanced version
+# alpaca-belle: Chinese-enhanced version
+# alpaca-belle-cot: full-data version 
+## --size
+# [7, 13, 30, 65]
+
+python3 generate.py --size 7 --data alpaca-belle-cot
+
 ```
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
 
@@ -160,3 +191,6 @@ Please cite the repo if you use the data collection, code, and experimental find
   howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
 }
 ```
+For data, please cite the original Stanford Alpaca, BELLE and FLAN papers as well.
+
+For models, please cite the original LLaMA, Stanford Alpaca, Self-Instruct and LoRA papers as well.
