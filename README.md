@@ -66,6 +66,18 @@ All data in our collection is formatted into the same templates, where each samp
 ```
 Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format. The formatting script can be found [here](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py).
 
+## Map of Data_name : Path
+
+```
+             "alpaca": "./data/alpaca_data_cleaned.json",
+             "belle": "./data/belle_data_cn.json",
+             "alpaca-belle": "./data/alpaca_plus_belle_data.json",
+             "cot": "./data/CoT_data.json",
+             "alpaca-cot": "./data/alcapa_plus_cot.json",
+             "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
+             "belle1.5m": "./data/belle_data1.5M_cn.json.json"
+```
+
 ## Instruction Finetuning
 ### Setup
 ```
@@ -75,18 +87,31 @@ Note that, make sure python>=3.9 when finetuning ChatGLM.
 ### Instruction Tuning
 
 **Single GPU**
-
+- for LLaMA
 ```
-## --data
-# alpaca-cot: reasoning-enhanced version
-# alpaca-belle: Chinese-enhanced version
-# alpaca-belle-cot: full-data version 
-## --size
-# [7, 13, 30, 65]
-
-
-python3 finetune.py --size 7 --data alpaca-belle-cot
+python3 uniform_finetune.py --model_type llama --model_name_or_path decapoda-research/llama-7b-hf \
+    --data alpaca-belle-cot --lora_target_modules q_proj v_proj \
+    --per_gpu_train_batch_size 128
+    
 ```
+- for ChatGLM
+```
+python3 uniform_finetune.py   --model_type chatglm --model_name_or_path THUDM/chatglm-6b \
+    --data alpaca-belle-cot --lora_target_modules query_key_value \
+    --lora_r 32 --lora_alpha 32 --lora_dropout 0.1 --per_gpu_train_batch_size 1 \
+    --learning_rate 2e-5 --epochs 1
+```
+Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be much smaller than others. 
+
+- for BLOOM
+```
+python3 uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
+    --data alpaca-belle-cot --lora_target_modules query_key_value \
+    
+```
+
+Note that you can also pass the local path (where the LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.
+
 **Multiple GPUs**
 ```
 ## --data
