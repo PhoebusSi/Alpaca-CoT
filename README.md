@@ -3,9 +3,9 @@
 
 中文README，请看[这里](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)。(Chinese READEME can be found [here](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md).)
 
-This is the repository for the `Evolving Alpaca` project, which aims to extensively collect instruction-tuning datasets (especially the CoT datasets) and conduct an in-depth empirical study based on [LLaMA](https://arxiv.org/abs/2302.13971v1) model [1].  `Evolving` is used to describe the continuous expansion of our instruction-tuning data collection, which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s [2] instruction-following capabilities.
+This is the repository for the `Evolving Alpaca` project, which aims to extensively collect instruction-tuning datasets (especially the CoT datasets) and conduct an in-depth empirical study based on [LLaMA](https://arxiv.org/abs/2302.13971v1) model [1].  `Evolving` is used to describe the continuous expansion of our [instruction-tuning data collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/), which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s [2] instruction-following capabilities.
 
-You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the model checkpoints, and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
+You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the [model checkpoints](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main), and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
 
 ## News
 - 3.25: To facilitate downloading, all model(LoRA) weights have been uploaded [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
