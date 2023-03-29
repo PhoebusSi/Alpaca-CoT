@@ -170,9 +170,6 @@ def train(args):
     model_name = args.model_name_or_path.split( '/')[-1]
     output_dir = f"saved_models/{model_name}_{args.data}"
 
-    data["train"] = data["train"].select([0,1,2,3,4,5,6,7,8,9,10])
-
-    print(data)
 
     # 2. split dataset
     if args.val_set_size > 0:
