@@ -1,9 +1,14 @@
+# chatglm
+icetk
+cpm_kernels==1.0.11
+torch>=1.13
+
 datasets
 loralib
 sentencepiece
 git+https://github.com/huggingface/transformers.git
 accelerate
 bitsandbytes
-# git+https://github.com/huggingface/peft.git
+git+https://github.com/huggingface/peft.git
 gradio
 appdirs
