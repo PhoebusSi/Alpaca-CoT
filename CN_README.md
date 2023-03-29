@@ -3,7 +3,8 @@
  `Evolving` is used to describe the continuous expansion of our instruction-tuning data collection, which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s instruction-following capabilities.
 
 ## News
-- 3.29: LLM BLOOM (bloomz-7b1-mt)已经集成进来。（相关模型的运行命令稍后发布）
+- 3.30: LLM ChatGLM (THUDM/chatglm-6b)已经集成进`uniform_finetune.py`。
+- 3.29: LLM BLOOM (bloomz-7b1-mt)已经集成进`uniform_finetune.py`。（相关模型的运行命令稍后发布）
 - 3.28: 为了方便下载，所有的模型权重均已上传到[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)。
 - 3.28: BELLE发布的1M中文指令数据（与原来的0.5M不重复）已被统一格式化，并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)。(相关的模型稍后发布）
 
@@ -157,8 +158,8 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 - 收集更多的instruction-finetuning数据集.
 
 ## 7. ToDo
-- 集成进来GLM-6B
-- 集成进来BLOOM-7B
+- 集成进来GLM-6B (✅)
+- 集成进来BLOOM-7B （✅）
 - 在hugging face上开放接口
 
   
