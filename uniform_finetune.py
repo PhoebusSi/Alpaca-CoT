@@ -57,13 +57,13 @@ _MODEL_CLASSES = {
 
 # add the custom dataset
 DATA_PATH = {
-             "alpaca": "alpaca_data_cleaned.json",
-             "belle": "/mnt/bn/qingyi-bn-lq/llama/belle-0.5M-cn/belle_data_cn.json",
-             "alpaca-belle": "/mnt/bn/qingyi-bn-lq/llama/belle-0.5M-cn/alpaca_plus_belle_data.json",
-             "cot": "/mnt/bn/qingyi-bn-lq/llama/all_formatted_data/CoT_data.json",
-             "alpaca-cot": "/mnt/bn/qingyi-bn-lq/llama/all_formatted_data/alcapa_plus_cot.json",
-             "alpaca-belle-cot": "/mnt/bn/qingyi-bn-lq/llama/all_formatted_data/alcapa_plus_belle_plus_cot.json",
-             "belle1.5m": "/mnt/bn/qingyi-bn-lq/llama/all_formatted_data/belle_data1.5M_cn.json.json"
+             "alpaca": "./data/alpaca_data_cleaned.json",
+             "belle": "./data/belle_data_cn.json",
+             "alpaca-belle": "./data/alpaca_plus_belle_data.json",
+             "cot": "./data/CoT_data.json",
+             "alpaca-cot": "./data/alcapa_plus_cot.json",
+             "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
+             "belle1.5m": "./data/belle_data1.5M_cn.json.json"
             }
 
 PROMPT_DICT = {
