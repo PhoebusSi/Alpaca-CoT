@@ -166,7 +166,7 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
 ```
 @misc{alpaca-cot,
-  author = {Qingyi Si, Zheng Lin },
+  author = {Qingyi Si, Rui Liu, Zheng Lin },
   school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
   title = {Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models},
   year = {2023},
