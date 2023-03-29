@@ -3,8 +3,8 @@
  `Evolving` is used to describe the continuous expansion of our instruction-tuning data collection, which will continuously enhance [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)'s instruction-following capabilities.
 
 ## News
-- 3.25: 为了方便下载，所有的模型权重均已上传到[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)。
-- 3.25: BELLE发布的1M中文指令数据（与原来的0.5M不重复）已被统一格式化，并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)。(相关的模型稍后发布）
+- 3.28: 为了方便下载，所有的模型权重均已上传到[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)。
+- 3.28: BELLE发布的1M中文指令数据（与原来的0.5M不重复）已被统一格式化，并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)。(相关的模型稍后发布）
 
 ## 1. 定位
 
@@ -59,8 +59,10 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 
 关于不同数据集的使用和来源的更多细节可以参考[这里](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data)。
 
-### 数据下载
+### 下载
 你可以在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main)下载所有我们已经统一格式后的formatted数据。然后，将下载到的文件全部放到[data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder。
+
+你可以在[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)下载训练自各种类型instruction数据的所有checkponts。然后，在`gernerate.py`中的`LoRA_Weights`设置成下载路径，即可直接运行模型的inference以查看模型效果。
 
 ### 数据格式
 我们集合中的所有数据均已被转化成相同的格式，每个样本的格式如下：
