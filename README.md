@@ -47,8 +47,12 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 - `CoT_data.json`: 9 CoT datasets involving about 75k samples.
 
 More details on the usage and sources of different datasets can be found [here](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data). 
-### Data Download
+### Download
 You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder. 
+
+You can download all checkpoints trained on various types of instruction data from [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main). Then, after setting `LoRA_Weights` (in `generate.py`) to the local path, you can directly execute the model inference. 
+
+
 ### Data Fomatting
 All data in our collection is formatted into the same templates, where each sample is as follows:
 ```
