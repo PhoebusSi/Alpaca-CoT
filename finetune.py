@@ -61,6 +61,7 @@ else:
     assert 1==2
 
 
+# Your own local path for saving model weights
 OUTPUT_DIR = "saved-"+args.data+args.size+"b"
 
 
