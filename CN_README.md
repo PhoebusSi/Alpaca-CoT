@@ -218,6 +218,7 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 
 [8]: [BELLE: Bloom-Enhanced Large Language model Engine](https://github.com/LianjiaTech/BELLE)
 
+[9]: [GPT4All: Training an Assistant-style Chatbot with Large Scale Data Distillation from GPT-3.5-Turbo](https://github.com/nomic-ai/gpt4all)
 
 
 
