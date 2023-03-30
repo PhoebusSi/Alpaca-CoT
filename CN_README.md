@@ -203,7 +203,7 @@ Please cite the repo if you use the data collection, code, and experimental find
 @misc{alpaca-cot,
   author = {Qingyi Si, Rui Liu, Zheng Lin },
   school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
-  title = {Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models},
+  title = {Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface},
   year = {2023},
   publisher = {GitHub},
   journal = {GitHub repository},
