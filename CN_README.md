@@ -87,7 +87,9 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
              "alpaca-cot": "./data/alcapa_plus_cot.json",
              "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
              "belle1.5m": "./data/belle_data1.5M_cn.json",
-             "finance": "./data/finance_en.json"
+             "finance": "./data/finance_en.json",
+             "gpt4all": "./data/gpt4all.json",
+             "gpt4all_wo_p3": "./data/gpt4all_without_p3.json",
 ```
 
 ## 4. 多接口统一的开源平台
@@ -99,7 +101,7 @@ pip install -r requirements.txt
 ### 模型微调
 为了便于研究者们在LLM上做系统的IFT研究，我们收集了不同类型的instruction数据，集成了多种LLM，并统一了接口，可以轻松定制化想要的搭配：
 - `--model_type`: 设置想要研究的LLM，目前已支持[llama, chatglm和bloom]，其中后两者的中文能力较强，后续将会集成更多的LLMs。
-- `--data`: 设置用以IFT的数据类型，以灵活特制想要的指令遵循能力，如追求较强的推理能力可设置alpaca-cot，较强的中文能力可设置belle1.5m，金融相关的响应能力可设置finance。
+- `--data`: 设置用以IFT的数据类型，以灵活特制想要的指令遵循能力，如追求较强的推理能力可设置alpaca-cot，较强的中文能力可设置belle1.5m，较强的coding和故事创作能力可设置gpt4all，金融相关的响应能力可设置finance。
 - `--model_name_or_path`: 与`--model_type`相对应，用来加载目标LLM的不同型号权重。如，要加载llama的13b的模型权重时可设置decapoda-research/llama-13b-hf。 
 
 **单卡**
