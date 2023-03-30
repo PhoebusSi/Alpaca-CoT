@@ -77,6 +77,18 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 ```
 注意，对于CoT数据集,我们首先使用FLAN提供的[template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py)将其从原数据转化成Chain-of-Thought的形式，之后再统一成以上格式。格式统一化的脚本可以在[这里](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py)找到。 
 
+### 数据类型和路径的映射
+
+```
+             "alpaca": "./data/alpaca_data_cleaned.json",
+             "belle": "./data/belle_data_cn.json",
+             "alpaca-belle": "./data/alpaca_plus_belle_data.json",
+             "cot": "./data/CoT_data.json",
+             "alpaca-cot": "./data/alcapa_plus_cot.json",
+             "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
+             "belle1.5m": "./data/belle_data1.5M_cn.json",
+             "finance": "./data/finance_en.json"
+```
 
 ## 4. Instruction Finetuning
 ### 环境配置
