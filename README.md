@@ -85,7 +85,9 @@ Note that, for CoT datasets, we first use the [template](https://github.com/goog
              "alpaca-cot": "./data/alcapa_plus_cot.json",
              "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
              "belle1.5m": "./data/belle_data1.5M_cn.json",
-             "finance": "./data/finance_en.json"
+             "finance": "./data/finance_en.json",
+             "gpt4all": "./data/gpt4all.json",
+             "gpt4_wo_p3": "./data/gpt4all_without_p3.json",
 ```
 
 ## Multi-interface Unified Platform
@@ -98,7 +100,7 @@ Note that, make sure python>=3.9 when finetuning ChatGLM.
 ### Instruction Finetuning
 In order for researchers to conduct systematic IFT research on LLMs, we have collected different types of instruction data, integrated multiple LLMs, and unified interfaces, making it easy to customize the desired collocation:
 - `--model_type` : Set the LLM you want to use. Currently, [llama, chatglm, bloom] are supported. The latter two have strong Chinese capabilities, and more LLMs will be integrated in the future.
-- `-- data`: Set the data type used for IFT to flexibly tailor the desired command compliance ability. For example, for strong reasoning ability, set "alpaca-cot", for strong Chinese ability, set "belle1.5m", and for financial related response ability, set "finance".
+- `-- data`: Set the data type used for IFT to flexibly tailor the desired command compliance ability. For example, for strong reasoning ability, set "alpaca-cot", for strong Chinese ability, set "belle1.5m", for coding and story generation ability, set "gpt4all", and for financial related response ability, set "finance".
 - `--model_name_or_path ': This is set to load different versions of the model weights for the target LLM  `--model_type`. For example, to load the llama's 13b version of weights, you can set decapoda-research/llama-13b-hf.
 
 **Single GPU**
