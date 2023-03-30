@@ -75,7 +75,8 @@ Note that, for CoT datasets, we first use the [template](https://github.com/goog
              "cot": "./data/CoT_data.json",
              "alpaca-cot": "./data/alcapa_plus_cot.json",
              "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
-             "belle1.5m": "./data/belle_data1.5M_cn.json.json"
+             "belle1.5m": "./data/belle_data1.5M_cn.json",
+             "finance": "./data/finance_en.json"
 ```
 
 ## Instruction Finetuning
