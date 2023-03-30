@@ -1,11 +1,21 @@
-![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/Alpaca-CoT-2.jpg)
-# Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface
+![](./figures/宣传0.png)
+# 特制自己的ChatGPT: 多接口统一的轻量级LLM-IFT平台 (**Alpaca-CoT**)
 
 ## News
 - 3.30: LLM ChatGLM (THUDM/chatglm-6b)已经集成进`uniform_finetune.py`。
 - 3.29: LLM BLOOM (bloomz-7b1-mt)已经集成进`uniform_finetune.py`。（相关模型的运行命令稍后发布）
 - 3.28: 为了方便下载，所有的模型权重均已上传到[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)。
 - 3.28: BELLE发布的1M中文指令数据（与原来的0.5M不重复）已被统一格式化，并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)。(相关的模型稍后发布）
+
+## 0. ChatGPT背后的技术
+
+**LLM**: （ **Large Language Models**）指经过大规模预训练且体量较大的语言模型，一般是transformer-based模型。
+
+**IFT**: （ **Instruction Fine-Tuning**）指令微调，指令是指用户传入的目的明确的输入文本，指令微调用以让模型学会遵循用户的指令。
+
+**CoT**: （ **Chain-of-Thought**）指令形式的一种特殊情况，包含step-by-step的推理过程。如下图蓝色部分所示。
+
+![cot](./figures/cot.jpg)
 
 ## 1. 定位
 
@@ -25,9 +35,9 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 ## 2. 概述
 
 近期，[LLaMA](https://arxiv.org/abs/2302.13971v1)[1]显示出惊人的zero-shot和few-shot能力，仅需较少的参数即可和GPT-3.5性能相当（LLaMA-13B显著优于GPT-3（175B），LLaMA-65B与PaLM-540MB相当），明显降低了训练、微调和使用competitive大型语言模型的成本。最近，为了提高LLaMA的instruction-following能力，[Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca)[2]利用[self-instruct](https://arxiv.org/abs/2212.10560)[3]生成的52K Englishi nstruction-finetuning数据对LLaMA进行了微调。然而，目前该方向的研究仍然面临着以下三个挑战：
-- 1. LLaMA-7b依然对计算资源有着较高的要求；
-- 2. 用于instruction finetuning的开源数据集较少；
-- 3. 缺乏各instruction类型带来的影响的实证研究，如响应中文的能力和CoT能力。
+- LLaMA-7b依然对计算资源有着较高的要求；
+- 用于instruction finetuning的开源数据集较少；
+- 缺乏各instruction类型带来的影响的实证研究，如响应中文的能力和CoT能力。
 
 为此，我们提出了Alpaca-CoT项目，该项目结合了相关的近期前沿技术，具有以下优势：
 - 1. **_仅需要较低计算资源即可高效完成对LLaMA的微调_**。`7b`,`13b`和`30b`版本的LLaMA模型均可在单卡80G A100上轻松完成训练。该优势主要来自于[low-rank adaptation (LoRA)](https://arxiv.org/pdf/2106.09685.pdf) [4], [PEFT](https://github.com/huggingface/peft)和[bitsandbytes](https://github.com/TimDettmers/bitsandbytes)等技术。我们的代码主要修改自[这里](https://github.com/tloen/alpaca-lora)。
@@ -96,7 +106,7 @@ pip install -r requirements.txt
 ```
 python3 uniform_finetune.py --model_type llama --model_name_or_path decapoda-research/llama-7b-hf \
     --data alpaca-belle-cot --lora_target_modules q_proj v_proj \
-    --per_gpu_train_batch_size 128 --learning_rate 3e-4 --epochs 1 
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
     
 ```
 - for ChatGLM
@@ -112,7 +122,7 @@ Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be 
 ```
 python3 uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
-    --per_gpu_train_batch_size 128 --learning_rate 3e-4 --epochs 1 
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
 ```
 
 Note that you can also pass the local path (where the LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.
@@ -124,7 +134,7 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy uniform_finetune.py \
     --model_type llama --model_name_or_path decapoda-research/llama-7b-hf \
     --data alpaca-belle-cot --lora_target_modules q_proj v_proj \
-    --per_gpu_train_batch_size 128 --learning_rate 3e-4 --epochs 1 
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
 ```
 - for ChatGLM
 ```
@@ -143,7 +153,7 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy \
     uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
-    --per_gpu_train_batch_size 128 --learning_rate 3e-4 --epochs 1  
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1  
 ```
 
 
@@ -181,15 +191,13 @@ python3 generate.py --size 7 --data alpaca-belle-cot
 
 
 ## 6. 未来工作
+- 集成进来更多的LLMs
 - 探究模型的few-shot能力
 - 对不同大小的模型进行细致探究
 - 在instruction-following evaluation suite上评估
 - 收集更多的instruction-finetuning数据集.
 
-## 7. ToDo
-- 集成进来GLM-6B (✅)
-- 集成进来BLOOM-7B （✅）
-- 在hugging face上开放接口
+
 
 ## 参考文献
 
