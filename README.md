@@ -23,7 +23,7 @@ To this end, we propose this project, which leverages various improvements that 
 - 3. The models published in this repo significantly **_improve the ability to follow Chinese instructions_**.
 - 4. This repo contains **_a [collection of instruction-finetuning datasets](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT) that are continuously collected_**, which so far includes English, Chinese and CoT instructions. In addition, a collection of checkpoints trained with various instruction datasets is also provided.
 - 5. This repo  **_integrates multiple LLMs and unifies their interfaces_**, It can be easily switched through hyperparameters. Currently, it includes **LLaMA**, **ChatGLM**[5], and **Bloom**[6], and more will continue to be added in the future for researchers to easily invoke and compare different LLMs.
-- This repo contains **_extensive empirical studies and qualitative analysis_**, which may provide valuable findings and promote the exploration of LLM in the future.
+- 6. This repo contains **_extensive empirical studies and qualitative analysis_**, which may provide valuable findings and promote the exploration of LLM in the future.
 
 
 **To the best of our knowledge, this work is the first to study _CoT reasoning_ based on LLaMA and Alpaca.** Therefore, we abbreviate our work to `Alpaca-CoT`.
