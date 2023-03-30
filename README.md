@@ -79,13 +79,14 @@ Note that, for CoT datasets, we first use the [template](https://github.com/goog
              "finance": "./data/finance_en.json"
 ```
 
-## Instruction Finetuning
+## Multi-interface Unified Platform
 ### Setup
 ```
 pip install -r requirements.txt
 ```
 Note that, make sure python>=3.9 when finetuning ChatGLM.
-### Multi-interface Unified Platform
+
+### Instruction Finetuning
 
 **Single GPU**
 - for LLaMA
