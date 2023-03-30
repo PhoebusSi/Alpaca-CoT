@@ -85,7 +85,7 @@ Note that, for CoT datasets, we first use the [template](https://github.com/goog
 pip install -r requirements.txt
 ```
 Note that, make sure python>=3.9 when finetuning ChatGLM.
-### Instruction Tuning
+### Multi-interface Unified Platform
 
 **Single GPU**
 - for LLaMA
