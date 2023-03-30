@@ -1,5 +1,5 @@
 ![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/Alpaca-CoT-2.jpg)
-# Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models (**Alpaca-CoT**)
+# Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface
 
 中文README，请看[这里](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)。(Chinese READEME can be found [here](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md).)
 
@@ -222,7 +222,7 @@ Please cite the repo if you use the data collection, code, and experimental find
 @misc{alpaca-cot,
   author = {Qingyi Si, Rui Liu, Zheng Lin },
   school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
-  title = {Evolving Alpaca: An Empirical Study on Instruction Tuning for Large Language Models},
+  title = {Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface},
   year = {2023},
   publisher = {GitHub},
   journal = {GitHub repository},
