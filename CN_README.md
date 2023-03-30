@@ -90,7 +90,7 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
              "finance": "./data/finance_en.json"
 ```
 
-## 4. Instruction Finetuning
+## 4. 多接口统一的开源平台
 ### 环境配置
 ```
 pip install -r requirements.txt
