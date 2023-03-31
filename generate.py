@@ -7,7 +7,8 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--size', type=str, help='the size of llama model')
+parser.add_argument('--size', type=str, help='the size of LLM model')
+parser.add_argument('--model', type=str, help='the model of LLM model')
 parser.add_argument('--data', type=str, help='the data used for instructing tuning')
 parser.add_argument('--local_rank', default=-1, type=int,help='node rank for distributed training')
 
@@ -16,15 +17,21 @@ args = parser.parse_args()
 assert (
     "LlamaTokenizer" in transformers._import_structure["models.llama"]
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
-from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig
+from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig, BloomForCausalLM, BloomTokenizerFast)
 
-tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+"b-hf")
-
+if args.model == "llama":
+    tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+"b-hf")
+elif args.model == "bloom":
+    tokenizer = BloomTokenizerFast.from_pretrained("bigscience/bloomz-"+args.size+"b1-mt")
+    
 LOAD_8BIT = False
-BASE_MODEL = "decapoda-research/llama-"+args.size+"b-hf"
-
+if args.model == "llama":
+    BASE_MODEL = "decapoda-research/llama-"+args.size+"b-hf"
+elif args.model == "bloom":
+    BASE_MODEL = "bigscience/bloomz-"+args.size+"b1-mt"   
+    
 # your own local path for LoRA weights (savded by fientune.py)
-LORA_WEIGHTS = "saved-"+args.data+args.size+"b"
+LORA_WEIGHTS = "saved-bloom-"+args.data+args.size+"b"
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -40,12 +47,20 @@ except:
 
 
 if device == "cuda":
-    model = LlamaForCausalLM.from_pretrained(
-        BASE_MODEL,
-        load_in_8bit=LOAD_8BIT,
-        torch_dtype=torch.float16,
-        device_map="auto",
-    )
+    if args.model == "llama":
+        model = LlamaForCausalLM.from_pretrained(
+            BASE_MODEL,
+            load_in_8bit=LOAD_8BIT,
+            torch_dtype=torch.float16,
+            device_map="auto",
+        )
+     elif args.model == "bloom":
+        model = BloomForCausalLM.from_pretrained(
+            BASE_MODEL,
+            load_in_8bit=LOAD_8BIT,
+            torch_dtype=torch.float16,
+            device_map="auto",
+        )
     model = PeftModel.from_pretrained(
         model,
         LORA_WEIGHTS,
@@ -180,6 +195,9 @@ if __name__ == "__main__":
     while 1:
         print("PLZ input instruction:")
         instruction = input()
-        print("Response:", evaluate(instruction))
+        response =  evaluate(instruction)
+        if response[-4:] == "</s>":
+            response=response[:-4]
+        print("Response:", response)
         print()
 
