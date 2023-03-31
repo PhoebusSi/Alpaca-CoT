@@ -2,6 +2,7 @@
 # 特制自己的ChatGPT: 多接口统一的轻量级LLM-IFT平台 (**Alpaca-CoT**)
 
 ## News
+- 4.1: instnwild（收集自推特，主要是生成、开放式QA和mind-storm types）已经被统一格式化并收集[此处](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 3.31: GPT4All[9]（从GPT-3.5-Turbo蒸馏得到的包含code, stories和对话的数据）已经被统一格式化并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). 
 - 3.30: LLM ChatGLM (THUDM/chatglm-6b)已经集成进`uniform_finetune.py`。
 - 3.29: LLM BLOOM (bloomz-7b1-mt)已经集成进`uniform_finetune.py`。（相关模型的运行命令稍后发布）
