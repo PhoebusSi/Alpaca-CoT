@@ -17,7 +17,7 @@ args = parser.parse_args()
 assert (
     "LlamaTokenizer" in transformers._import_structure["models.llama"]
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
-from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig, BloomForCausalLM, BloomTokenizerFast)
+from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig, BloomForCausalLM, BloomTokenizerFast
 
 if args.model == "llama":
     tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+"b-hf")
@@ -54,7 +54,7 @@ if device == "cuda":
             torch_dtype=torch.float16,
             device_map="auto",
         )
-     elif args.model == "bloom":
+    elif args.model == "bloom":
         model = BloomForCausalLM.from_pretrained(
             BASE_MODEL,
             load_in_8bit=LOAD_8BIT,
