@@ -4,34 +4,41 @@ from peft import PeftModel
 import transformers
 import gradio as gr
 import argparse
-
+from transformers import (
+    LlamaForCausalLM, LlamaTokenizer, 
+    AutoModel, AutoTokenizer,
+    BloomForCausalLM, BloomTokenizerFast)
 
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--size', type=str, help='the size of LLM model')
-parser.add_argument('--model', type=str, help='the model of LLM model')
 parser.add_argument('--data', type=str, help='the data used for instructing tuning')
-parser.add_argument('--local_rank', default=-1, type=int,help='node rank for distributed training')
-
+parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'bloom'])
+parser.add_argument('--size', type=str, help='the size of llama model')
+parser.add_argument('--model_name_or_path', default="decapoda-research/llama-7b-hf", type=str)
 args = parser.parse_args()
 
 assert (
     "LlamaTokenizer" in transformers._import_structure["models.llama"]
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
-from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig, BloomForCausalLM, BloomTokenizerFast)
+from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig
 
-if args.model == "llama":
-    tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-"+args.size+"b-hf")
-elif args.model == "bloom":
-    tokenizer = BloomTokenizerFast.from_pretrained("bigscience/bloomz-"+args.size+"b1-mt")
-    
+
 LOAD_8BIT = False
-if args.model == "llama":
-    BASE_MODEL = "decapoda-research/llama-"+args.size+"b-hf"
-elif args.model == "bloom":
-    BASE_MODEL = "bigscience/bloomz-"+args.size+"b1-mt"   
-    
-# your own local path for LoRA weights (savded by fientune.py)
-LORA_WEIGHTS = "saved-bloom-"+args.data+args.size+"b"
+if args.model_type == "llama":
+    BASE_MODEL = "decapoda-research/llama-7b-hf"
+    tokenizer = LlamaTokenizer.from_pretrained(BASE_MODEL)
+    LORA_WEIGHTS = "./saved-"+args.data+args.size+"b"
+elif args.model_type == "bloom":
+    BASE_MODEL = "bigscience/bloomz-7b1-mt"
+    tokenizer = BloomTokenizerFast.from_pretrained(BASE_MODEL)
+    LORA_WEIGHTS = "./saved_bloominstinwild-belle1.5m/middle"
+elif args.model_type == "chatglm":
+    BASE_MODEL = "THUDM/chatglm-6b"
+    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL,trust_remote_code=True)
+    LORA_WEIGHTS = "./saved_chatglm" + args.data 
+
+
+
+
 
 if torch.cuda.is_available():
     device = "cuda"
@@ -44,51 +51,111 @@ try:
 except:
     pass
 
-
-
 if device == "cuda":
-    if args.model == "llama":
+    if args.model_type == "llama":
         model = LlamaForCausalLM.from_pretrained(
             BASE_MODEL,
             load_in_8bit=LOAD_8BIT,
             torch_dtype=torch.float16,
             device_map="auto",
         )
-     elif args.model == "bloom":
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            torch_dtype=torch.float16,
+        )
+    elif args.model_type == "bloom":
         model = BloomForCausalLM.from_pretrained(
             BASE_MODEL,
             load_in_8bit=LOAD_8BIT,
             torch_dtype=torch.float16,
             device_map="auto",
         )
-    model = PeftModel.from_pretrained(
-        model,
-        LORA_WEIGHTS,
-        torch_dtype=torch.float16,
-    )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            torch_dtype=torch.float16,
+        )
+    elif args.model_type == "chatglm":
+        model = AutoModel.from_pretrained(
+            BASE_MODEL,
+            trust_remote_code=True,
+            torch_dtype=torch.float16,
+            device_map="auto",
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            torch_dtype=torch.float16,
+        )
 elif device == "mps":
-    model = LlamaForCausalLM.from_pretrained(
-        BASE_MODEL,
-        device_map={"": device},
-        torch_dtype=torch.float16,
-    )
-    model = PeftModel.from_pretrained(
-        model,
-        LORA_WEIGHTS,
-        device_map={"": device},
-        torch_dtype=torch.float16,
-    )
+    if args.model_type == "llama":
+        model = LlamaForCausalLM.from_pretrained(
+            BASE_MODEL,
+            device_map={"": device},
+            torch_dtype=torch.float16,
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            device_map={"": device},
+            torch_dtype=torch.float16,
+        )
+    elif args.model_type == "bloom":
+        model = BloomForCausalLM.from_pretrained(
+            BASE_MODEL,
+            device_map={"": device},
+            torch_dtype=torch.float16,
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            device_map={"": device},
+            torch_dtype=torch.float16,
+        )
+    elif args.model_type == "chatglm":
+        model = AutoModel.from_pretrained(
+            BASE_MODEL,
+            trust_remote_code=True,
+            device_map={"": device},
+            torch_dtype=torch.float16,
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            device_map={"": device},
+            torch_dtype=torch.float16,
+        )
 else:
-    model = LlamaForCausalLM.from_pretrained(
-        BASE_MODEL, device_map={"": device}, low_cpu_mem_usage=True
-    )
-    model = PeftModel.from_pretrained(
-        model,
-        LORA_WEIGHTS,
-        device_map={"": device},
-    )
+    if args.model_type == "llama":
+        model = LlamaForCausalLM.from_pretrained(
+            BASE_MODEL, device_map={"": device}, low_cpu_mem_usage=True
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            device_map={"": device},
+        )
 
-
+    elif args.model_type == "bloom":
+        model = BloomForCausalLM.from_pretrained(
+            BASE_MODEL, device_map={"": device}, low_cpu_mem_usage=True
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            device_map={"": device},
+        )   
+    elif args.model_type == "chatglm":
+        model = AutoModel.from_pretrained(
+            BASE_MODEL,trust_remote_code=True,
+            device_map={"": device}, low_cpu_mem_usage=True
+        )
+        model = PeftModel.from_pretrained(
+            model,
+            LORA_WEIGHTS,
+            device_map={"": device},
+        )   
 def generate_prompt(instruction, input=None):
     if input:
         return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
@@ -174,11 +241,9 @@ gr.Interface(
     description="Alpaca4",
 ).launch()
 
-"""
-
 # Old testing code follows.
 
-
+"""
 if __name__ == "__main__":
     # testing code for readme
     # for instruction in [
@@ -195,9 +260,9 @@ if __name__ == "__main__":
     while 1:
         print("PLZ input instruction:")
         instruction = input()
-        response =  evaluate(instruction)
+        response = evaluate(instruction)
         if response[-4:] == "</s>":
-            response=response[:-4]
+            response = response[:-4]
         print("Response:", response)
         print()
 
