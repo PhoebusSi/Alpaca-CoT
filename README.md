@@ -2,6 +2,7 @@
 # Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Language Models Interface
 
 中文README，请看[这里](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)。(Chinese READEME can be found [here](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md).)
+
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests.
 <img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
 
