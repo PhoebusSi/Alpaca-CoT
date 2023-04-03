@@ -162,9 +162,11 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
 
 ### Inference #To be modified
 ``` 
-python3 generate.py --size 7 --data alpaca-belle-cot --model llama
+python3 generate.py  --data alpaca-belle-cot --model_type llama
 
-python3 generate.py --size 7 --data alpaca-belle-cot --model bloom
+python3 generate.py  --data alpaca-belle-cot --model_type chatglm
+
+python3 generate.py  --data alpaca-belle-cot --model_type bloom
 
 ```
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
