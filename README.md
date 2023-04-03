@@ -2,9 +2,10 @@
 # Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Language Models Interface
 
 中文README，请看[这里](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)。(Chinese READEME can be found [here](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md).)
+<img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
 
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests.
-<img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
+
 
 
 This is the repository for the `Alpaca-CoT` project, which aims to build an instruction finetuning (IFT) platform with extensive instruction collection (especially the CoT datasets) and a unified interface for various large language models.  We are constantly expanding our [instruction-tuning data collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/), and integrating more LLMs. In addition, we also conduct an in-depth empirical study. 
