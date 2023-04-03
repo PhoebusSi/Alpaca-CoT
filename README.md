@@ -15,7 +15,7 @@ This is the repository for the `Alpaca-CoT` project, which aims to build an inst
 You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the [model checkpoints](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main), and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
 
 ## News
--  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
+-  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 -  4.1: Checkpoints of Bloom7b fine-tuned from instinwild-CN(47k) + belle(1.5M) can be found [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
 -  4.1: instinwild (collected from Twitter, where users tend to share their interesting prompts of mostly generation, open QA, and mind-storm types) has been formatted and collected [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). 
 - 3.31: GPT4All[9] (a massive data (ditillation from GPT-3.5-Turbo) including code, stories and dialogue) has been formatted and collected [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). 
