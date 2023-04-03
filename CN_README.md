@@ -5,6 +5,8 @@
 <img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
 
 ## News
+- 4.3: 中文的CoT数据集`CoT_CN_data.json`已上传到[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+- 4.1: 在instinwild-CN(47k) + belle(1.5M)微调得到的Bloom7b的checkpoint已被上传到了[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: instnwild（收集自推特，主要是生成、开放式QA和mind-storm types）已经被统一格式化并收集[此处](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 3.31: GPT4All[9]（从GPT-3.5-Turbo蒸馏得到的包含code, stories和对话的数据）已经被统一格式化并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). 
 - 3.30: LLM ChatGLM (THUDM/chatglm-6b)已经集成进`uniform_finetune.py`。
