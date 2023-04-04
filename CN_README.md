@@ -5,14 +5,11 @@
 <img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
 
 ## News
+- 4.4: 已收集和统一格式化数据集`FastChat`, `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` 和 `natural-instructions`。这些数据集一个共涉及约8000多万条指令和2k个任务，可以在这里[下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main)。详细的使用说明将在以后更新。
 - 4.3: 中文的CoT数据集`CoT_CN_data.json`已上传到[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: 在instinwild-CN(47k) + belle(1.5M)微调得到的Bloom7b的checkpoint已被上传到了[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: instnwild（收集自推特，主要是生成、开放式QA和mind-storm types）已经被统一格式化并收集[此处](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
-- 3.31: GPT4All[9]（从GPT-3.5-Turbo蒸馏得到的包含code, stories和对话的数据）已经被统一格式化并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). 
-- 3.30: LLM ChatGLM (THUDM/chatglm-6b)已经集成进`uniform_finetune.py`。
-- 3.29: LLM BLOOM (bloomz-7b1-mt)已经集成进`uniform_finetune.py`。（相关模型的运行命令稍后发布）
-- 3.28: 为了方便下载，所有的模型权重均已上传到[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main)。
-- 3.28: BELLE发布的1M中文指令数据（与原来的0.5M不重复）已被统一格式化，并收集在[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)。(相关的模型稍后发布）
+
 
 ## 0. ChatGPT背后的技术
 
