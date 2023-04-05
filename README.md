@@ -56,6 +56,23 @@ To this end, we propose this project, which leverages various improvements that 
 [9]: [GPT4All: Training an Assistant-style Chatbot with Large Scale Data Distillation from GPT-3.5-Turbo](https://github.com/nomic-ai/gpt4all)
 
 ## Data Collection 
+
+| Dataset              | Nums     | Lang         | Task      | Gen        | Type                             | Src                             | Url                                                                       |
+| :------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
+| Chain of Thought     | 74771    | EN/CN        | MT        |            |                                  |                                 | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
+| FastChat             | 51974    | EN           | MT        | HG         | general instruct                 | GPT-3 with human                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
+| GPT4all              | 806199   | EN           | MT        | COL        | code, storys and dialogs         | distillation from GPT-3.5-turbo | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPT4all)        |
+| GPTeacher            | 29013    | EN           | MT        | SI         | general, roleplay, toolformer    | GPT-4 & toolformer              | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPTeacher)        |
+| Guanaco              | 534610   | ML           | MT        | SI         | various linguistic tasks         | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Guanaco)        |
+| HC3                  | 37175    | EN/CN        | TS        | MIX        | dialogue evaluation              | gpt-3.5, human                  | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/HC3)        |
+| alpaca               | 52002    | EN           | MT        | SI         |                                  | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/alpaca)        |
+| Natural Instructions | 5040134  | ML           | MT        | COL        | diverse nlp tasks                | Human generated                 | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Natural-Instructions)        |
+| belle_cn             | 1079517  | CN           | TS/MT     | SI         | mathematical reasoning, dialogue | ChatGPT                         | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/belle_cn)        |
+| instinwild           | 52191    | EN/CN        | MT        | SI         | generation, open-qa, mind-storm  | text-davunci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instinwild)        |
+| prosocial dialog     | 165681   | EN           | TS        | MIX        | dialogue                         | GPT-3 with human                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/prosocial-dialog)        |
+| finance_en           | 68912    | EN           | TS        | COL        | financial related qa             | GPT3.5                          | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/)        |
+| xP3                  | 78883588 | ML           | MT        | COL        | various nlp tasks                | -                               | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
+
 ### Statistics
 Note: The following figure shows the statistics of the dataset collected as of February 26, which is only displayed as a motivation. More datasets have been collected, such as financial related instruction datasets.
 ![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
