@@ -57,9 +57,28 @@ To this end, we propose this project, which leverages various improvements that 
 
 ## Data Collection 
 
+Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@yaodongC](https://github.com/yaodongC)), we labeled each collected dataset according to the following rules:
+
+(Lang)Lingual-Tags:
+- EN: Instruction datasets in English
+- CN: Instruction datasets in Chinese
+- ML: [Multi-lingual] Instruction datasets in multiple languages
+
+(Task)Task-Tags:
+- MT: [Multi-task] Datasets containing multiple tasks
+- TS: [Task-specific] Datasets tailored for specific tasks
+
+(Gen)Generation-method:
+- HG: [Human Generated Dataset] Datasets created by humans
+- SI: [Self-Instruct] Datasets generated using self-instruct methods
+- MIX: [Mixed Dataset] Dataset contains both human and machine generated data
+- COL: [Collection of Dataset] Dataset made from a collection of other datasets
+
+
+
 | Dataset              | Nums     | Lang         | Task      | Gen        | Type                             | Src                             | Url                                                                       |
 | :------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
-| Chain of Thought     | 74771    | EN/CN        | MT        |            |                                  |                                 | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
+| Chain of Thought     | 74771    | EN/CN        | MT        | HG         | instruct with cot reasoning      |annotating CoT on existing data  |  [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
 | FastChat             | 51974    | EN           | MT        | HG         | general instruct                 | GPT-3 with human                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
 | GPT4all              | 806199   | EN           | MT        | COL        | code, storys and dialogs         | distillation from GPT-3.5-turbo | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPT4all)        |
 | GPTeacher            | 29013    | EN           | MT        | SI         | general, roleplay, toolformer    | GPT-4 & toolformer              | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPTeacher)        |
