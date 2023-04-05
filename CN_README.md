@@ -55,21 +55,38 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 
 ## 3. 数据集合 (Data Collection)  
 
-| 数据集                | 数目     | 语言         | 任务       | 生成       | 类型                             | 来源                             | 链接                                                                       |
+我们参考[这里](https://github.com/yaodongC/awesome-instruction-dataset) ([@yaodongC](https://github.com/yaodongC)), 将收集到的数据集按照以下规则标注Tags：
+
+(Lang)Lingual-Tags:
+- EN: Instruction datasets in English
+- CN: Instruction datasets in Chinese
+- ML: [Multi-lingual] Instruction datasets in multiple languages
+
+(Task)Task-Tags:
+- MT: [Multi-task] Datasets containing multiple tasks
+- TS: [Task-specific] Datasets tailored for specific tasks
+
+(Gen)Generation-method:
+- HG: [Human Generated Dataset] Datasets created by humans
+- SI: [Self-Instruct] Datasets generated using self-instruct methods
+- MIX: [Mixed Dataset] Dataset contains both human and machine generated data
+- COL: [Collection of Dataset] Dataset made from a collection of other datasets
+
+| 数据集                | 数目     | Lang        | Task       | Gen       | 类型                             | 来源                             | 链接                                                                       |
 | :------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
-| Chain of Thought     | 74771    | EN/CN        | MT        |            |                                  |                                 | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
-| FastChat             | 51974    | EN           | MT        | HG         | 通用指令                         | ChatGPT 与人交互                 | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
+| Chain of Thought     | 74771    | EN/CN        | MT        |            |                                  |   人在现有数据集上标注CoT                              | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
+| FastChat             | 51974    | EN           | MT        | MIX         | 通用指令                         | ChatGPT 与人交互                 | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
 | GPT4all              | 806199   | EN           | MT        | COL        | 代码，故事，对话                  | GPT-3.5-turbo 蒸馏               | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPT4all)        |
 | GPTeacher            | 29013    | EN           | MT        | SI         | 通用，角色扮演，工具指令           | GPT-4 & toolformer              | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPTeacher)        |
 | Guanaco              | 534610   | ML           | MT        | SI         | 多种nlp任务                      | text-davinci-003                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Guanaco)        |
-| HC3                  | 37175    | EN/CN        | TS        | MIX        | 对话评估                         | gpt-3.5，人工                    | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/HC3)        |
-| alpaca               | 52002    | EN           | MT        | SI         |                                  | text-davinci-003                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/alpaca)        |
-| Natural Instructions | 5040134  | ML           | MT        | COL        | 多种nlp任务                       | 人工生成                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Natural-Instructions)        |
-| belle_cn             | 1079517  | CN           | TS/MT     | SI         | 数学推理，对话                    | ChatGPT                         | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/belle_cn)        |
+| HC3                  | 37175    | EN/CN        | TS        | MIX        | 对话评估                         | gpt-3.5 或 人工                    | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/HC3)        |
+| alpaca               | 52002    | EN           | MT        | SI         |    通用指令                              | text-davinci-003                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/alpaca)        |
+| Natural Instructions | 5040134  | ML           | MT        | COL        | 多种nlp任务                       | 人工标注的数据集的收集                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Natural-Instructions)        |
+| belle_cn             | 1079517  | CN           | TS/MT     | SI         | 通用指令，数学推理，对话                    | text-davunci-003                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/belle_cn)        |
 | instinwild           | 52191    | EN/CN        | MT        | SI         | 生成，开放域问答，头脑风暴         | text-davunci-003                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instinwild)        |
-| prosocial dialog     | 165681   | EN           | TS        | MIX        | 对话                             | GPT-3 与人交互                  | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/prosocial-dialog)        |
+| prosocial dialog     | 165681   | EN           | TS        | MIX        | 对话                             | GPT-3改写问题，人工回复             | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/prosocial-dialog)        |
 | finance_en           | 68912    | EN           | TS        | COL        | 金融领域问答                      | GPT3.5                          | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/)        |
-| xP3                  | 78883588 | ML           | MT        | COL        | 多种nlp任务                      | -                               | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
+| xP3                  | 78883588 | ML           | MT        | COL        | 多种nlp任务                      | 人工标注的数据集的收集                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
 
 该集合仍在不断更新和扩增中。可在以下链接下载和查看更多数据细节：https://github.com/PhoebusSi/alpaca-CoT/tree/main/data
 ### 数据统计
