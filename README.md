@@ -57,6 +57,11 @@ To this end, we propose this project, which leverages various improvements that 
 
 ## Data Collection 
 
+The relative size of collected datasets can be shown by this graph:
+
+![img](./figures/show.png)
+
+
 Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@yaodongC](https://github.com/yaodongC)), we labeled each collected dataset according to the following rules:
 
 (Lang)Lingual-Tags:
@@ -75,22 +80,21 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 - COL: [Collection of Dataset] Dataset made from a collection of other datasets
 
 
-
-| Dataset              | Nums     | Lang         | Task      | Gen        | Type                             | Src                             | Url                                                                       |
-| :------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
-| Chain of Thought     | 74771    | EN/CN        | MT        | HG         | instruct with cot reasoning      |annotating CoT on existing data  |  [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
-| FastChat             | 51974    | EN           | MT        | MIX         | general instruct                 |crowdsourcing to collect conversations between people and ChatGPT (ShareGPT)   | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
-| GPT4all              | 806199   | EN           | MT        | COL        | code, storys and dialogs         | distillation from GPT-3.5-turbo | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPT4all)        |
-| GPTeacher            | 29013    | EN           | MT        | SI         | general, roleplay, toolformer    | GPT-4 & toolformer              | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPTeacher)        |
-| Guanaco              | 534610   | ML           | MT        | SI         | various linguistic tasks         | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Guanaco)        |
-| HC3                  | 37175    | EN/CN        | TS        | MIX        | dialogue evaluation              | human or ChatGPT | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/HC3)        |
-| alpaca               | 52002    | EN           | MT        | SI         |  general instruct       | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/alpaca)        |
-| Natural Instructions | 5040134  | ML           | MT        | COL        | diverse nlp tasks                | human annotated datasets collection   | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Natural-Instructions)        |
-| belle_cn             | 1079517  | CN           | TS/MT     | SI         | general, mathematical reasoning, dialogue | text-davinci-003                          | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/belle_cn)        |
-| instinwild           | 52191    | EN/CN        | MT        | SI         | generation, open-qa, mind-storm  | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instinwild)        |
-| prosocial dialog     | 165681   | EN           | TS        | MIX        | dialogue                         | GPT-3 rewrites questions + humans feedback manually            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/prosocial-dialog)        |
-| finance_en           | 68912    | EN           | TS        | COL        | financial related qa             | GPT3.5                          | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/)        |
-| xP3                  | 78883588 | ML           | MT        | COL        | a collection of prompts & datasets across 46 of languages & 16 NLP tasks               | human   annotated datasets collection            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
+| Dataset                                                                        | Nums     | Lang         | Task      | Gen        | Type                             | Src                             | Url                                                                       |
+| :----------------------------------------------------------------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
+| [Chain of Thought](https://github.com/google-research/FLAN)                    | 74771    | EN/CN        | MT        | HG         | instruct with cot reasoning      |annotating CoT on existing data  |  [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Chain-of-Thought)        |
+| [FastChat](https://github.com/lm-sys/FastChat)                                 | 51974    | EN           | MT        | MIX        | general instruct                 |crowdsourcing to collect conversations between people and ChatGPT (ShareGPT)   | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FastChat)        |
+| [GPT4all](https://github.com/nomic-ai/gpt4all)                                 | 806199   | EN           | MT        | COL        | code, storys and dialogs         | distillation from GPT-3.5-turbo | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPT4all)        |
+| [GPTeacher](https://github.com/teknium1/GPTeacher)                             | 29013    | EN           | MT        | SI         | general, roleplay, toolformer    | GPT-4 & toolformer              | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPTeacher)        |
+| [Guanaco](https://huggingface.co/datasets/JosephusCheung/GuanacoDataset)       | 534610   | ML           | MT        | SI         | various linguistic tasks         | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Guanaco)        |
+| [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3)                      | 37175    | EN/CN        | TS        | MIX        | dialogue evaluation              | human or ChatGPT | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/HC3)        |
+| [alpaca](https://github.com/tatsu-lab/stanford_alpaca)                         | 52002    | EN           | MT        | SI         |  general instruct       | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/alpaca)        |
+| [Natural Instructions](https://github.com/allenai/natural-instructions)        | 5040134  | ML           | MT        | COL        | diverse nlp tasks                | human annotated datasets collection   | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Natural-Instructions)        |
+| [belle_cn](https://huggingface.co/BelleGroup)                                  | 1079517  | CN           | TS/MT     | SI         | general, mathematical reasoning, dialogue | text-davinci-003                          | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/belle_cn)        |
+| [instinwild](https://github.com/XueFuzhao/InstructionWild)                     | 52191    | EN/CN        | MT        | SI         | generation, open-qa, mind-storm  | text-davinci-003                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instinwild)        |
+| [prosocial dialog](https://huggingface.co/datasets/allenai/prosocial-dialog)   | 165681   | EN           | TS        | MIX        | dialogue                         | GPT-3 rewrites questions + humans feedback manually            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/prosocial-dialog)        |
+| [finance_en](https://huggingface.co/datasets/gbharti/finance-alpaca)           | 68912    | EN           | TS        | COL        | financial related qa             | GPT3.5                          | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/)        |
+| [xP3](https://huggingface.co/datasets/bigscience/xP3)                          | 78883588 | ML           | MT        | COL        | a collection of prompts & datasets across 46 of languages & 16 NLP tasks               | human   annotated datasets collection            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
 
 ### Statistics
 Note: The following figure shows the statistics of the dataset collected as of February 26, which is only displayed as a motivation. More datasets have been collected, such as financial related instruction datasets.
