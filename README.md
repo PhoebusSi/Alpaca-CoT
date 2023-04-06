@@ -104,7 +104,6 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 - `CoT_data.json`: 9 CoT datasets involving about 75k samples. (published by FLAN[7])
 - `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. (published by BELLE [8])
 
-More details on the usage and sources of different datasets can be found [here](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data). 
 ### Download
 You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder. 
 
