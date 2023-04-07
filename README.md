@@ -79,6 +79,7 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 - MIX: [Mixed Dataset] Dataset contains both human and machine generated data
 - COL: [Collection of Dataset] Dataset made from a collection of other datasets
 
+### Statistics
 
 | Dataset                                                                        | Nums     | Lang         | Task      | Gen        | Type                             | Src                             | Url                                                                       |
 | :----------------------------------------------------------------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
@@ -96,13 +97,8 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 | [finance_en](https://huggingface.co/datasets/gbharti/finance-alpaca)           | 68912    | EN           | TS        | COL        | financial related qa             | GPT3.5                          | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/)        |
 | [xP3](https://huggingface.co/datasets/bigscience/xP3)                          | 78883588 | ML           | MT        | COL        | a collection of prompts & datasets across 46 of languages & 16 NLP tasks               | human   annotated datasets collection            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
 
-### Statistics
-Note: The following figure shows the statistics of the dataset collected as of February 26, which is only displayed as a motivation. More datasets have been collected, such as financial related instruction datasets.
-![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
-The current collection of instruction-finetuning datasets consists mainly of three parts:
-- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples. 
-- `CoT_data.json`: 9 CoT datasets involving about 75k samples. (published by FLAN[7])
-- `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. (published by BELLE [8])
+
+
 
 ### Download
 You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder. 
@@ -121,20 +117,6 @@ All data in our collection is formatted into the same templates, where each samp
 ```
 Note that, for CoT datasets, we first use the [template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py) provided by FLAN to change the original dataset into various Chain-of-Thoughts forms, and then convert it to the above format. The formatting script can be found [here](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py).
 
-## Dict of Data_type and Path
-
-```
-             "alpaca": "./data/alpaca_data_cleaned.json",
-             "belle": "./data/belle_data_cn.json",
-             "alpaca-belle": "./data/alpaca_plus_belle_data.json",
-             "cot": "./data/CoT_data.json",
-             "alpaca-cot": "./data/alcapa_plus_cot.json",
-             "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
-             "belle1.5m": "./data/belle_data1.5M_cn.json",
-             "finance": "./data/finance_en.json",
-             "gpt4all": "./data/gpt4all.json",
-             "gpt4_wo_p3": "./data/gpt4all_without_p3.json",
-```
 
 ## Multi-interface Unified Platform
 ### Setup
@@ -226,6 +208,14 @@ python3 web.py --model_type chatglm --lora_dir xxx
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
 
 ## Quantitative Analysis
+
+
+Note: The following figure shows the statistics of the dataset collected as of March 26, which is only displayed as a motivation of data collection. More datasets have been collected, such as financial related instruction datasets.
+![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
+The current collection of instruction-finetuning datasets consists mainly of three parts:
+- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples. 
+- `CoT_data.json`: 9 CoT datasets involving about 75k samples. (published by FLAN[7])
+- `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. (published by BELLE [8])
 
 ### Ablation of CoT and Chinese Instructions
 
