@@ -78,6 +78,7 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 - MIX: [Mixed Dataset] Dataset contains both human and machine generated data
 - COL: [Collection of Dataset] Dataset made from a collection of other datasets
 
+### 数据统计
 | 数据集                                                                         | 数目     | Lang        | Task       | Gen       | 类型                             | 来源                             | 链接                                                                       |
 | :----------------------------------------------------------------------------- | :------- | :----------- | :-------- | :----------| :------------------------------- | :------------------------------ | :------------------------------------------------------------------------- |
 | [Chain of Thought](https://github.com/google-research/FLAN)                    | 74771    | EN/CN        | MT        | HG         | CoT相关任务                      |   人在现有数据集上标注CoT                              | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Chain-of-Thought)        |
@@ -95,13 +96,7 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 | [xP3](https://huggingface.co/datasets/bigscience/xP3)                          | 78883588 | ML           | MT        | COL        | 多种nlp任务                      | 人工标注的数据集的收集                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)        |
 
 该集合仍在不断更新和扩增中。可在以下链接下载和查看更多数据细节：https://github.com/PhoebusSi/alpaca-CoT/tree/main/data
-### 数据统计
-注意：下图是截止到2.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。
-![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
-当前的instruction-finetuning数据集合主要包含以下三个部分：
-- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
-- `CoT_data.json`: 9 CoT datasets involving about 75k samples. （相关的CoT数据集由FLAN[7]发布）
-- `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. （相关的中文instruction数据由BELLE[8]发布）
+
 
 
 ### 下载
@@ -120,20 +115,6 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 ```
 注意，对于CoT数据集,我们首先使用FLAN提供的[template](https://github.com/google-research/FLAN/blob/main/flan/v2/templates.py)将其从原数据转化成Chain-of-Thought的形式，之后再统一成以上格式。格式统一化的脚本可以在[这里](https://github.com/PhoebusSi/alpaca-CoT/blob/main/data/origin_cot_data/formating.py)找到。 
 
-### 数据类型和路径的映射
-
-```
-             "alpaca": "./data/alpaca_data_cleaned.json",
-             "belle": "./data/belle_data_cn.json",
-             "alpaca-belle": "./data/alpaca_plus_belle_data.json",
-             "cot": "./data/CoT_data.json",
-             "alpaca-cot": "./data/alcapa_plus_cot.json",
-             "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
-             "belle1.5m": "./data/belle_data1.5M_cn.json",
-             "finance": "./data/finance_en.json",
-             "gpt4all": "./data/gpt4all.json",
-             "gpt4all_wo_p3": "./data/gpt4all_without_p3.json",
-```
 
 ## 4. 多接口统一的开源平台
 
@@ -225,6 +206,13 @@ python3 web.py --model_type chatglm --lora_dir xxx
 注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 ## 5. Quantitative Analysis
+注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。
+![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
+当前的instruction-finetuning数据集合主要包含以下三个部分：
+- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
+- `CoT_data.json`: 9 CoT datasets involving about 75k samples. （相关的CoT数据集由FLAN[7]发布）
+- `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. （相关的中文instruction数据由BELLE[8]发布）
+
 ### 关于CoT和Chinese Instructions的消融
 "w/o CoT" and "w/o CN" 分别表示用在instruction-finetuning期间不采用CoT数据和Chinese instructions。
 
