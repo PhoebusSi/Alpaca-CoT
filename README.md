@@ -204,15 +204,25 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1  
 ```
 
-### Inference #To be modified
-``` 
-python3 generate.py  --data alpaca-belle-cot --model_type llama
+### Parameter merging
+```
+python3 merge.py --model_type llama --size 7b --lora_dir xxx --merged_dir yyy
+```
+### Local chatting
+```
+python3 server.py --model_type chatglm --lora_dir xxx
+```
+### Batch predicting
+```
+python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --result_dir yyy
+```
 
-python3 generate.py  --data alpaca-belle-cot --model_type chatglm
-
-python3 generate.py  --data alpaca-belle-cot --model_type bloom
+### Web service building
 
 ```
+python3 web.py --model_type chatglm --lora_dir xxx
+```
+
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
 
 ## Quantitative Analysis

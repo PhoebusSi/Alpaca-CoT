@@ -203,11 +203,25 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
 ```
 
 
-### 模型推理 （待调整
+### 参数合并
 ```
-python3 generate.py --size 7 --data alpaca-belle-cot
+python3 merge.py --model_type llama --size 7b --lora_dir xxx --merged_dir yyy
+```
+### 本地使用
+```
+python3 server.py --model_type chatglm --lora_dir xxx
+```
+### 批量预测
+```
+python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --result_dir yyy
+```
+
+### web服务
 
 ```
+python3 web.py --model_type chatglm --lora_dir xxx
+```
+
 注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 ## 5. Quantitative Analysis
