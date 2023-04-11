@@ -5,6 +5,8 @@
 <img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
 
 ## News
+- 4.11: 添加了`多轮对话`功能，感谢[@paulcx]https://github.com/paulcx)。
+- 4.7: 添加了`参数合并`、`本地使用`、`批量预测`、`web服务`功能，感谢[@weberrr](https://github.com/weberrr)。
 - 4.4: 已收集和统一格式化数据集`FastChat`, `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` 和 `natural-instructions`。这些数据集一个共涉及约8000多万条指令和2k个任务，可以在这里[下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main)。详细的使用说明将在以后更新。
 - 4.3: 中文的CoT数据集`CoT_CN_data.json`已上传到[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: 在instinwild-CN(47k) + belle(1.5M)微调得到的Bloom7b的checkpoint已被上传到了[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
