@@ -3,7 +3,7 @@
 
 <img src="./figures/wechat.jpg" width = "100" height = "100" div align=right />
 
-中文README，请看[这里](./CN_README.md).)
+中文README，请看[这里](./CN_README.md).
 
 
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests.
@@ -15,7 +15,9 @@ This is the repository for the `Alpaca-CoT` project, which aims to build an inst
 You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the [model checkpoints](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main), and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
 
 ## News
--  4.11: Datasets `firefly`, `instruct`, `Code Alpaca` are collected and formatted, which can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+-  4.11: Added function `multi-turn conversation` by [@paulcx](https://github.com/paulcx).
+-  4.9: Datasets `firefly`, `instruct`, `Code Alpaca` are collected and formatted, which can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+-  4.7: Added functions `Parameter merging`, `Local chatting`, `Batch predicting` and `Web service building` by [@weberr](https://github.com/weberrr).
 -  4.4: Datasets `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` and `natural-instructions` are collected and formatted.
 -  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 -  4.1: Checkpoints of Bloom7b fine-tuned from instinwild-CN(47k) + belle(1.5M) can be found [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).

@@ -5,7 +5,9 @@
 <img src="./figures/wechat.jpg" width = "100" height = "100" div align=right />
 
 ## News
-- 4.11: 已收集和统一格式化数据集 `firefly`, `instruct`, `Code Alpaca` [这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+- 4.11: 添加了`多轮对话`功能，感谢[@paulcx](https://github.com/paulcx)。
+- 4.9: 已收集和统一格式化数据集 `firefly`, `instruct`, `Code Alpaca` [这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+- 4.7: 添加了`参数合并`、`本地使用`、`批量预测`、`web服务`功能，感谢[@weberrr](https://github.com/weberrr)。
 - 4.4: 已收集和统一格式化数据集`FastChat`, `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` 和 `natural-instructions`。
 - 4.3: 中文的CoT数据集`CoT_CN_data.json`已上传到[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: 在instinwild-CN(47k) + belle(1.5M)微调得到的Bloom7b的checkpoint已被上传到了[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
@@ -97,7 +99,6 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 | [firefly](https://github.com/yangjianxin1/Firefly)                             | 1649398  | CN           | MT        | COL        | 23种nlp任务                       | 收集中文数据集，人工书写指令模板           | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/firefly)              |
 | [instruct](https://huggingface.co/datasets/swype/instruct)                     | 888969   | EN           | MT        | COL        | GPT4All，Alpaca和开源数据集的增强  | 使用AllenAI提供的nlp增强工具               | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instruct)             |
 | [Code Alpaca](https://github.com/sahil280114/codealpaca)                       | 20022    | EN           | SI        | SI         | 代码生成，编辑，优化               | text-davinci-003                          | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/CodeAlpaca)            |
-
 | 进行中 |
 | [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | 通用指令                          | 众包收集ChatGPT与人的交互 (ShareGPT)       |                                                                                           |
 | [Galpaca](https://huggingface.co/GeorgiaTechResearchInstitute/galpaca-30b)     |          |              |           |            |                                  |                                           |                                                                                            |
