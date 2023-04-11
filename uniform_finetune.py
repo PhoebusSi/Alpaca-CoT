@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import copy
 import torch
@@ -64,7 +65,8 @@ DATA_PATH = {
              "alpaca-cot": "./data/alcapa_plus_cot.json",
              "alpaca-belle-cot": "./data/alcapa_plus_belle_plus_cot.json",
              "belle1.5m": "./data/belle_data1.5M_cn.json",
-             "finance": "./data/finance_en.json"
+             "finance": "./data/finance_en.json",
+             "multiturn_chat": "./data/multiturn_chat_0.8M.json",
             }
 
 PROMPT_DICT = {
@@ -78,13 +80,23 @@ PROMPT_DICT = {
         "Write a response that appropriately completes the request.\n\n"
         "### Instruction:\n{instruction}\n\n### Response:"
     ),
+    "prompt_multirun_input": (
+        "Below is an multi-round dialogue between human and assistant. "
+        "Write a response as an assistant that appropriately completes the human request in each round by incorporating previous context.\n\n"
+        "{instruction}{output}"
+    ),
 }
 
 IGNORE_INDEX = -100
 
 def generate_prompt(data_point):
-    prompt_ = PROMPT_DICT['prompt_input'] if data_point["input"] else PROMPT_DICT['prompt_no_input'] 
-    return prompt_.format_map(data_point) 
+    # a nasty solution just for now
+    if 'Human:' in data_point["instruction"] and 'Assistant:' in data_point["instruction"]:
+        data_point["instruction"] = data_point["instruction"].replace('Human:', '### Human: ')
+        data_point["instruction"] = data_point["instruction"].replace('Assistant:', '### Assistant: ')
+        return PROMPT_DICT['prompt_multirun_input'].format_map(data_point)
+    prompt_ = PROMPT_DICT['prompt_input'] if data_point["input"] else PROMPT_DICT['prompt_no_input']
+    return prompt_.format_map(data_point)
 
 
 def get_data_model(args):
@@ -180,25 +192,64 @@ def train(args):
 
     def generate_and_tokenize_prompt(data_point):
         prompt_no_resp = generate_prompt(data_point)
-        if "chatglm" in args.model_type:
-            tokenized_result = prompt_tokenize(prompt_no_resp)
+
+        if 'multi-round dialogue' in prompt_no_resp:
+            if "chatglm" not in args.model_type:
+                prompt_no_resp = re.sub(r'(?<!\n)\n### ', '\n</s>### ', prompt_no_resp)
+                prompt_no_resp += '</s>'
+                """ so far the prompt_no_resp looks like:
+                Below is an multi-round dialogue ...
+                ### Human: ...
+                </s>### Assistant: ...
+                </s>### Human: ...
+                ...
+                </s>### Assistant: ... </s>
+                """
+            inputs_with_offsets = tokenizer(prompt_no_resp, return_offsets_mapping=True)
+            labels = copy.deepcopy(inputs_with_offsets['input_ids'])
+            source_len = len(tokenizer(PROMPT_DICT['prompt_multirun_input'].split('\n\n')[0]+'\n\n')['input_ids'])
+            labels[:source_len] = [IGNORE_INDEX] * source_len
+            offsets = inputs_with_offsets["offset_mapping"]
+
+            matches = re.finditer(r'### (?!Assistant:)(.*?)<\/s>', prompt_no_resp, re.DOTALL)
+
+            for match in matches:
+                start_pos, end_pos = match.span()
+                start_idx = None
+                end_idx = None
+
+                for i, (start, end) in enumerate(offsets):
+                    if start <= start_pos < end:
+                        start_idx = i
+                    if start <= end_pos < end:
+                        end_idx = i
+
+                if start_idx is not None and end_idx is not None:
+                    for i in range(start_idx, end_idx-1):
+                        labels[i] = IGNORE_INDEX
+
+            return dict(
+                input_ids=inputs_with_offsets['input_ids'],
+                attention_mask=inputs_with_offsets['attention_mask'],
+                labels=labels,
+            )
         else:
-            tokenized_result = tokenize(prompt_no_resp)
-        source_len = len(tokenized_result['input_ids'])
+            if "chatglm" in args.model_type:
+                tokenized_result = prompt_tokenize(prompt_no_resp)
+            else:
+                tokenized_result = tokenize(prompt_no_resp)
 
-        prompt_with_response = prompt_no_resp + " " + data_point["output"]
+            source_len = len(tokenized_result['input_ids'])
+            prompt_with_response = prompt_no_resp + " " + data_point["output"]
+            # if "llama" in args.model_type:
+            prompt_with_response += " " + tokenizer.eos_token
+            if "chatglm" in args.model_type:
+                tokenized_with_response = completion_tokenize(prompt_with_response)
+            else:
+                tokenized_with_response = tokenize(prompt_with_response)
+            tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][source_len:] 
 
-        # if "llama" in args.model_type:
-        prompt_with_response += " " + tokenizer.eos_token
-
-        if "chatglm" in args.model_type:
-            tokenized_with_response = completion_tokenize(prompt_with_response)
-        else:
-            tokenized_with_response = tokenize(prompt_with_response)
-
-        tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][source_len:] 
-
-        return tokenized_with_response
+            return tokenized_with_response
 
     model_name = args.model_name_or_path.split( '/')[-1]
     output_dir = f"saved_models/{model_name}_{args.data}"
