@@ -1,9 +1,9 @@
-![Alpaca-CoT](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/Alpaca-CoT-2.jpg)
+![Alpaca-CoT](./figures/Alpaca-CoT-2.jpg)
 # Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Language Models Interface
 
-<img src="https://github.com/PhoebusSi/Alpaca-CoT/blob/main/figures/wechat.jpg" width = "100" height = "100" div align=right />
+<img src="./figures/wechat.jpg" width = "100" height = "100" div align=right />
 
-中文README，请看[这里](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)。(Chinese READEME can be found [here](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md).)
+中文README，请看[这里](./CN_README.md).
 
 
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests.
@@ -16,11 +16,12 @@ You are in a warm welcome to provide us with any non-collected instruction-tunin
 
 ## News
 -  4.11: Added function `multi-turn conversation` by [@paulcx](https://github.com/paulcx).
+-  4.9: Datasets `firefly`, `instruct`, `Code Alpaca` are collected and formatted, which can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 -  4.7: Added functions `Parameter merging`, `Local chatting`, `Batch predicting` and `Web service building` by [@weberr](https://github.com/weberrr).
--  4.4: Datasets `FastChat`, `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` and `natural-instructions` (involving about 80M+ instructions and 2k tasks ) are collected and formatted, which can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). The detailed instructions for use will be updated later.
+-  4.4: Datasets `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` and `natural-instructions` are collected and formatted.
 -  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 -  4.1: Checkpoints of Bloom7b fine-tuned from instinwild-CN(47k) + belle(1.5M) can be found [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
--  4.1: instinwild (collected from Twitter, where users tend to share their interesting prompts of mostly generation, open QA, and mind-storm types) has been formatted and collected [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). 
+-  4.1: instinwild (collected from Twitter, where users tend to share their interesting prompts of mostly generation, open QA, and mind-storm types) has been formatted and collected. 
 
 
 ## Overview
@@ -67,7 +68,6 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 | Dataset                                                                        | Nums     | Lang         | Task      | Gen        | Type                                                                     | Src                                                                            | Url                                                                                             |
 | :----------------------------------------------------------------------------- | :------- | :----------- | :-------- | :----------| :----------------------------------------------------------------------- | :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
 | [Chain of Thought](https://github.com/google-research/FLAN)                    | 74771    | EN/CN        | MT        | HG         | instruct with cot reasoning                                              | annotating CoT on existing data                                                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Chain-of-Thought)      |
-| [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | general instruct                                                         | crowdsourcing to collect conversations between people and ChatGPT (ShareGPT)   | Waiting for its open source.                                                                    |
 | [GPT4all](https://github.com/nomic-ai/gpt4all)                                 | 806199   | EN           | MT        | COL        | code, storys and dialogs                                                 | distillation from GPT-3.5-turbo                                                | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPT4all)               |
 | [GPTeacher](https://github.com/teknium1/GPTeacher)                             | 29013    | EN           | MT        | SI         | general, roleplay, toolformer                                            | GPT-4 & toolformer                                                             | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/GPTeacher)             |
 | [Guanaco](https://huggingface.co/datasets/JosephusCheung/GuanacoDataset)       | 534610   | ML           | MT        | SI         | various linguistic tasks                                                 | text-davinci-003                                                               | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Guanaco)               |
@@ -79,8 +79,14 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 | [prosocial dialog](https://huggingface.co/datasets/allenai/prosocial-dialog)   | 165681   | EN           | TS        | MIX        | dialogue                                                                 | GPT-3 rewrites questions + humans feedback manually                            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/prosocial-dialog)      |
 | [finance_en](https://huggingface.co/datasets/gbharti/finance-alpaca)           | 68912    | EN           | TS        | COL        | financial related qa                                                     | GPT3.5                                                                         | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/)                      |
 | [xP3](https://huggingface.co/datasets/bigscience/xP3)                          | 78883588 | ML           | MT        | COL        | a collection of prompts & datasets across 46 of languages & 16 NLP tasks | human annotated datasets collection                                            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/xP3)                   |
-| [firefly](https://github.com/yangjianxin1/Firefly)                             | 1649398  | CN           | MT        | COL        | 23 nlp tasks                                                             | human annotated datasets collection                                            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/firefly)                   |
-| [instruct](https://huggingface.co/datasets/swype/instruct)                     | 888969   | EN           | MT        | COL        | augmented of GPT4All, Alpaca, open-source Meta datasets                  | augmentation performed using the advanced NLP tools provided by AllenAI        | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instruct)                   |
+| [firefly](https://github.com/yangjianxin1/Firefly)                             | 1649398  | CN           | MT        | COL        | 23 nlp tasks                                                             | human annotated datasets collection                                            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/firefly)               |
+| [instruct](https://huggingface.co/datasets/swype/instruct)                     | 888969   | EN           | MT        | COL        | augmented of GPT4All, Alpaca, open-source Meta datasets                  | augmentation performed using the advanced NLP tools provided by AllenAI        | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instruct)              |
+| [Code Alpaca](https://github.com/sahil280114/codealpaca)                       | 20022    | EN           | SI        | SI         | code generation, editing, optimization                                   | text-davinci-003                                                               | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/CodeAlpaca)            |
+| TODO |
+| [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | general instruct                                                         | crowdsourcing to collect conversations between people and ChatGPT (ShareGPT)   |                                                                                                 |
+| [Galpaca](https://huggingface.co/GeorgiaTechResearchInstitute/galpaca-30b)     |          |              |           |            |                                                                          |                                                                                |                                                                                                 |
+| [Alpaca_GPT4](https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM)      |          |              |           |            |                                                                          |                                                                                |                                                                                                 |
+| [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                                                          |                                                                                |                                                                                                 |
 
 
 
@@ -196,7 +202,7 @@ More details of instruction finetuing and inference can be found [here](https://
 
 
 Note: The following figure shows the statistics of the dataset collected as of March 26, which is only displayed as a motivation of data collection. More datasets have been collected, such as financial related instruction datasets.
-![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
+![data collection statistics](./figures/piechart.png)
 The current collection of instruction-finetuning datasets consists mainly of three parts:
 - `alpaca_data_cleaned.json`: about 52K English instruction-following training samples. 
 - `CoT_data.json`: 9 CoT datasets involving about 75k samples. (published by FLAN[7])
@@ -205,19 +211,19 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 ### Ablation of CoT and Chinese Instructions
 
 
-![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-cot.png)
+![ablation-cot](./figures/ablation-cot.png)
 "w/o CoT" and "w/o CN" denote models that exclude CoT data and Chinese instructions from their instruction finetuning data, respectively.  
 
 The above table shows two examples (invoving with numerical calculations) that require a certain amount of reasoning ability to respond correctly. 
 As shown in the middle column, `Ours w/o CoT` fails to generate the correct response, which shows that once the finetuning data does not contain CoT data, the model's reasoning ability significantly decreases. This further demonstrates that CoT data is essential for LLM models. 
 
-![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-cn.png)
+![ablation-cot](./figures/ablation-cn.png)
 
 The above table shows two examples that require the ability to respond to Chinese instructions. 
 As shown in the right column, either the generated content of `Ours w/o CN` is unreasonable, or the Chinese instructions are answered in English by `Ours w/o CN`. This shows that removing Chinese data during finetuning will cause the model to be unable to handle Chinese instructions, and further demonstrates the need to collect Chinese instruction finetuning data.
 
 
-![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/ablation-both.png)
+![ablation-cot](./figures/ablation-both.png)
 
 The above table shows a relatively difficult example, which requires both a certain accumulation of knowledge of Chinese history and a logical and complete ability to state historical events. As shown in this table, `Ours w/o CN` can only generate a short and erroneous response, because due to the lack of Chinese finetuning data, the corresponding knowledge of Chinese history is naturally lacking.  Although `Ours w/o CoT` lists some relevant Chinese historical events, its logic of expression is self-contradictory, which is caused by the lack of CoT data.
 `
@@ -226,7 +232,7 @@ The above table shows a relatively difficult example, which requires both a cert
 
 ### The Effect of CoT Data
   
-![CoT-comparison](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CoT-comparison.png)
+![CoT-comparison](./figures/CoT-comparison.png)
 Samples of each odd number of rows do not apply the CoT prompt, such as "step-by-step reasoning." Both `Ours(w/CoT)` and Alpaca are based on LLaMA-7B, and the only difference between them two is that the instruction-finetuning data of `Ours(w/CoT)` has a extra CoT data than that of Alpaca. 
 
 From the above table, we find that:
@@ -238,7 +244,7 @@ From the above table, we find that:
 ### The Effect of Chinese Instruction Data
 
 _Quantitative comparison of responses to Chinese instructions._
-![CN_compare_CN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN-compareCN.png)
+![CN_compare_CN](./figures/CN-compareCN.png)
 
 Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions. 
 
@@ -250,7 +256,7 @@ From the above table, several observations can be found:
 
 
  _Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca._ 
-![CN_compare_EN](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/CN_compareEN.png)
+![CN_compare_EN](./figures/CN_compareEN.png)
 
 
 From the above table, we find that: 
