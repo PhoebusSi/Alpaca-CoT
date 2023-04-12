@@ -1,8 +1,8 @@
 ![](./figures/宣传0.png)
 # 特制自己的ChatGPT: 多接口统一的轻量级LLM-IFT平台 (**Alpaca-CoT**)
 
-您可以选择加入我们的群聊(WeChat)，和更多的同好研究者们交流。
-<img src="./figures/wechat.jpg" width = "100" height = "100" div align=right />
+您可以选择加入我们的群聊(WeChat)，和更多的同好研究者们交流。目前群聊人数过多，需要好友邀请才能入群，请扫码加我为好友，拉您入群。
+<img src="./figures/image.png" width = "100" height = "100" div align=right />
 
 ## News
 - 4.11: 添加了`多轮对话`功能，感谢[@paulcx](https://github.com/paulcx)。
