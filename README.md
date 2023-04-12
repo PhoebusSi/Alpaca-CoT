@@ -1,12 +1,12 @@
 ![Alpaca-CoT](./figures/Alpaca-CoT-2.jpg)
 # Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Language Models Interface
 
-<img src="./figures/wechat.jpg" width = "100" height = "100" div align=right />
+<img src="./figures/image.png" width = "100" height = "100" div align=right />
 
 中文README，请看[这里](./CN_README.md).
 
 
-You can also choose to join our group chat (WeChat) and communicate with more people with the same interests.
+You can also choose to join our group chat (WeChat) and communicate with more people with the same interests. At present, the number of group members is too large to join the group directly through the group QR code. You need to connect with me first to get into the group.
 
 
 
