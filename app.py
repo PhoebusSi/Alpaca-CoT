@@ -11,7 +11,6 @@ from transformers import (
     LlamaForCausalLM, LlamaTokenizer, 
     AutoModel, AutoTokenizer,
     BloomForCausalLM, BloomTokenizerFast, GenerationConfig)
-from model_chatglm import ChatGLMForConditionalGeneration, ChatGLMTokenizer
 
 tokenizer=None
 model=None
@@ -26,12 +25,16 @@ _MODEL_CLASSES = {
         
     }),
     "chatglm": ModelClass(**{
-        "tokenizer": ChatGLMTokenizer,
-        "model":  ChatGLMForConditionalGeneration,
+        "tokenizer": AutoTokenizer, #ChatGLMTokenizer,
+        "model":  AutoModel, #ChatGLMForConditionalGeneration,
     }),
     "bloom": ModelClass(**{
-        "tokenizer": AutoTokenizer,
+        "tokenizer": BloomTokenizerFast,
         "model": BloomForCausalLM,
+    }),
+    "Auto": ModelClass(**{
+        "tokenizer": AutoTokenizer,
+        "model": AutoModel,
     })
 }
 
@@ -57,6 +60,7 @@ def get_model_class(model_type,
         model_base,
         lora_model_path,
         torch_dtype=torch.float16,
+        device_map={"": device}
     )
     if not LOAD_8BIT: 
         model.half()
@@ -124,9 +128,6 @@ def clear_session():
     return '', '', None
  
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--size', default=7, type=int, help='the size of llama model')
-parser.add_argument('--data', default="", type=str, help='the data used for instructing tuning')
-parser.add_argument('--local_rank', default=-1, type=int, help='node rank for distributed training')
 parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'bloom'])
 parser.add_argument('--model_name_or_path', default="decapoda-research/llama-7b-hf", type=str)
 parser.add_argument('--lora_name_or_path', default="", type=str)
@@ -162,4 +163,4 @@ with block as demo:
     clear.click(lambda: None, None, message, queue=False)
     clear_history.click(fn=clear_session , inputs=[], outputs=[message, chatbot, state], queue=False)
  
-demo.queue(max_size=20, concurrency_count=20).launch(server_name="0.0.0.0", server_port=7890, debug=True, inbrowser=False)
+demo.queue(max_size=20, concurrency_count=20).launch(server_name="0.0.0.0", server_port=7890, debug=True, inbrowser=False, share=True)
