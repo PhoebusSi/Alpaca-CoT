@@ -269,6 +269,8 @@ def train(args):
     # 3. train
     total_batch_size = args.per_gpu_train_batch_size * args.gradient_accumulation_steps * (world_size if ddp else 1) 
     total_optim_steps = train_data.num_rows // total_batch_size
+    saving_step = int(total_optim_steps/10)
+    warmup_steps = int(total_optim_steps/10)
 
     print("***** Running training *****")
     print(f"  Num Epochs = {args.epochs}", )
@@ -276,6 +278,7 @@ def train(args):
     print(f"  Gradient Accumulation steps = {args.gradient_accumulation_steps}")
     print(f"  Total train batch size (w. parallel, distributed & accumulation) = {total_batch_size}")
     print(f"  Total optimization steps = {total_optim_steps}")
+    print(f"  Saving steps = {saving_step}")
 
     trainer = transformers.Trainer(
         model=model,
@@ -284,17 +287,17 @@ def train(args):
         args=transformers.TrainingArguments(
             per_device_train_batch_size=args.per_gpu_train_batch_size,
             gradient_accumulation_steps=args.gradient_accumulation_steps,
-            warmup_steps=100,
+            warmup_steps=warmup_steps,
             num_train_epochs=args.epochs,
             learning_rate=args.learning_rate,
             fp16=True,
             logging_steps=20,
             evaluation_strategy="steps" if args.val_set_size > 0 else "no",
             save_strategy="steps",
-            eval_steps=200 if args.val_set_size > 0 else None,
-            save_steps=200,
+            eval_steps=saving_step if args.val_set_size > 0 else None,
+            save_steps=saving_step,
             output_dir=output_dir,
-            save_total_limit=3,
+            save_total_limit=11,
             load_best_model_at_end=True if args.val_set_size > 0 else False,
             ddp_find_unused_parameters=False if ddp else None,
         ),
