@@ -16,7 +16,8 @@
 您也可以选择加入我们的群聊(WeChat)，和更多的同好研究者们交流。目前群聊人数过多，需要好友邀请才能入群，请扫码加我为好友，拉您入群。
 
 ## News
--  4.12: 现在你可以在<a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>中体验Alpaca-CoT.
+- 4.15: 已收集和统一格式化数据集 `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)`. 
+- 4.12: 现在你可以在<a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>中体验Alpaca-CoT.
 - 4.11: 添加了`多轮对话`功能，感谢[@paulcx](https://github.com/paulcx)。
 - 4.9: 已收集和统一格式化数据集 `firefly`, `instruct`, `Code Alpaca` [这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 4.7: 添加了`参数合并`、`本地使用`、`批量预测`、`web服务`功能，感谢[@weberrr](https://github.com/weberrr)。
@@ -112,13 +113,16 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 | [instruct](https://huggingface.co/datasets/swype/instruct)                     | 888969   | EN           | MT        | COL        | GPT4All，Alpaca和开源数据集的增强  | 使用AllenAI提供的nlp增强工具               | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/instruct)             |
 | [Code Alpaca](https://github.com/sahil280114/codealpaca)                       | 20022    | EN           | SI        | SI         | 代码生成，编辑，优化               | text-davinci-003                          | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/CodeAlpaca)            |
 | [Alpaca_GPT4](https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM)      | 52002    | EN/CN        | MT        | SI         | 通用指令                          | GPT-4 生成的Alpaca数据                     | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/alpacaGPT4)            |
+| [webGPT](https://huggingface.co/datasets/openai/webgpt_comparisons)            | 18994    | EN           | TS        | MIX        | 信息检索问答                      | fine-tuned GPT-3 + 人工评估                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/webGPT)                |
+| [dolly](https://github.com/databrickslabs/dolly)                               | 15015    | EN           | TS        | HG         | 封闭领域问答                      | 人工标注                                   | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/dolly)                 |
+| [baize](https://github.com/project-baize/baize-chatbot)                        | 653699   | EN           | MT        | COL        | Alpaca和多种问答任务              | 人工标注的数据集的收集                      | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/baize)                 |
+| [hh-rlhf](https://github.com/anthropics/hh-rlhf)                               | 284517   | EN           | TS        | MIX        | 对话                             | RLHF models                                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/hh-rlhf)               |
+| [OIG(part)](https://laion.ai/blog/oig-dataset/)                                | 49237    | EN           | MT        | COL        | 多种nlp任务                      | 人工标注的数据集的收集和数据增强             | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/OIG)                   |
 | 进行中 |
-| [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | 通用指令                          | 众包收集ChatGPT与人的交互 (ShareGPT)       |                                                                                           |
-| [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                  |                                           |                                                                                            |
-| [project-baize](https://github.com/project-baize/baize-chatbot)                |          |              |           |            | medical, quora and Stack Overflow                                        |                                                                                |                                                                                                 |
-| [koala](https://bair.berkeley.edu/blog/2023/04/03/koala/)                      |          |              |           |            |                                                                          |                                                                                |                                                                                                 |
-| [colossalchat](https://github.com/hpcaitech/ColossalAI)                        |          |              |           |            |                                                                          |                                                                                |                                                                                                 |
-| [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    |          |              |           |            |                                                                          |                                                                                |                                                                                                 |
+| [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | 通用指令                          | 众包收集ChatGPT与人的交互 (ShareGPT)       |                         |
+| [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                  |                                           |                          |
+| [colossalchat](https://github.com/hpcaitech/ColossalAI)                        |          |              |           |            |                                  |                                           |                          |
+| [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    |          |              |           |            |                                  |                                           |                          |
 
 该集合仍在不断更新和扩增中。可在以下链接下载和查看更多数据细节：https://github.com/PhoebusSi/alpaca-CoT/tree/main/data
 
