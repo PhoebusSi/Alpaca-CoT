@@ -160,7 +160,12 @@ def train(args):
 
     if "chatglm" in args.model_type:
         def prompt_tokenize(prompt):    
-            input_ids = tokenizer.encode(prompt)
+            input_ids = tokenizer.encode(prompt,
+                                         truncation=True, 
+                                         max_length=args.cutoff_len, 
+                                         #    padding="max_length", 
+                                         padding=False,
+                                        )
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids)
