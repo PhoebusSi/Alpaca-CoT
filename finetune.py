@@ -195,6 +195,12 @@ if VAL_SET_SIZE > 0:
 else:
     train_data = data["train"].shuffle().map(generate_and_tokenize_prompt)
     val_data = None
+    
+# from https://github.com/tloen/alpaca-lora/fintune.py    
+if not ddp and torch.cuda.device_count() > 1:
+        # keeps Trainer from trying its own DataParallelism when more than 1 gpu is available
+        model.is_parallelizable = True
+        model.model_parallel = True
 
 trainer = transformers.Trainer(
     model=model,
