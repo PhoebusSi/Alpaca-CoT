@@ -318,7 +318,7 @@ def train(args):
     if torch.__version__ >= "2" and sys.platform != "win32":
         model = torch.compile(model)
 
-    trainer.train()
+    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
 
     model.save_pretrained(output_dir)
 
@@ -345,8 +345,9 @@ if __name__ == "__main__":
     parser.add_argument('--lora_target_modules', nargs='+', 
                         help="the module to be injected, e.g. q_proj/v_proj/k_proj/o_proj for llama, query_key_value for bloom&GLM", 
                         default=["q_proj", "v_proj"])
+    parser.add_argument('--resume_from_checkpoint', nargs='?', default=None, const=True, help='resume from the specified or the latest checkpoint, e.g. `--resume_from_checkpoint [path]` or `--resume_from_checkpoint`')
 
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()
     print(args)
     
     train(args)
