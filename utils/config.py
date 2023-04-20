@@ -71,7 +71,7 @@ MODEL_LORA_TARGET_MODULES = {
 MODEL_PATHS = {
     "llama_7b": "decapoda-research/llama-7b-hf",
     "llama_13b": "decapoda-research/llama-13b-hf",
-    "chatglm_6b": "THUDM/chatglm-6b-hf",
+    "chatglm_6b": "THUDM/chatglm-6b",
     "bloom_7b": "bigscience/bloomz-7b1-mt",
 }
 
