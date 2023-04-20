@@ -15,11 +15,11 @@ def predict(args):
                 generated_text = generator(batch, max_length=args.cutoff_len, num_return_sequences=1)
                 for instruction, prompt, result in zip(origin, batch, generated_text):
                     res = result[0]['generated_text']
-                    filter_res = generate_service_output(res, prompt, args.llm, args.lora_dir)
+                    filter_res = generate_service_output(res, prompt, args.model_type, args.lora_dir)
                     instruction['generate'] = filter_res
                     str_info = json.dumps(instruction, ensure_ascii=False)
-                    # print(str_info)
                     f.write(str_info + "\n")
+                    f.flush()
     predict_and_write_to_file(input_data, args.predict_batch_size)
 
 
