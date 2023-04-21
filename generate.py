@@ -186,8 +186,8 @@ if torch.__version__ >= "2" and sys.platform != "win32":
 def evaluate(
     instruction,
     input=None,
-    temperature=0.1,
-    top_p=0.75,
+    temperature=1.0,
+    top_p=0.9,
     top_k=40,
     num_beams=4,
     max_new_tokens=512,
@@ -201,6 +201,9 @@ def evaluate(
         top_p=top_p,
         top_k=top_k,
         num_beams=num_beams,
+        do_sample=True,
+        no_repeat_ngram_size=6,
+        repetition_penalty=1.8,
         **kwargs,
     )
     with torch.no_grad():
