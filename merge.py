@@ -5,6 +5,8 @@ import os
 import platform
 from utils.tools import *
 from transformers import AutoModelForCausalLM
+import peft
+
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 parser = argparse.ArgumentParser(description='Process some llm info.')
@@ -27,9 +29,12 @@ if lora_type == 'q_v_proj':
     first_weight_old = first_weight.clone()
     lora_weight = lora_model.base_model.model.model.layers[0].self_attn.q_proj.weight
     assert torch.allclose(first_weight_old, first_weight)
-    for layer in lora_model.base_model.model.model.layers:
-        layer.self_attn.q_proj.merge_weights = True
-        layer.self_attn.v_proj.merge_weights = True
+    if peft.__version__ > '0.2.0':
+        lora_model = lora_model.merge_and_unload()
+    else:
+        for layer in lora_model.base_model.model.model.layers:
+            layer.self_attn.q_proj.merge_weights = True
+            layer.self_attn.v_proj.merge_weights = True
     lora_model.train(False)
     assert not torch.allclose(first_weight_old, first_weight)
     lora_model_sd = lora_model.state_dict()
