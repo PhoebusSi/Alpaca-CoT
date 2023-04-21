@@ -193,17 +193,17 @@ python3 merge.py --model_type llama --size 7b --lora_dir xxx --merged_dir yyy
 ```
 ### Local chatting
 ```
-python3 server.py --model_type chatglm --lora_dir xxx
+python3 server.py --model_type chatglm --size 6b --lora_dir xxx
 ```
 ### Batch predicting
 ```
-python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --result_dir yyy
+python3 predict.py --model_type chatglm --size 6b --data for_dict_data --lora_dir xxx --result_dir yyy
 ```
 
 ### Web service building
 
 ```
-python3 web.py --model_type chatglm --lora_dir xxx
+python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 ```
 
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
