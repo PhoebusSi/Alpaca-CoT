@@ -68,8 +68,8 @@ def get_model_class(model_type,
 
 def predict(
             instruction,
-            top_p=0.75,
-            temperature=0.1,
+            top_p=0.9,
+            temperature=1.0,
             history=None, 
             max_new_tokens=512,
             top_k=40,
@@ -92,6 +92,9 @@ def predict(
         top_p=top_p,
         top_k=top_k,
         num_beams=num_beams,
+        do_sample=True,
+        no_repeat_ngram_size=6,
+        repetition_penalty=1.8,
         **kwargs,
     )
     with torch.no_grad():
