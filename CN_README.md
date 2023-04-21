@@ -220,6 +220,17 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1  
 ```
+### Inference
+``` 
+python3 generate.py  --data alpaca-belle-cot --model_type llama
+
+python3 generate.py  --data alpaca-belle-cot --model_type chatglm
+
+python3 generate.py  --data alpaca-belle-cot --model_type bloom
+
+```
+
+注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 
 ### 参数合并
@@ -241,7 +252,6 @@ python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --re
 python3 web.py --model_type chatglm --lora_dir xxx
 ```
 
-注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 ## 5. Quantitative Analysis
 注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。
