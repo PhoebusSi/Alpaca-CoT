@@ -9,7 +9,7 @@ sentencepiece
 git+https://github.com/huggingface/transformers.git
 accelerate
 bitsandbytes
-git+https://github.com/huggingface/peft.git
+peft=2.0.0
 gradio
 appdirs
 
