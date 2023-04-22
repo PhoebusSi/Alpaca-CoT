@@ -205,7 +205,7 @@ python3 generate.py  --data alpaca-belle-cot --model_type bloom
 
 ```
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
-### generation parameter settings
+### Generation parameter settings
 ```
 top_p=0.9, #Moderately increase the probability threshold of nucleus sampling to increase the quantity of candidate tokens and increase generation diversity.
 temperature=1.0, #The previous low temperature parameter could lead to a severe polarization in the probability distribution of generated words, which degenerates the generation strategy into greedy decoding.
