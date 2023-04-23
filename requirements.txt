@@ -6,7 +6,8 @@ torch>=1.13
 datasets
 loralib
 sentencepiece
-git+https://github.com/huggingface/transformers.git
+# git+https://github.com/huggingface/transformers.git
+transformers==4.28.1
 accelerate
 bitsandbytes
 peft=2.0.0

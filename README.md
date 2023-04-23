@@ -17,6 +17,9 @@ You are in a warm welcome to provide us with any non-collected instruction-tunin
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests. At present, the number of group members is too large to join the group directly through the group QR code. You need to connect with me first to get into the group.
 
 ## News
+-  ⚠ If you have any problems about model loading, try `pythom -m pip install transformers==4.28.1` or `pythom -m pip install git+https://github.com/huggingface/transformers.git` first. 
+-  ⚠ If you have any problems about model saving, try `pythom -m pip install peft=2.0.0` or `pythom -m pip install git+https://github.com/huggingface/peft.git` first.
+
 -  4.21: Datasets `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG` are collected and formatted. 
 -  4.15: Datasets `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)` are collected and formatted. 
 -  4.12: Now you can try Alpaca-CoT on <a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>.
