@@ -209,6 +209,17 @@ python3 generate.py  --data alpaca-belle-cot --model_type bloom
 ```
 More details of instruction finetuing and inference can be found [here](https://github.com/tloen/alpaca-lora) where we modified from. Note that the folders `saved-xxx7b` are the save path for LoRA weights, and LLaMA weights are automatically downloaded from Hugging Face.
 
+
+### Inference Hyper-parameter Settings
+```
+top_p=0.9, #Moderately increase the probability threshold of nucleus sampling to increase the quantity of candidate tokens and increase generation diversity.
+temperature=1.0, #The previous low temperature parameter could lead to a severe polarization in the probability distribution of generated words, which degenerates the generation strategy into greedy decoding.
+do_sample=True, #do_sample parameter is set to False by default. After setting to True, the generation methods turn into beam-search multinomial sampling decoding strategy.
+no_repeat_ngram_size=6, #Configure the probability of the next repeating n-gram to 0, to ensure that there are no n-grams appearing twice. This setting is an empirical preliminary exploration.
+repetition_penalty=1.8, #For words that have appeared before, in the subsequent prediction process, we reduce the probability of their reoccurrence by introducing the repetition_penalty parameter. This setting is an empirical preliminary exploration.
+```
+
+
 ### Parameter merging
 ```
 python3 merge.py --model_type llama --size 7b --lora_dir xxx --merged_dir yyy
