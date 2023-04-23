@@ -227,18 +227,26 @@ python3 generate.py  --data alpaca-belle-cot --model_type llama
 python3 generate.py  --data alpaca-belle-cot --model_type chatglm
 
 python3 generate.py  --data alpaca-belle-cot --model_type bloom
-
 ```
 
 注意，`saved-xxx7b` 文件夹是保存LoRA weights的路径，而LLaMA的weights则会在脚本执行期间自动从Hugging Face上下载。
 
 ### 生成相关超参设置
 ```
-top_p=0.9, #适度调大核采样的概率阈值，扩大候选子集，增加生成多样性。
-temperature=1.0, #之前的温度参数过低会导致生成词的概率分布极化严重，导致生成策略退化成greedy decoding。
-do_sample=True, #do_sample参数默认关闭，不开启时生成仍保持beam-search解码策略，开启后为beam-search multinomial sampling解码策略。
-no_repeat_ngram_size=6, #通过配置下一个词重复出现n-gram的概率为0，来保证没有n-gram出现两次，设置过小会抑制合理的重复，影响生成的流畅性，过大会失去作用。
-repetition_penalty=1.8, #对于之前出现过的词语，在后续预测的过程中，通过引入惩罚因子repetition_penalty降低其出现的概率。
+top_p=0.9, 
+        #适度调大核采样的概率阈值，扩大候选子集，增加生成多样性。
+        
+temperature=1.0, 
+        #之前的温度参数过低会导致生成词的概率分布极化严重，导致生成策略退化成greedy decoding。
+        
+do_sample=True, 
+        #do_sample参数默认关闭，不开启时生成仍保持beam-search解码策略，开启后为beam-search multinomial sampling解码策略。
+        
+no_repeat_ngram_size=6, 
+        #通过配置下一个词重复出现n-gram的概率为0，来保证没有n-gram出现两次，设置过小会抑制合理的重复，影响生成的流畅性，过大会失去作用。
+        
+repetition_penalty=1.8, 
+        #对于之前出现过的词语，在后续预测的过程中，通过引入惩罚因子repetition_penalty降低其出现的概率。
 ```
 
 ### 参数合并
