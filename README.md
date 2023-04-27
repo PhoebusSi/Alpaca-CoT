@@ -318,18 +318,12 @@ From the above table, we find that:
 
 
 
-## Future Work
-- Exploration of few-shot ability.
-- Ablation study of various sizes of models.
-- Evaluate on instruction-following evaluation suite.
-- Collect more instruction finetuning datasets.
-
   
 ## Citation
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
 ```
 @misc{alpaca-cot,
-  author = {Qingyi Si, Rui Liu, Zheng Lin },
+  author = {Qingyi Si, Tong Wang, Rui Liu, Zheng Lin },
   school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
   title = {Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface},
   year = {2023},
@@ -338,27 +332,5 @@ Please cite the repo if you use the data collection, code, and experimental find
   howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
 }
 ```
-For data, please cite the original Stanford Alpaca, BELLE and FLAN papers as well.
-
-For models, please cite the original LLaMA, Stanford Alpaca, Self-Instruct and LoRA papers as well.
-
-
-## References
-[1]: [LLaMA: Open and Efficient Foundation Language Models](https://arxiv.org/abs/2302.13971v1)
-
-[2]: [Stanford Alpaca: An Instruction-following LLaMA model](https://github.com/tatsu-lab/stanford_alpaca)
-
-[3]: [Self-Instruct: Aligning Language Model with Self Generated Instructions](https://arxiv.org/abs/2212.10560)
-
-[4]: [LoRA: Low-Rank Adaptation of Large Language Models](https://arxiv.org/pdf/2106.09685.pdf)
-
-[5]: [ChatGLM: An Open Bilingual Dialogue Language Model](https://github.com/THUDM/ChatGLM-6B)
-
-[6]: [BLOOM: A 176B-Parameter Open-Access Multilingual Language Model](https://arxiv.org/abs/2211.05100)
-
-[7]: [FLAN: Scaling Instruction-Finetuned Language Models](https://arxiv.org/abs/2210.11416)
-
-[8]: [BELLE: Bloom-Enhanced Large Language model Engine](https://github.com/LianjiaTech/BELLE)
-
-[9]: [GPT4All: Training an Assistant-style Chatbot with Large Scale Data Distillation from GPT-3.5-Turbo](https://github.com/nomic-ai/gpt4all)
+For data and models, please cite the original data, parameter-efficient methods and LLMs source as well.
 
