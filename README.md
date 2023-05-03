@@ -9,7 +9,7 @@
 [![colab](https://img.shields.io/badge/Google-Colab-blue?logo=Google%20Colab)](https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing)
 
 
-This is the repository for the `Alpaca-CoT` project, which aims to build an instruction finetuning (IFT) platform with extensive instruction collection (especially the CoT datasets) and a unified interface for various large language models.  We are constantly expanding our [instruction-tuning data collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/), and integrating more LLMs. In addition, we also conduct an in-depth empirical study. 
+This is the repository for the `Alpaca-CoT` project, which aims to build an instruction finetuning (IFT) platform with extensive instruction collection (especially the CoT datasets) and a unified interface for various large language models.  We are constantly expanding our [instruction-tuning data collection](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/), and integrating more LLMs. In addition, we also conduct an in-depth empirical study.
 
 You are in a warm welcome to provide us with any non-collected instruction-tuning datasets (or their sources). We will uniformly format them, train Alpaca model (and other LLMs in the early future) with these datasets, open source the [model checkpoints](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main), and conduct extensive empirical studies. We hope that our project can make a modest contribution to the open-source process of large language models, and reduce its threshold for NLP researchers to get started.
 
@@ -17,11 +17,11 @@ You are in a warm welcome to provide us with any non-collected instruction-tunin
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests. At present, the number of group members is too large to join the group directly through the group QR code. You need to connect with me first to get into the group.
 
 ## News
--  ⚠ If you have any problems about model loading, try `pythom -m pip install transformers==4.28.1` or `pythom -m pip install git+https://github.com/huggingface/transformers.git` first. 
--  ⚠ If you have any problems about model saving, try `pythom -m pip install peft=2.0.0` or `pythom -m pip install git+https://github.com/huggingface/peft.git` first.
+-  ⚠ If you have any problems about model loading, try `python -m pip install transformers==4.28.1` or `python -m pip install git+https://github.com/huggingface/transformers.git` first.
+-  ⚠ If you have any problems about model saving, try `python -m pip install peft=2.0.0` or `python -m pip install git+https://github.com/huggingface/peft.git` first.
 
--  4.21: Datasets `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG` are collected and formatted. 
--  4.15: Datasets `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)` are collected and formatted. 
+-  4.21: Datasets `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG` are collected and formatted.
+-  4.15: Datasets `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)` are collected and formatted.
 -  4.12: Now you can try Alpaca-CoT on <a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>.
 -  4.11: Added function `multi-turn conversation` by [@paulcx](https://github.com/paulcx).
 -  4.9: Datasets `firefly`, `instruct`, `Code Alpaca` are collected and formatted, which can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
@@ -29,7 +29,7 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 -  4.4: Datasets `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` and `natural-instructions` are collected and formatted.
 -  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 -  4.1: Checkpoints of `Bloom7b fine-tuned` from instinwild-CN(47k) + belle(1.5M) can be found [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
--  4.1: `instinwild` (collected from Twitter, where users tend to share their interesting prompts of mostly generation, open QA, and mind-storm types) has been formatted and collected. 
+-  4.1: `instinwild` (collected from Twitter, where users tend to share their interesting prompts of mostly generation, open QA, and mind-storm types) has been formatted and collected.
 
 
 ## Overview
@@ -37,7 +37,7 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 [LLaMA](https://arxiv.org/abs/2302.13971v1) [1] is a great work that demonstrates the amazing zero-shot and few-shot ability. It significantly reduces the cost of training, finetuning, and using competitive large language models, i.e., LLaMA-13B outperforms GPT-3(175B) and LLaMA-65B is competitive to PaLM-540M. Recently, to boost the instruction-following ability of LLaMA, [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca) [2] finetuned LLaMA-7B on 52K instruction-following data generated by the [Self-Instruct](https://arxiv.org/abs/2212.10560) [3] techniques. However, at present, the LLM research community still faces three challenges: 1. Even LLaMA-7b still has high requirements for computing resources; 2. There are few open source datasets for instruction finetuning; and 3. There is a lack of empirical study on the impact of various types of instruction on model abilities, such as the ability to respond to Chinese instruction and the CoT reasoning.
 
 To this end, we propose this project, which leverages various improvements that were subsequently proposed, with the following advantages:
-- 1. This repo contains code, modified from [here](https://github.com/tloen/alpaca-lora), which can **_finetune LLaMA cheaply and efficiently_** (without performance degradation compared to Stanford Alpaca) by using [low-rank adaptation (LoRA)](https://arxiv.org/pdf/2106.09685.pdf) [4], [PEFT](https://github.com/huggingface/peft) and [bitsandbytes](https://github.com/TimDettmers/bitsandbytes). The `7b`, `13b` and `30b` versions of LLaMA models can be easily trained on a single 80G A100. 
+- 1. This repo contains code, modified from [here](https://github.com/tloen/alpaca-lora), which can **_finetune LLaMA cheaply and efficiently_** (without performance degradation compared to Stanford Alpaca) by using [low-rank adaptation (LoRA)](https://arxiv.org/pdf/2106.09685.pdf) [4], [PEFT](https://github.com/huggingface/peft) and [bitsandbytes](https://github.com/TimDettmers/bitsandbytes). The `7b`, `13b` and `30b` versions of LLaMA models can be easily trained on a single 80G A100.
 - 2. The models published in this repo significantly **_improve the CoT (reasoning) capability_**.
 - 3. The models published in this repo significantly **_improve the ability to follow Chinese instructions_**.
 - 4. This repo contains **_a [collection of instruction-finetuning datasets](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT) that are continuously collected_**, which so far includes English, Chinese and CoT instructions. In addition, a collection of checkpoints trained with various instruction datasets is also provided.
@@ -47,7 +47,7 @@ To this end, we propose this project, which leverages various improvements that 
 
 **To the best of our knowledge, this work is the first to study _CoT reasoning_ based on LLaMA and Alpaca.** Therefore, we abbreviate our work to `Alpaca-CoT`.
 
-## Data Collection 
+## Data Collection
 
 The relative size of collected datasets can be shown by this graph:
 
@@ -101,7 +101,7 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 | [FLAN-Muffin](https://huggingface.co/datasets/Muennighoff/flan)                | 1764800  | EN           | MT        | COL        | 60 nlp tasks                                                                                                      | human annotated datasets collection                                            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FLAN-Muffin)           |
 | [COIG](https://huggingface.co/datasets/BAAI/COIG)                              | 298428   | CN           | MT        | COL        | collect fron Exam, Translated, Human Value Alignment Instructions and Counterfactural Correction Multi-round Chat | using automatic tool and manual verification                                   | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/COIG)                   |
 | [GPT4Tools](https://github.com/StevenGrove/GPT4Tools)                          | 71446    | EN           | MT        | SI         | a collection of tool-related instructions                                                                    | gpt-3.5-turbo | [download](https://github.com/StevenGrove/GPT4Tools#dataset)
-| TODO |    
+| TODO |
 | [ShareChat](https://huggingface.co/datasets/RyokoAI/ShareGPT52K)               |          | EN           | MT        | MIX        | general instruct                                                                                                  | crowdsourcing to collect conversations between people and ChatGPT (ShareGPT)   |                                                                                                 |
 | [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                                                                                                   |                                                                                |                                                                                                 |
 | [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    |          |              |           |            |                                                                                                                   |                                                                                |                                                                                                 |
@@ -112,9 +112,9 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 
 
 ### Download
-You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder. 
+You can download all the formatted data [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main). Then you should put them in the [data](https://github.com/PhoebusSi/alpaca-CoT/tree/main/data) folder.
 
-You can download all checkpoints trained on various types of instruction data from [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main). Then, after setting `LoRA_WEIGHTS` (in `generate.py`) to the local path, you can directly execute the model inference. 
+You can download all checkpoints trained on various types of instruction data from [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main). Then, after setting `LoRA_WEIGHTS` (in `generate.py`) to the local path, you can directly execute the model inference.
 
 
 ### Data Fomatting
@@ -139,16 +139,15 @@ Note that, make sure python>=3.9 when finetuning ChatGLM.
 ### Instruction Finetuning
 In order for researchers to conduct systematic IFT research on LLMs, we have collected different types of instruction data, integrated multiple LLMs, and unified interfaces, making it easy to customize the desired collocation:
 - `--model_type` : Set the LLM you want to use. Currently, [llama, chatglm, bloom] are supported. The latter two have strong Chinese capabilities, and more LLMs will be integrated in the future.
-- `-- data`: Set the data type used for IFT to flexibly tailor the desired command compliance ability. For example, for strong reasoning ability, set "alpaca-cot", for strong Chinese ability, set "belle1.5m", for coding and story generation ability, set "gpt4all", and for financial related response ability, set "finance".
-- `--model_name_or_path ': This is set to load different versions of the model weights for the target LLM  `--model_type`. For example, to load the llama's 13b version of weights, you can set decapoda-research/llama-13b-hf.
+- `--data`: Set the data type used for IFT to flexibly tailor the desired command compliance ability. For example, for strong reasoning ability, set "alpaca-cot", for strong Chinese ability, set "belle1.5m", for coding and story generation ability, set "gpt4all", and for financial related response ability, set "finance".
+- `--model_name_or_path`: This is set to load different versions of the model weights for the target LLM  `--model_type`. For example, to load the llama's 13b version of weights, you can set decapoda-research/llama-13b-hf.
 
 **Single GPU**
 - for LLaMA
 ```
 python3 uniform_finetune.py --model_type llama --model_name_or_path decapoda-research/llama-7b-hf \
     --data alpaca-belle-cot --lora_target_modules q_proj v_proj \
-    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
-    
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1
 ```
 - for ChatGLM
 ```
@@ -157,13 +156,13 @@ python3 uniform_finetune.py   --model_type chatglm --model_name_or_path THUDM/ch
     --lora_r 32 --lora_alpha 32 --lora_dropout 0.1 --per_gpu_train_batch_size 2 \
     --learning_rate 2e-5 --epochs 1
 ```
-Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be smaller than others. 
+Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be smaller than others.
 
 - for BLOOM
 ```
 python3 uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
-    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1
 ```
 
 Note that you can also pass the local path (where LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.
@@ -175,7 +174,7 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy uniform_finetune.py \
     --model_type llama --model_name_or_path decapoda-research/llama-7b-hf \
     --data alpaca-belle-cot --lora_target_modules q_proj v_proj \
-    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1
 ```
 - for ChatGLM
 ```
@@ -186,7 +185,7 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --lora_r 32 --lora_alpha 32 --lora_dropout 0.1 --per_gpu_train_batch_size 2 \
     --learning_rate 2e-5 --epochs 1
 ```
-Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be smaller than others. 
+Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be smaller than others.
 
 - for BLOOM
 ```
@@ -194,13 +193,13 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy \
     uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
-    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1  
+    --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1
 ```
 
 
 
 ### Inference
-``` 
+```
 python3 generate.py  --data alpaca-belle-cot --model_type llama
 
 python3 generate.py  --data alpaca-belle-cot --model_type chatglm
@@ -213,19 +212,19 @@ More details of instruction finetuing and inference can be found [here](https://
 
 ### Inference Hyper-parameter Explanation
 ```
-top_p=0.9, 
+top_p=0.9,
         #Moderately increase the probability threshold of nucleus sampling to increase the quantity of candidate tokens and increase generation diversity.
-        
-temperature=1.0, 
+
+temperature=1.0,
         #The previous low temperature parameter could lead to a severe polarization in the probability distribution of generated words, which degenerates the generation strategy into greedy decoding.
-        
-do_sample=True, 
+
+do_sample=True,
         #do_sample parameter is set to False by default. After setting to True, the generation methods turn into beam-search multinomial sampling decoding strategy.
-    
-no_repeat_ngram_size=6, 
+
+no_repeat_ngram_size=6,
         #Configure the probability of the next repeating n-gram to 0, to ensure that there are no n-grams appearing twice. This setting is an empirical preliminary exploration.
-    
-repetition_penalty=1.8, 
+
+repetition_penalty=1.8,
         #For words that have appeared before, in the subsequent prediction process, we reduce the probability of their reoccurrence by introducing the repetition_penalty parameter. This setting is an empirical preliminary exploration.
 ```
 
@@ -256,7 +255,7 @@ python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 Note: The following figure shows the statistics of the dataset collected as of March 26, which is only displayed as a motivation of data collection. More datasets have been collected, such as financial related instruction datasets.
 ![data collection statistics](./figures/piechart.png)
 The current collection of instruction-finetuning datasets consists mainly of three parts:
-- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples. 
+- `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
 - `CoT_data.json`: 9 CoT datasets involving about 75k samples. (published by FLAN[7])
 - `belle_data_cn.json`:  about 0.5M Chinese |instruction-following training samples. (published by BELLE [8])
 
@@ -264,14 +263,14 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 
 
 ![ablation-cot](./figures/ablation-cot.png)
-"w/o CoT" and "w/o CN" denote models that exclude CoT data and Chinese instructions from their instruction finetuning data, respectively.  
+"w/o CoT" and "w/o CN" denote models that exclude CoT data and Chinese instructions from their instruction finetuning data, respectively.
 
-The above table shows two examples (invoving with numerical calculations) that require a certain amount of reasoning ability to respond correctly. 
-As shown in the middle column, `Ours w/o CoT` fails to generate the correct response, which shows that once the finetuning data does not contain CoT data, the model's reasoning ability significantly decreases. This further demonstrates that CoT data is essential for LLM models. 
+The above table shows two examples (invoving with numerical calculations) that require a certain amount of reasoning ability to respond correctly.
+As shown in the middle column, `Ours w/o CoT` fails to generate the correct response, which shows that once the finetuning data does not contain CoT data, the model's reasoning ability significantly decreases. This further demonstrates that CoT data is essential for LLM models.
 
 ![ablation-cot](./figures/ablation-cn.png)
 
-The above table shows two examples that require the ability to respond to Chinese instructions. 
+The above table shows two examples that require the ability to respond to Chinese instructions.
 As shown in the right column, either the generated content of `Ours w/o CN` is unreasonable, or the Chinese instructions are answered in English by `Ours w/o CN`. This shows that removing Chinese data during finetuning will cause the model to be unable to handle Chinese instructions, and further demonstrates the need to collect Chinese instruction finetuning data.
 
 
@@ -283,14 +282,14 @@ The above table shows a relatively difficult example, which requires both a cert
 **In summary, the models finetuned from our complete dataset (English, Chinese, and CoT instruction data) can significantly improve model reasoning and Chinese instruction following abilities.**
 
 ### The Effect of CoT Data
-  
+
 ![CoT-comparison](./figures/CoT-comparison.png)
-Samples of each odd number of rows do not apply the CoT prompt, such as "step-by-step reasoning." Both `Ours(w/CoT)` and Alpaca are based on LLaMA-7B, and the only difference between them two is that the instruction-finetuning data of `Ours(w/CoT)` has a extra CoT data than that of Alpaca. 
+Samples of each odd number of rows do not apply the CoT prompt, such as "step-by-step reasoning." Both `Ours(w/CoT)` and Alpaca are based on LLaMA-7B, and the only difference between them two is that the instruction-finetuning data of `Ours(w/CoT)` has a extra CoT data than that of Alpaca.
 
 From the above table, we find that:
-- `Ours(w/CoT)` always generates the correct rationale before the answer, while Alpaca fails to generate any reasonable rationale, as shown in the first 4 examples (commonsense questions). This shows that using CoT data for finetuning can significantly improve reasoning ability. 
-- For `Ours(w/CoT)`, the CoT prompt (e.g., concatenate 'step-by-step' with the input question) has little effect on easy examples (e.g., commonsense questions) and has an important effect on challenging questions (e.g., questions requiring reasoning, like the last four examples). 
-- For Alpaca, CoT prompt always has little effect or even negative impact. For the last two examples, after adding CoT prompt, Aplpaca changes the correct generated answer to the wrong one. This may be due to the inconsistency between the input forms of finetuning and inference. 
+- `Ours(w/CoT)` always generates the correct rationale before the answer, while Alpaca fails to generate any reasonable rationale, as shown in the first 4 examples (commonsense questions). This shows that using CoT data for finetuning can significantly improve reasoning ability.
+- For `Ours(w/CoT)`, the CoT prompt (e.g., concatenate 'step-by-step' with the input question) has little effect on easy examples (e.g., commonsense questions) and has an important effect on challenging questions (e.g., questions requiring reasoning, like the last four examples).
+- For Alpaca, CoT prompt always has little effect or even negative impact. For the last two examples, after adding CoT prompt, Aplpaca changes the correct generated answer to the wrong one. This may be due to the inconsistency between the input forms of finetuning and inference.
 
 
 ### The Effect of Chinese Instruction Data
@@ -298,29 +297,29 @@ From the above table, we find that:
 _Quantitative comparison of responses to Chinese instructions._
 ![CN_compare_CN](./figures/CN-compareCN.png)
 
-Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions. 
+Our model is finetuned from a 7B LLaMA on 52K English instructions and 0.5M Chinese instructions. Stanford Alpaca (our reimplementation) is finetuned from a 7B LLaMA on 52K English instructions. BELLE is finetuned from a 7B BLOOM on 2B Chinese instructions.
 
 From the above table, several observations can be found:
 - Compared to Alpaca, `ours (w/ CN)` has a stronger ability to understand Chinese instructions. For the first example, Alpaca fails to distinguish between the `instruction` part and `input` part, while we do.
-- Chinese instruction finetuning data can significant enhance the ability to interact in Chinese. For the second example, `ours (w/ CN)` not only provides the correct code, but also provides the corresponding Chinese annotation, while Alpaca does not. In addition, as shown in the 3-5 examples, Alpaca can only respond to Chinese instruction with an English response. 
+- Chinese instruction finetuning data can significant enhance the ability to interact in Chinese. For the second example, `ours (w/ CN)` not only provides the correct code, but also provides the corresponding Chinese annotation, while Alpaca does not. In addition, as shown in the 3-5 examples, Alpaca can only respond to Chinese instruction with an English response.
 - Compared to BELLE, `ours (w/ CN)`'s performance on instructions requiring an open response (as shown in last two examples) still needs to be improved. BELLE's outstanding performance against such instructions is due to: 1. Its BLOOM backbone model encounters much more multilingual data during pre-training; 2. Its Chinese instruction finetuning data is more than ours, that is, 2M vs 0.5M.
 
 
 
- _Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca._ 
+ _Quantitative comparison of responses to English instructions. The purpose of this subsection is to explore whether finetuning on Chinese instructions has a negative impact on Alpaca._
 ![CN_compare_EN](./figures/CN_compareEN.png)
 
 
-From the above table, we find that: 
-- Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English intructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.  
+From the above table, we find that:
+- Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English intructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.
 
 
 
 
 
-  
+
 ## Citation
-Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
+Please cite the repo if you use the data collection, code, and experimental findings in this repo.
 ```
 @misc{alpaca-cot,
   author = {Qingyi Si, Tong Wang, Rui Liu, Zheng Lin },
