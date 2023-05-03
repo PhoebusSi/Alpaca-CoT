@@ -10,11 +10,8 @@ from datasets import load_dataset
 import transformers
 from collections import namedtuple
 
-assert (
-    "LlamaTokenizer" in transformers._import_structure["models.llama"]
-), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
 from transformers import (
-    LlamaForCausalLM, LlamaTokenizer, 
+    LlamaForCausalLM, LlamaTokenizer,
     AutoModel, AutoTokenizer,
     BloomForCausalLM, BloomTokenizerFast)
 
@@ -32,7 +29,7 @@ device_map = "auto"
 world_size = int(os.environ.get("WORLD_SIZE", 1))
 ddp = world_size != 1
 if ddp:
-    device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)} 
+    device_map = {"": int(os.environ.get("LOCAL_RANK") or 0)}
 
 ModelClass = namedtuple("ModelClass", ('tokenizer', 'model'))
 
@@ -40,7 +37,7 @@ _MODEL_CLASSES = {
     "llama": ModelClass(**{
         "tokenizer": LlamaTokenizer,
         "model": LlamaForCausalLM,
-        
+
     }),
     "chatglm": ModelClass(**{
         "tokenizer": AutoTokenizer, #ChatGLMTokenizer,
@@ -120,15 +117,15 @@ def get_data_model(args):
 
     if args.model_type == "chatglm":
         # chatglm can not set load_in_8bit=True: ChatGLMForConditionalGeneration does not support gradient checkpointing.
-        model = model_class.model.from_pretrained(args.model_name_or_path, 
+        model = model_class.model.from_pretrained(args.model_name_or_path,
                                                 trust_remote_code=True,
                                                 device_map=device_map)
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path,trust_remote_code=True) # default add_eos_token=False
     else:
-        model = model_class.model.from_pretrained(args.model_name_or_path, 
+        model = model_class.model.from_pretrained(args.model_name_or_path,
                                                 load_in_8bit=True,
                                                 device_map=device_map)
-    
+
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path) # default add_eos_token=False
 
     # llama has no pad_id, maybe copy the stanford_alpaca's handling ?
@@ -148,7 +145,7 @@ def get_data_model(args):
     model = get_peft_model(model, config)
 
     # the size of trainable parameters for lora modules
-    model.print_trainable_parameters() 
+    model.print_trainable_parameters()
 
     return data, model, tokenizer
 
@@ -159,18 +156,18 @@ def train(args):
     data, model, tokenizer = get_data_model(args)
 
     if "chatglm" in args.model_type:
-        def prompt_tokenize(prompt):    
+        def prompt_tokenize(prompt):
             input_ids = tokenizer.encode(prompt,
-                                         truncation=True, 
-                                         max_length=args.cutoff_len, 
-                                         #    padding="max_length", 
+                                         truncation=True,
+                                         max_length=args.cutoff_len,
+                                         #    padding="max_length",
                                          padding=False,
                                         )
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids)
             }
-        def completion_tokenize(completion):         
+        def completion_tokenize(completion):
             if completion[-4:] == '</s>':
                 input_ids = tokenizer.encode(completion[:-4]) #, add_special_tokens=False)
             else:
@@ -181,19 +178,19 @@ def train(args):
             }
     else:
         def tokenize(prompt):
-            result = tokenizer(prompt, 
-                               truncation=True, 
-                               max_length=args.cutoff_len, 
-                            #    padding="max_length", 
+            result = tokenizer(prompt,
+                               truncation=True,
+                               max_length=args.cutoff_len,
+                            #    padding="max_length",
                                padding=False,
-                            )   
-        
+                            )
+
             return {
                 "input_ids": result["input_ids"],
                 "attention_mask": result["attention_mask"],
                 "labels": copy.deepcopy(result["input_ids"])
             }
-    
+
 
     def generate_and_tokenize_prompt(data_point):
         prompt_no_resp = generate_prompt(data_point)
@@ -252,7 +249,7 @@ def train(args):
                 tokenized_with_response = completion_tokenize(prompt_with_response)
             else:
                 tokenized_with_response = tokenize(prompt_with_response)
-            tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][source_len:] 
+            tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][source_len:]
 
             return tokenized_with_response
 
@@ -272,7 +269,7 @@ def train(args):
         val_data = None
 
     # 3. train
-    total_batch_size = args.per_gpu_train_batch_size * args.gradient_accumulation_steps * (world_size if ddp else 1) 
+    total_batch_size = args.per_gpu_train_batch_size * args.gradient_accumulation_steps * (world_size if ddp else 1)
     total_optim_steps = train_data.num_rows // total_batch_size
     saving_step = int(total_optim_steps/10)
     warmup_steps = int(total_optim_steps/10)
@@ -314,7 +311,7 @@ def train(args):
     model.state_dict = (
         lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())
     ).__get__(model, type(model))
-    
+
     if torch.__version__ >= "2" and sys.platform != "win32":
         model = torch.compile(model)
 
@@ -326,7 +323,7 @@ def train(args):
 
 
 if __name__ == "__main__":
-    
+
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--size', type=str, help='the size of llama model')
     parser.add_argument('--data', type=str, help='the data used for instructing tuning')
@@ -342,12 +339,12 @@ if __name__ == "__main__":
     parser.add_argument('--lora_alpha', default=16, type=int)
     parser.add_argument('--lora_dropout', default=0.05, type=float)
     parser.add_argument('--val_set_size', default=2000, type=int)
-    parser.add_argument('--lora_target_modules', nargs='+', 
-                        help="the module to be injected, e.g. q_proj/v_proj/k_proj/o_proj for llama, query_key_value for bloom&GLM", 
+    parser.add_argument('--lora_target_modules', nargs='+',
+                        help="the module to be injected, e.g. q_proj/v_proj/k_proj/o_proj for llama, query_key_value for bloom&GLM",
                         default=["q_proj", "v_proj"])
     parser.add_argument('--resume_from_checkpoint', nargs='?', default=None, const=True, help='resume from the specified or the latest checkpoint, e.g. `--resume_from_checkpoint [path]` or `--resume_from_checkpoint`')
 
     args, _ = parser.parse_known_args()
     print(args)
-    
+
     train(args)
