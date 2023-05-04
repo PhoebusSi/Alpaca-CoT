@@ -20,6 +20,8 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 -  ⚠ If you have any problems about model loading, try `python -m pip install transformers==4.28.1` or `python -m pip install git+https://github.com/huggingface/transformers.git` first.
 -  ⚠ If you have any problems about model saving, try `python -m pip install peft=2.0.0` or `python -m pip install git+https://github.com/huggingface/peft.git` first.
 
+-  5.4: All parameter-efficient methods in PEFT (e.g., p-tuning) were merged, which can be set by hyper-parameter directly.
+-  5.4: LLM `Moss` was merged.
 -  4.21: Datasets `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG` are collected and formatted.
 -  4.15: Datasets `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)` are collected and formatted.
 -  4.12: Now you can try Alpaca-CoT on <a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>.
@@ -28,8 +30,6 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 -  4.7: Added functions `Parameter merging`, `Local chatting`, `Batch predicting` and `Web service building` by [@weberr](https://github.com/weberrr).
 -  4.4: Datasets `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` and `natural-instructions` are collected and formatted.
 -  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
--  4.1: Checkpoints of `Bloom7b fine-tuned` from instinwild-CN(47k) + belle(1.5M) can be found [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
--  4.1: `instinwild` (collected from Twitter, where users tend to share their interesting prompts of mostly generation, open QA, and mind-storm types) has been formatted and collected.
 
 
 ## Overview
