@@ -101,7 +101,6 @@ Referring to [this](https://github.com/yaodongC/awesome-instruction-dataset) ([@
 | [FLAN-Muffin](https://huggingface.co/datasets/Muennighoff/flan)                | 1764800  | EN           | MT        | COL        | 60 nlp tasks                                                                                                      | human annotated datasets collection                                            | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FLAN-Muffin)           |
 | [COIG](https://huggingface.co/datasets/BAAI/COIG)                              | 298428   | CN           | MT        | COL        | collect fron Exam, Translated, Human Value Alignment Instructions and Counterfactural Correction Multi-round Chat | using automatic tool and manual verification                                   | [download](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/COIG)                   |
 | [GPT4Tools](https://github.com/StevenGrove/GPT4Tools)                          | 71446    | EN           | MT        | SI         | a collection of tool-related instructions                                                                    | gpt-3.5-turbo | [download](https://github.com/StevenGrove/GPT4Tools#dataset)
-| TODO |
 | [ShareChat](https://huggingface.co/datasets/RyokoAI/ShareGPT52K)               |          | EN           | MT        | MIX        | general instruct                                                                                                  | crowdsourcing to collect conversations between people and ChatGPT (ShareGPT)   |                                                                                                 |
 | [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                                                                                                   |                                                                                |                                                                                                 |
 | [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    |          |              |           |            |                                                                                                                   |                                                                                |                                                                                                 |
@@ -163,6 +162,13 @@ Note that `load_in_8bit` is not yet suitable for ChatGLM, so batch_size must be 
 python3 uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1
+```
+
+- for MOSS
+```
+python3 uniform_finetune.py   ---model_type moss --model_name_or_path fnlp/moss-moon-003-sft  \
+    --data alpaca --lora_target_modules q_proj v_proj --per_gpu_train_batch_size 1 \
+    --learning_rate 3e-4 --epochs 3
 ```
 
 Note that you can also pass the local path (where LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.

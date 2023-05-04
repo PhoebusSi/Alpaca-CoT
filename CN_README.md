@@ -123,8 +123,6 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 | [camel](https://github.com/lightaime/camel)                                    | 760620   | EN           | MT        | SI         | 物理生物化学编程，数学，社会等领域的角色扮演对话人工标注的数据集的收集         | gpt-3.5-turbo 生成                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/camel)                 |
 | [FLAN-Muffin](https://huggingface.co/datasets/Muennighoff/flan)                | 1764800  | EN           | MT        | COL        | 60种nlp任务                                                              | 人工标注的数据集的收集                      | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FLAN-Muffin)           |
 | [COIG](https://huggingface.co/datasets/BAAI/COIG)                              | 298428   | CN           | MT        | COL        | 考试，翻译，价值观指令数据集搜集，基于知识图谱的反事实对话                    | 自动化工具+人工验证                         | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/COIG)                 |
-
-| 进行中 |
 | [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | 通用指令                          | 众包收集ChatGPT与人的交互 (ShareGPT)       |                          |
 | [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                  |                                           |                          |
 | [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    |          |              |           |            |                                  |                                           |                          |
