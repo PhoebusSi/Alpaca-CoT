@@ -10,7 +10,8 @@ sentencepiece
 transformers>=4.28.0
 accelerate
 bitsandbytes
-git+https://github.com/huggingface/peft.git
+#git+https://github.com/huggingface/peft.git
+pip install -e ./peft
 gradio
 appdirs
 

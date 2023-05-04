@@ -18,6 +18,11 @@ from transformers import (
 
 from peft import (
     prepare_model_for_int8_training,
+    AdaLoraConfig,
+    PrefixTuningConfig,
+    PromptEncoderConfig,
+    PromptTuningConfig,
+    PromptTuningInit,
     LoraConfig,
     get_peft_model,
     get_peft_model_state_dict,
@@ -56,6 +61,13 @@ _MODEL_CLASSES = {
         "tokenizer": AutoTokenizer,
         "model": AutoModel,
     })
+}
+_PEFT_CLASSES = {
+    "lora":LoraConfig,
+    "adalora":AdaLoraConfig,
+    "prompt":PromptTuningConfig,
+    "p_tuning":PromptEncoderConfig,
+    "prefix":PrefixTuningConfig
 }
 
 # add the custom dataset
@@ -114,6 +126,10 @@ def get_data_model(args):
 
         return _MODEL_CLASSES[model_type] # tokenizer, model
 
+    def get_peft_class(peft_type):
+
+        return _PEFT_CLASSES[peft_type] # tokenizer, model
+
     data_file_path = DATA_PATH.get(args.data, None)
 
     assert data_file_path, "Error: Wrong type of data."
@@ -123,6 +139,7 @@ def get_data_model(args):
     print(data)
 
     model_class = get_model_class(args.model_type)
+    peft_class = get_peft_class(args.peft_type)
 
     if args.model_type in ["chatglm"]:
         # chatglm can not set load_in_8bit=True: ChatGLMForConditionalGeneration does not support gradient checkpointing.
@@ -149,14 +166,50 @@ def get_data_model(args):
 
     model = prepare_model_for_int8_training(model)
 
-    config = LoraConfig(
-        r=args.lora_r,
-        lora_alpha=args.lora_alpha,
-        target_modules=args.lora_target_modules,
-        lora_dropout=args.lora_dropout,
-        bias="none",
-        task_type="CAUSAL_LM",
-    )
+    if args.peft_type=='lora':
+        config = peft_class(
+            r=args.lora_r,
+            lora_alpha=args.lora_alpha,
+            target_modules=args.lora_target_modules,
+            lora_dropout=args.lora_dropout,
+            bias="none",
+            task_type="CAUSAL_LM",
+        )
+    elif args.peft_type=='adalora':
+        config = peft_class(
+            init_r=args.adalora_init_r,
+            r=args.lora_r,
+            beta1=0.85,
+            beta2=0.85,
+            tinit=args.adalora_tinit,
+            tfinal=args.adalora_tfinal,
+            deltaT=args.adalora_delta_t,
+            lora_alpha=args.lora_alpha,
+            lora_dropout=args.lora_dropout,
+            target_modules=args.lora_target_modules,
+            task_type="CAUSAL_LM",
+            inference_mode=False,
+        )
+    elif args.peft_type=='prompt':
+        config = peft_class(
+            task_type="CAUSAL_LM",
+            num_virtual_tokens=args.num_virtual_tokens,
+        )
+    elif args.peft_type=='p_tuning':
+        config = peft_class(
+            task_type="CAUSAL_LM",
+            num_virtual_tokens=args.num_virtual_tokens,
+            encoder_hidden_size=args.ptuning_encoder_hidden_size
+        )
+    elif args.peft_type=='prefix':
+        config = peft_class(
+            task_type="CAUSAL_LM",
+            num_virtual_tokens=args.num_virtual_tokens,
+        )
+        model.gradient_checkpointing_disable()
+    else:
+        assert args.peft_type, "Error: Wrong type of peft."
+    
     model = get_peft_model(model, config)
 
     # the size of trainable parameters for lora modules
@@ -283,8 +336,10 @@ def train(args):
 
             return tokenized_with_response
 
-    model_name = args.model_name_or_path.split('/')[-1]
-    output_dir = f"saved_models/{model_name}_{args.data}"
+
+    model_name = args.model_name_or_path.split( '/')[-1]
+    output_dir = f"saved_models/{model_name}_{args.data}/{args.peft_type}"
+
 
 
     # 2. split dataset
@@ -365,6 +420,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', default=3, type=int)
     parser.add_argument('--learning_rate', default=3e-4, type=float)
     parser.add_argument('--cutoff_len', default=512, type=int)
+    #PEFT arguments
+    parser.add_argument('--peft_type', default="lora", choices=['lora', 'adalora', 'prompt','p_tuning','prefix'])
     parser.add_argument('--lora_r', default=8, type=int)
     parser.add_argument('--lora_alpha', default=16, type=int)
     parser.add_argument('--lora_dropout', default=0.05, type=float)
@@ -372,6 +429,12 @@ if __name__ == "__main__":
     parser.add_argument('--lora_target_modules', nargs='+',
                         help="the module to be injected, e.g. q_proj/v_proj/k_proj/o_proj for llama, query_key_value for bloom&GLM",
                         default=["q_proj", "v_proj"])
+    parser.add_argument('--adalora_init_r', default=12, type=int)
+    parser.add_argument("--adalora_tinit", type=int, default=200, help="number of warmup steps for AdaLoRA wherein no pruning is performed")
+    parser.add_argument("--adalora_tfinal", type=int, default=1000, help=" fix the resulting budget distribution and fine-tune the model for tfinal steps when using AdaLoRA ")
+    parser.add_argument("--adalora_delta_t", type=int, default=10, help="interval of steps for AdaLoRA to update rank")
+    parser.add_argument('--num_virtual_tokens', default=20, type=int)
+    parser.add_argument('--ptuning_encoder_hidden_size', default=128, type=int)
     parser.add_argument('--resume_from_checkpoint', nargs='?', default=None, const=True, help='resume from the specified or the latest checkpoint, e.g. `--resume_from_checkpoint [path]` or `--resume_from_checkpoint`')
 
     args, _ = parser.parse_known_args()

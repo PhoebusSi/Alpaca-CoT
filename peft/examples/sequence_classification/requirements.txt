@@ -1,0 +1,6 @@
+transformers
+accelerate
+loralib
+evaluate
+tqdm
+datasets
