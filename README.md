@@ -17,6 +17,7 @@ You are in a warm welcome to provide us with any non-collected instruction-tunin
 You can also choose to join our group chat (WeChat) and communicate with more people with the same interests. At present, the number of group members is too large to join the group directly through the group QR code. You need to connect with me first to get into the group.
 
 ## News
+-  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
 -  ⚠ If you have any problems about model loading, try `python -m pip install transformers==4.28.1` or `python -m pip install git+https://github.com/huggingface/transformers.git` first.
 -  ⚠ If you have any problems about model saving, try `python -m pip install peft=2.0.0` or `python -m pip install git+https://github.com/huggingface/peft.git` first.
 
@@ -135,9 +136,17 @@ pip install -r requirements.txt
 ```
 Note that, make sure python>=3.9 when finetuning ChatGLM.
 
+**PEFT**
+* if you want to use other methods besides LORA, please install the edited version in our project
+```
+pip install -e ./peft
+```
+
+
 ### Instruction Finetuning
 In order for researchers to conduct systematic IFT research on LLMs, we have collected different types of instruction data, integrated multiple LLMs, and unified interfaces, making it easy to customize the desired collocation:
 - `--model_type` : Set the LLM you want to use. Currently, [llama, chatglm, bloom] are supported. The latter two have strong Chinese capabilities, and more LLMs will be integrated in the future.
+- `--peft_type`: Set the PEFT you want to use. Currently, [lora, adalora, prefix tuning,p tuning, prompt] are supported.
 - `--data`: Set the data type used for IFT to flexibly tailor the desired command compliance ability. For example, for strong reasoning ability, set "alpaca-cot", for strong Chinese ability, set "belle1.5m", for coding and story generation ability, set "gpt4all", and for financial related response ability, set "finance".
 - `--model_name_or_path`: This is set to load different versions of the model weights for the target LLM  `--model_type`. For example, to load the llama's 13b version of weights, you can set decapoda-research/llama-13b-hf.
 
@@ -328,7 +337,7 @@ From the above table, we find that:
 Please cite the repo if you use the data collection, code, and experimental findings in this repo.
 ```
 @misc{alpaca-cot,
-  author = {Qingyi Si, Tong Wang, Rui Liu, Zheng Lin },
+  author = {Qingyi Si, Tong Wang, Naibin Gu, Rui Liu, Zheng Lin },
   school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
   title = {Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface},
   year = {2023},
