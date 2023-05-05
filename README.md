@@ -18,8 +18,6 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 
 ## News
 -  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
--  ⚠ If you have any problems about model loading, try `python -m pip install transformers==4.28.1` or `python -m pip install git+https://github.com/huggingface/transformers.git` first.
--  ⚠ If you have any problems about model saving, try `python -m pip install peft=2.0.0` or `python -m pip install git+https://github.com/huggingface/peft.git` first.
 
 -  5.4: All parameter-efficient methods in PEFT (e.g., p-tuning) were merged, which can be set by hyper-parameter directly.
 -  5.4: LLM `Moss` was merged.
