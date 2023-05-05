@@ -236,10 +236,7 @@ def train(args):
                 "labels": copy.deepcopy(input_ids)
             }
         def completion_tokenize(completion):
-            if completion[-4:] == '</s>':
-                input_ids = tokenizer.encode(completion[:-4]) #, add_special_tokens=False)
-            else:
-                input_ids = tokenizer.encode(completion) #, add_special_tokens=False)
+            input_ids = tokenizer.encode(completion) #, add_special_tokens=False)
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids)
