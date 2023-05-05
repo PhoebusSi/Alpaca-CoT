@@ -199,7 +199,7 @@ def get_fine_tuned_model(args):
                 target_modules=MODEL_LORA_TARGET_MODULES[args.model_type],
             )
             model = get_peft_model(model, peft_config)
-            model.load_state_dict(torch.load(peft_path), strict=False)
+            model.load_state_dict(torch.load(peft_path, map_location="cpu"), strict=False)
             # torch.set_default_tensor_type(torch.cuda.FloatTensor)
     else:
         model = model_class.model.from_pretrained(model_path,
