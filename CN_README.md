@@ -338,7 +338,7 @@ python3 web.py --model_type chatglm --lora_dir xxx
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
 ```
 @misc{alpaca-cot,
-  author = {Qingyi Si, Tong Wang, Rui Liu, Zheng Lin },
+  author = {Qingyi Si, Tong Wang, Naibin Gu, Rui Liu, Zheng Lin },
   school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
   title = {Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface},
   year = {2023},
