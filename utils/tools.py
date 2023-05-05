@@ -10,6 +10,8 @@ from peft import (
 )
 from transformers import GenerationConfig
 from .config import *
+from .device import get_device_map
+
 
 
 def generate_prompt(data_point):
@@ -177,10 +179,11 @@ def get_fine_tuned_model(args):
             return MODEL_CLASSES[llm_type], model_path
         else:
             load_path = llm_type + "_" + model_path
+            if llm_type in ['moss']:
+                load_path = llm_type
             return MODEL_CLASSES[llm_type], COMMON_PATH + MODEL_PATHS[load_path]
 
     model_class, model_path = _get_model_class(args.model_type, args.size)
-
     if args.model_type == "chatglm":
         model = model_class.model.from_pretrained(model_path,
                                                   trust_remote_code=True,
@@ -201,6 +204,20 @@ def get_fine_tuned_model(args):
             model = get_peft_model(model, peft_config)
             model.load_state_dict(torch.load(peft_path, map_location="cpu"), strict=False)
             # torch.set_default_tensor_type(torch.cuda.FloatTensor)
+    elif args.model_type == "moss":
+        model = model_class.model.from_pretrained(model_path,
+                                                  trust_remote_code=True,
+                                                  load_in_8bit=False,
+                                                  torch_dtype=torch.float16,
+                                                  device_map= get_device_map(model_type="moss", load_in_8bit=True))
+
+        tokenizer = model_class.tokenizer.from_pretrained(model_path,trust_remote_code=True)
+        if args.lora_dir != 'none':
+            model = PeftModel.from_pretrained(
+                model,
+                args.lora_dir,
+                device_map={"": DEVICE_TYPE}
+            )
     else:
         model = model_class.model.from_pretrained(model_path,
                                                   load_in_8bit=False,
@@ -264,6 +281,8 @@ def generate_service_prompt(instruction, llm, lora):
         else:
             return PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT['prompt_format_after']
     else:
+        if llm in ['moss']:
+            return META_INSTRUCTION.get('moss',"") + PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT['prompt_format_after']
         return PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT['prompt_format_after']
 
 
