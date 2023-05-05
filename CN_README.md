@@ -303,12 +303,6 @@ python3 web.py --model_type chatglm --lora_dir xxx
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图8.png)
 
 
-## 6. 未来工作
-- 集成进来更多的LLMs
-- 探究模型的few-shot能力
-- 对不同大小的模型进行细致探究
-- 在instruction-following evaluation suite上评估
-- 收集更多的instruction-finetuning数据集.
 
 
 
@@ -347,7 +341,3 @@ Please cite the repo if you use the data collection, code, and experimental find
   howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
 }
 ```
-For data, please cite the original Stanford Alpaca, BELLE and FLAN papers as well.
-
-For models, please cite the original LLaMA, Stanford Alpaca, Self-Instruct and LoRA papers as well.
-
