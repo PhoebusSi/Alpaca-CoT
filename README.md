@@ -19,8 +19,8 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 ## News
 -  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
 
--  5.4: All parameter-efficient methods in PEFT (e.g., p-tuning) were merged, which can be set by hyper-parameter directly.
--  5.4: LLM `Moss` was merged.
+-  🚀5.4: All parameter-efficient methods in PEFT (e.g., p-tuning) were merged, which can be set by hyper-parameter directly.
+-  🚀5.4: LLM `MOSS` was merged.
 -  4.21: Datasets `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG` are collected and formatted.
 -  4.15: Datasets `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)` are collected and formatted.
 -  4.12: Now you can try Alpaca-CoT on <a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>.
