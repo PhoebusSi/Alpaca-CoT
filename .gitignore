@@ -109,3 +109,7 @@ ENV/
 
 figures/*.pptx
 figures/*.xlsx
+
+saved_models/
+result/
+wandb/
