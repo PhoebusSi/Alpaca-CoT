@@ -205,6 +205,7 @@ def get_data_model(args):
         config = peft_class(
             task_type="CAUSAL_LM",
             num_virtual_tokens=args.num_virtual_tokens,
+            prefix_projection=True,
         )
         model.gradient_checkpointing_disable()
     else:
