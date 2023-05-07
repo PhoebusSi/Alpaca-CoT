@@ -1,10 +1,10 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 import argparse
 import torch
 import sys
-import os
 import platform
 from utils.tools import *
-os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 parser = argparse.ArgumentParser(description='Process some llm info.')
 parser.add_argument('--model_type', type=str, default="chatglm", choices=AVAILABLE_MODEL,

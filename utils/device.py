@@ -10,7 +10,7 @@ from transformers.utils import ContextManagers
 def get_device_map(model_type="moss", load_in_8bit=False):
     if model_type == "moss":
         cls = get_class_from_dynamic_module(
-            "fnlp/moss-moon-003-sft", "modeling_moss" + ".py", "MossForCausalLM")
+            class_reference="fnlp/moss-moon-003-sft--modeling_moss.MossForCausalLM", pretrained_model_name_or_path="fnlp/moss-moon-003-sft")
         config = AutoConfig.from_pretrained(
             "fnlp/moss-moon-003-sft", return_unused_kwargs=True, trust_remote_code=True)[0]
         with ContextManagers([no_init_weights(_enable=True), init_empty_weights()]):
