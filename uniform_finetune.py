@@ -199,12 +199,13 @@ def get_data_model(args):
         config = peft_class(
             task_type="CAUSAL_LM",
             num_virtual_tokens=args.num_virtual_tokens,
-            encoder_hidden_size=args.ptuning_encoder_hidden_size
+            encoder_hidden_size=args.prompt_encoder_hidden_size
         )
     elif args.peft_type=='prefix':
         config = peft_class(
             task_type="CAUSAL_LM",
             num_virtual_tokens=args.num_virtual_tokens,
+            encoder_hidden_size=args.prompt_encoder_hidden_size,
             prefix_projection=True,
         )
         model.gradient_checkpointing_disable()
@@ -432,7 +433,7 @@ if __name__ == "__main__":
     parser.add_argument("--adalora_tfinal", type=int, default=1000, help=" fix the resulting budget distribution and fine-tune the model for tfinal steps when using AdaLoRA ")
     parser.add_argument("--adalora_delta_t", type=int, default=10, help="interval of steps for AdaLoRA to update rank")
     parser.add_argument('--num_virtual_tokens', default=20, type=int)
-    parser.add_argument('--ptuning_encoder_hidden_size', default=128, type=int)
+    parser.add_argument('--prompt_encoder_hidden_size', default=128, type=int)
     parser.add_argument('--resume_from_checkpoint', nargs='?', default=None, const=True, help='resume from the specified or the latest checkpoint, e.g. `--resume_from_checkpoint [path]` or `--resume_from_checkpoint`')
 
     args, _ = parser.parse_known_args()
