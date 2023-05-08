@@ -46,7 +46,7 @@
 虽然ChatGPT已经具备了不错的表格处理能力，但它也存在一些局限：
 
 - **只支持用Markdown格式表示的简单表格**：ChatGPT、文心一言等大模型目前仅支持Markdown格式的表格，第一行是列表头，其余行是数据，不支持包含合并单元格的层级表格。
-- **在各项表格智能任务中的能力有待进一步增强**：ChatGPT已经具备多项基本的表格处理能力，但其能力有待进一步增强，比如针对表格问答任务，ChatGPT能够较好地回答关于表格的信息查找类问题（选择表格中的文本作为答案），但不能很好地回答关于表格的数值推理类问题（基于表格中的数值进行多步数学计算）。
+- **在各项表格智能任务中的能力有待进一步增强**：ChatGPT已经具备多项基本的表格处理能力，但其能力有待进一步增强，比如针对表格问答任务，ChatGPT能够回答简单的信息查找类问题（选择表格中的文本作为答案），但在回答复杂的数值推理类问题（基于表格中的数值进行多步数学计算）时经常出错。
 - **与表格处理相关的训练数据并未开源**：ChatGPT的训练数据并未开源。为了复现ChatGPT，开源社区目前也已经贡献了许多纯文本任务的宝贵训练数据，但表格智能任务的训练数据相对较少，缺乏统一的整理。
 
 考虑到上述局限，我们提出Tabular-LLM项目，项目的核心计划如下：
@@ -160,7 +160,7 @@ output为：
 
 ## 4. 数据集统计（不断更新ing）
 
-“样本数量”代表本项目基于原始数据集整理格式后获取的样本数量，未填代表待收集。大家可以基于“下载”中的链接获取整理好的json格式的数据。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
+“样本数量”代表本项目对原始数据集统一格式后获取到的样本的数量，未填代表待收集。大家可以基于“下载”中的链接获取整理好的数据（JSON文件），“Markdown格式”和“HTML格式”代表数据使用的表格表示方法。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
 
 ### 4.1 下载
 
@@ -172,9 +172,9 @@ output为：
 
 | 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | 下载 | 备注 |
 | --- | --- | --- | ------------ | :---: | --- | --- |---|
-| [WTQ](https://ppasupat.github.io/WikiTableQuestions/) | ACL 2015 | 训练集：17689，测试集：4344 | 从Wikipedia里随机选择超过8行5列的表格，由众包人员提出问题并给出答案。 | 英文 | Compositional Semantic Parsing on Semi-Structured Tables |  |  |
-| [AIT-QA](https://github.com/IBM/AITQA) | NAACL 2022 | 训练集：511，测试集：无 | 来自航空公司年报的层级表格 | 英文 | AIT-QA: Question Answering Dataset over Complex Tables in the Airline Industry |  | 将层级表格中的合并单元格拆分为多个子单元格，然后用markdown格式表示。 |
-| [TabMCQ](https://allenai.org/data/tablestore-questions) | 2016 | 训练集：1411，测试集：无 | 数据来自于四年级的科学考试，基于表格提出多选问题。 | 英文 | TabMCQ: A Dataset of General Knowledge Tables and Multiple-choice Questions |  |  |
+| [WTQ](https://ppasupat.github.io/WikiTableQuestions/) | ACL 2015 | 训练集：17689，测试集：4344 | 从Wikipedia里随机选择超过8行5列的表格，由众包人员提出问题并给出答案。 | 英文 | Compositional Semantic Parsing on Semi-Structured Tables |[Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/WTQ)  |  |
+| [AIT-QA](https://github.com/IBM/AITQA) | NAACL 2022 | 训练集：511，测试集：无 | 来自航空公司年报的层级表格 | 英文 | AIT-QA: Question Answering Dataset over Complex Tables in the Airline Industry | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/AIT-QA) | 将层级表格中的合并单元格拆分为多个子单元格，然后用markdown格式表示。 |
+| [TabMCQ](https://allenai.org/data/tablestore-questions) | 2016 | 训练集：1411，测试集：无 | 数据来自于四年级的科学考试，基于表格提出多选问题。 | 英文 | TabMCQ: A Dataset of General Knowledge Tables and Multiple-choice Questions | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/TABMCQ) |  |
 | [FeTaQA](https://github.com/Yale-LILY/FeTaQA) | 2021 | 训练集：8327，测试集：2003 | 数据来自Wikipedia，以往数据集中的答案都比较简单，比如一个单词，本文构造的数据集中，答案是任意长度的句子。 | 英文 | FeTaQA: Free-form Table Question Answering |  |  |
 | [TAT-QA](https://nextplusplus.github.io/TAT-QA/) | ACL 2021 | 训练集：14883，测试集：1669 | 需要同时考虑表格和文本信息进行多跳推理，很多样本需要进行数值计算以得到最终答案。数据来自于公司的经济年报。 | 英文 | TAT-QA: A Question Answering Benchmark on a Hybrid of Tabular and Textual Content in Finance |  | 对于需要数值计算的样本，在答案中拼接上了具体的计算公式，比如 20 - 5 = 15。 |
 | [WikiSQL](https://github.com/salesforce/WikiSQL) | 2018 | 训练集：59736，测试集：14603 | 表格来自Wikipedia | 英文（有一些样本包含中文） | Seq2SQL: Generating Structured Queries from Natural Language using Reinforcement Learning |  | 基于Tapas论文的方法提取出答案文本，后续考虑真正执行SQL语句提取出更精确的答案文本。 |
