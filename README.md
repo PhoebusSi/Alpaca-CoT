@@ -4,9 +4,19 @@
 
 本项目基于[**Alpaca-CoT项目**](https://github.com/PhoebusSi/Alpaca-CoT)（一个多接口统一的轻量级LLM指令微调平台），目标是广泛收集开源的表格智能任务数据集（比如表格问答、表格-文本生成等），然后将【原始任务数据】整理为【指令微调格式的数据】并基于Alpaca-CoT项目微调相应的LLM，进而增强LLM对于表格数据的理解，最终构建出专门面向表格智能任务的大型语言模型。
 
-我们目前正在整理学界现有的表格智能数据集，也非常欢迎您向我们提供任何尚未收集的表格相关任务的数据集，我们将努力统一它们的格式并开源训练好的模型。**我们希望本项目能够助力开源社区复现并进一步增强ChatGPT的表格处理能力，同时也使研究者构建针对特定垂类领域的表格智能LLM时，有一个更好的数据和模型基础。**
+我们目前正在整理学界现有的表格智能数据集，也非常欢迎您向我们提供任何尚未收集的表格相关任务的数据集，我们将努力统一它们的格式并开源训练好的模型。**我们希望本项目能够助力开源社区复现并进一步增强ChatGPT的表格处理能力，同时也使研究者在构建针对特定垂类领域的表格智能LLM时，有一个更好的数据和模型基础。**
 
-如果您对“表格+LLM”感兴趣，欢迎您加入本项目的微信群，和更多志同道合的研究者进行讨论交流。
+如果您对“表格+LLM”感兴趣，欢迎您加入本项目的微信群，和更多志同道合的研究者进行讨论交流。本文档撰写过程中难免有所纰漏，欢迎大家随时提issue或者在微信群中指出项目中的错误，我们将及时进行订正，感谢大家的阅读！！！ 
+
+后续章节的主要内容如下：
+- [第0节](#0-背景)和[第1节](#1-动机)分别介绍项目提出的背景和动机。
+- [第2节](#2-表格的表示方法)讨论表格的表示方法。
+- [第3节](#3-样本格式)介绍本项目在处理数据时使用的样本格式。
+- [第4节](#4-数据集统计不断更新ing)给出处理好的指令微调数据的下载链接和开源的模型检查点。
+- [第5节](#5-实验分析和经验总结)用于记录实验分析和经验总结。
+- [第6节](#6-未来计划)介绍本项目的未来计划。
+- [第7节](#7-现有的表格智能产品)列举国内外现有的表格智能产品。
+- [第8节](#8-文档智能模型)介绍文档智能，另一种处理表格数据的思路。
 
 
 ## News
@@ -46,7 +56,7 @@
 虽然ChatGPT已经具备了不错的表格处理能力，但它也存在一些局限：
 
 - **只支持用Markdown格式表示的简单表格**：ChatGPT、文心一言等大模型目前仅支持Markdown格式的表格，第一行是列表头，其余行是数据，不支持包含合并单元格的层级表格。
-- **在各项表格智能任务中的能力有待进一步增强**：ChatGPT已经具备多项基本的表格处理能力，但其能力有待进一步增强，比如针对表格问答任务，ChatGPT能够较好地回答关于表格的信息查找类问题（选择表格中的文本作为答案），但不能很好地回答关于表格的数值推理类问题（基于表格中的数值进行多步数学计算）。
+- **在各项表格智能任务中的能力有待进一步增强**：ChatGPT已经具备多项基本的表格处理能力，但其能力有待进一步增强，比如针对表格问答任务，ChatGPT能够回答简单的信息查找类问题（选择表格中的文本作为答案），但在回答复杂的数值推理类问题（基于表格中的数值进行多步数学计算）时经常出错。
 - **与表格处理相关的训练数据并未开源**：ChatGPT的训练数据并未开源。为了复现ChatGPT，开源社区目前也已经贡献了许多纯文本任务的宝贵训练数据，但表格智能任务的训练数据相对较少，缺乏统一的整理。
 
 考虑到上述局限，我们提出Tabular-LLM项目，项目的核心计划如下：
@@ -89,7 +99,7 @@ ChatGPT、文心一言等模型目前应该是采用Markdown格式来表示表�
 
 ### 2.4 HTML格式
 
-为了表示更复杂的表格结构，尤其是合并单元格，我们可以使用HTML格式来表示表格，每对【<tr>.....</tr>】标签之间为表格的一行，每对 【<td>....</td>】 标签之间为一行中不同列的单元格，利用【rowspan=m, colspan=n】参数指定某个单元格可以占据m行n列，如下所示。除了能表示合并单元格，HTML还可以设定单元格对齐、单元格背景颜色等表格样式。
+为了表示更复杂的表格结构，尤其是合并单元格，我们可以使用HTML格式来表示表格，每对【&lt;tr&gt;.....&lt;/tr&gt;】标签之间为表格的一行，每对 【&lt;td&gt;....&lt;/td&gt;】 标签之间为一行中不同列的单元格，利用【rowspan=m, colspan=n】参数指定某个单元格可以占据m行n列，如下所示。除了能表示合并单元格，HTML还可以设定单元格对齐、单元格背景颜色等表格样式。
 ![](./tabular_llm_figures/HTML_table.png)
 
 ### 2.5 Latex格式
@@ -107,7 +117,7 @@ ChatGPT、文心一言等模型目前应该是采用Markdown格式来表示表�
     以微软的Excel为例，其背后也会有一套表格表示方法以及操作表格的编程语言VBA，那么为了开发配合Excel使用的LLM，可能就需要收集相应格式的数据来训练LLM理解这种格式的表格和用户需求，然后让LLM直接生成回复或者生成反映用户需求的VBA代码，最后执行代码返回结果。比如，用户可能会输入用自然语言表示的需求“帮我把行表头对应单元格的字体加粗”或者“帮我在表格后面新增一列，计算B列和C列的差值”，表格智能LLM就需要理解Excel表格并生成VBA代码，最终执行代码返回更新后的表格。整体流程可能如下所示：
 ![](./tabular_llm_figures/potential_tabular_llm_for_excel.png)
 
-回到本项目，由于我们的主要目标是进行表格智能LLM的初步探索，我们更偏向于增强开源LLM的表格处理能力，尚未考虑落地到具体的应用场景，所以**我们仿照ChatGPT，选择利用Markdown格式来表示垂直表格和水平表格，利用HTML格式来表示包含合并单元格的表格，如果原数据集较难转为HTML格式，那么我们将合并单元格拆分为多个相同的子单元格，然后使用Markdown格式进行表示。**（注：后续可能根据实验结果更换表格表示方法，比如统一使用HTML格式表示，我们会尽可能提供更多格式的数据供大家选择。）
+回到本项目，由于我们的主要目标是进行表格智能LLM的初步探索，我们更偏向于增强开源LLM的表格处理能力，尚未考虑落地到具体的应用场景，所以**我们仿照ChatGPT，优先使用Markdown格式来表示不包含合并单元格的表格，利用HTML格式来表示包含合并单元格的表格，如果原数据集较难转为HTML格式，那么我们将合并单元格拆分为多个相同的子单元格，然后使用Markdown格式进行表示。**（注：后续可能根据实验结果更换表格表示方法，比如统一使用HTML格式表示，我们会尽可能提供更多格式的数据供大家选择。）
 
 ## 3. 样本格式
 
@@ -118,8 +128,9 @@ ChatGPT、文心一言等模型目前应该是采用Markdown格式来表示表�
 {
     'instruction': 任务指令 # 不同的表格智能任务对应的指令可能不同
     'input': 输入字符串, # 基于问题、表格、表格标题等信息构造的格式化输入，
+    			# 对于不同的数据集，input中包含的信息可能不同，比如Table-Text QA数据集的input中还包含与表格相关的文本段落。
 			# 以表格问答为例，输入的构造方式为:
-                        # f"Table:\n{markdown_table}\nTable title:\n{table_title}\nQuestion:\n{question_text}"
+                        # input = f"Table:\n{markdown_table}\nTable title:\n{table_title}\nQuestion:\n{question_text}"
     'output': 输出字符串, # 模型输出
     'table_type': 表格类型, # vertical:垂直表格; horizontal:水平表格; hierarchical:层级表格; complex:复杂表格 
     'task_type': 任务类型, # 比如TQA:表格问答, TFV:表格事实验证
@@ -160,25 +171,36 @@ output为：
 
 ## 4. 数据集统计（不断更新ing）
 
-“样本数量”代表本项目基于原始数据集整理格式后获取的样本数量，未填代表待收集。大家可以基于“下载”中的链接获取整理好的json格式的数据。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
+在4.1中可以下载汇总后的数据和微调后的模型，在4.2至4.6中可以下载针对不同任务不同数据集的数据，数据文件都采用JSON格式。
+
+“样本数量”代表本项目对原始数据集统一格式后获取到的样本的数量，未填代表待收集。“Markdown格式”和“HTML格式”代表数据使用的表格表示方法。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
 
 ### 4.1 下载
+截止日期：2023-0508
 
-汇总后的数据下载：
+不同任务的汇总数据：[huggingface地址](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/all-data)
+| 类别 | JSON文件下载链接(样本数量)    |  备注 |
+| --- | --- | --- |
+| 所有数据 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_train_data.json)(272,249)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_test_data.json)(41,313)   |     
+| 表格问答 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_train_data.json)(148,475)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_test_data.json)(26,674)  |    |   
+| 表格事实验证 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_train_data.json)(123,774)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_test_data.json)(14,639)    |      |      
 
 模型下载：
+| 模型 | 描述 | 链接 | 
+| --- | --- | --- |
+|     |     |     |
 
 ### 4.2 表格问答
 
-| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | 下载 | 备注 |
+| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | huggingface地址 | 备注 |
 | --- | --- | --- | ------------ | :---: | --- | --- |---|
-| [WTQ](https://ppasupat.github.io/WikiTableQuestions/) | ACL 2015 | 训练集：17689，测试集：4344 | 从Wikipedia里随机选择超过8行5列的表格，由众包人员提出问题并给出答案。 | 英文 | Compositional Semantic Parsing on Semi-Structured Tables |  |  |
-| [AIT-QA](https://github.com/IBM/AITQA) | NAACL 2022 | 训练集：511，测试集：无 | 来自航空公司年报的层级表格 | 英文 | AIT-QA: Question Answering Dataset over Complex Tables in the Airline Industry |  | 将层级表格中的合并单元格拆分为多个子单元格，然后用markdown格式表示。 |
-| [TabMCQ](https://allenai.org/data/tablestore-questions) | 2016 | 训练集：1411，测试集：无 | 数据来自于四年级的科学考试，基于表格提出多选问题。 | 英文 | TabMCQ: A Dataset of General Knowledge Tables and Multiple-choice Questions |  |  |
-| [FeTaQA](https://github.com/Yale-LILY/FeTaQA) | 2021 | 训练集：8327，测试集：2003 | 数据来自Wikipedia，以往数据集中的答案都比较简单，比如一个单词，本文构造的数据集中，答案是任意长度的句子。 | 英文 | FeTaQA: Free-form Table Question Answering |  |  |
-| [TAT-QA](https://nextplusplus.github.io/TAT-QA/) | ACL 2021 | 训练集：14883，测试集：1669 | 需要同时考虑表格和文本信息进行多跳推理，很多样本需要进行数值计算以得到最终答案。数据来自于公司的经济年报。 | 英文 | TAT-QA: A Question Answering Benchmark on a Hybrid of Tabular and Textual Content in Finance |  | 对于需要数值计算的样本，在答案中拼接上了具体的计算公式，比如 20 - 5 = 15。 |
-| [WikiSQL](https://github.com/salesforce/WikiSQL) | 2018 | 训练集：59736，测试集：14603 | 表格来自Wikipedia | 英文（有一些样本包含中文） | Seq2SQL: Generating Structured Queries from Natural Language using Reinforcement Learning |  | 基于Tapas论文的方法提取出答案文本，后续考虑真正执行SQL语句提取出更精确的答案文本。 |
-| [NL2SQL](https://github.com/ZhuiyiTechnology/TableQA) | 2020 | 训练集：45918，测试集：4055 | 来自追一科技，首届中文NL2SQL挑战赛数据集，强调问题中的用词和表格中的用词不一定严格相同，比如“腾讯/鹅厂”，同时也包含无法回答的问题。 | 中文 | TableQA: a Large-Scale Chinese Text-to-SQL Dataset for Table-Aware SQL Generation |  | 执行SQL语句提取答案文本，对于无法回答的问题，答案设置为“根据表格信息无法回答该问题。” |
+| [WTQ](https://ppasupat.github.io/WikiTableQuestions/) | ACL 2015 | 训练集：17689，测试集：4344 | 从Wikipedia里随机选择超过8行5列的表格，由众包人员提出问题并给出答案。 | 英文 | Compositional Semantic Parsing on Semi-Structured Tables |[Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/WTQ)  |  |
+| [AIT-QA](https://github.com/IBM/AITQA) | NAACL 2022 | 训练集：511，测试集：无 | 来自航空公司年报的层级表格 | 英文 | AIT-QA: Question Answering Dataset over Complex Tables in the Airline Industry | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/AIT-QA) | 将层级表格中的合并单元格拆分为多个子单元格，然后用markdown格式表示。 |
+| [TabMCQ](https://allenai.org/data/tablestore-questions) | 2016 | 训练集：1411，测试集：无 | 数据来自于四年级的科学考试，基于表格提出多选问题。 | 英文 | TabMCQ: A Dataset of General Knowledge Tables and Multiple-choice Questions | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/TABMCQ) |  |
+| [FeTaQA](https://github.com/Yale-LILY/FeTaQA) | 2021 | 训练集：8327，测试集：2003 | 数据来自Wikipedia，以往数据集中的答案都比较简单，比如一个单词，本文构造的数据集中，答案是任意长度的句子。 | 英文 | FeTaQA: Free-form Table Question Answering |[HTML格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/FeTaQA)  |  |
+| [TAT-QA](https://nextplusplus.github.io/TAT-QA/) | ACL 2021 | 训练集：14883，测试集：1669 | 需要同时考虑表格和文本信息进行多跳推理，很多样本需要进行数值计算以得到最终答案。数据来自于公司的经济年报。 | 英文 | TAT-QA: A Question Answering Benchmark on a Hybrid of Tabular and Textual Content in Finance | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/TAT-QA) | 对于需要数值计算的样本，在答案中拼接上了具体的计算公式，比如 20 - 5 = 15。 |
+| [WikiSQL](https://github.com/salesforce/WikiSQL) | 2018 | 训练集：59736，测试集：14603 | 表格来自Wikipedia | 英文（有一些样本包含中文） | Seq2SQL: Generating Structured Queries from Natural Language using Reinforcement Learning | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/WikiSQL)  | 基于Tapas论文的方法提取出答案文本，后续考虑真正执行SQL语句提取出更精确的答案文本。 |
+| [NL2SQL](https://github.com/ZhuiyiTechnology/TableQA) | 2020 | 训练集：45918，测试集：4055 | 首届中文NL2SQL挑战赛数据集，强调问题中的用词和表格中的用词不一定严格相同，比如“腾讯/鹅厂”，同时也包含无法回答的问题。 | 中文 | TableQA: a Large-Scale Chinese Text-to-SQL Dataset for Table-Aware SQL Generation | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/NL2SQL) | 执行SQL语句提取答案文本，对于无法回答的问题，答案设置为“根据表格信息无法回答该问题。” |
 | [HiTab](https://github.com/microsoft/HiTab) | ACL 2020 |  | 层级表格数据集，包含TQA和Table-to-text两种任务 | 英文 | HiTab : A Hierarchical Table Dataset for Question Answering and Natural Language Generation |  |  |
 | [PACIFIC](https://github.com/dengyang17/pacific) | EMNLP 2022 |  | 基于TAT-QA构建的对话数据集 | 英文 | PACIFIC: Towards Proactive Conversational Question Answering over Tabular and Textual Data in Finance |  |  |
 | [FINQA](https://github.com/czyssrs/FinQA#finqa) | EMNLP 2021 |  | 面向金融数据的table-text数值推理数据集 | 英文 | FINQA: A Dataset of Numerical Reasoning over Financial Data |  |  |
@@ -186,10 +208,10 @@ output为：
 
 ### 4.3 表格事实验证
 
-| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | 下载 | 备注 |
+| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | huggingface地址 | 备注 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [TABFACT](https://tabfact.github.io/) | ICLR 2020 | 训练集：105436，测试集：12839 | 表格来自Wikipedia | 英文 | TabFact: A Large-scale Dataset for Table-based Fact Verification |  |  |
-| [Infotab](https://infotabs.github.io/) | ACL 2020 | 训练集：18338，测试集：1800 | 来源于Wikipedia infobox ，属于entity table；三分类；除了train/dev/test还有对抗和跨领域测试集 | 英文 | INFOTABS: Inference on Tables as Semi-structured Data |  |  |
+| [TABFACT](https://tabfact.github.io/) | ICLR 2020 | 训练集：105436，测试集：12839 | 表格来自Wikipedia | 英文 | TabFact: A Large-scale Dataset for Table-based Fact Verification | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Fact-Verification/Tabfact)  |  |
+| [Infotab](https://infotabs.github.io/) | ACL 2020 | 训练集：18338，测试集：1800 | 来源于Wikipedia infobox ，属于entity table；三分类；除了train/dev/test还有对抗和跨领域测试集 | 英文 | INFOTABS: Inference on Tables as Semi-structured Data | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Fact-Verification/Infotabs)  |  |
 | [PubHealthTab](https://github.com/mubasharaak/PubHealthTab) | NAACL 2022，Findings |  | 三分类；可能有层级表格，表格可能存在列表头和行表头；表格同时给出了html格式和列表格式 | 英文 | PubHealthTab: A Public Health Table-based Dataset for Evidence-based Fact Checking |  |  |
 
 ### 4.4 表格→文本生成
@@ -206,4 +228,24 @@ output为：
 - 对训练好的模型进行测试分析，总结经验供大家参考
 - 构建一个在线demo
 
-本文档撰写过程中难免有所纰漏，欢迎大家随时提issue或者在微信群中指出项目中的错误，我们将及时进行订正，感谢大家的阅读！！！ 
+## 7. 现有的表格智能产品
+本节列举一些国内外已有的表格智能产品，供研究人员参考，也欢迎大家随时补充。
+| 产品 | 团队/公司 | 推出时间 | 介绍 | 优缺点 |
+| --- | --- | --- | --- | --- |
+| [ChatExcel](https://chatexcel.com/) | 北大 | 2023年2月 | 一个能够便捷人对 Excel 复杂操作的智能助手，用户上传Excel表格，然后用自然语言描述自己的需求，比如“求每行数据的平均值作为新增的一列”，ChatExcel可以对表格进行自动处理，返回更新后的表格以满足用户需求。更多信息可以参考项目核心成员撰写的[知乎回答](https://www.zhihu.com/question/586673687/answer/2914537074)。| 对复杂需求的语义理解有待增强，不知道背后有没有接大模型hhh，目前似乎只支持最简单的垂直表格，无法处理合并单元格。 |
+| [Microsoft 365 Copilot](https://www.microsoft.com/en-us/microsoft-365/blog/2023/03/16/introducing-microsoft-365-copilot-a-whole-new-way-to-work/) | 微软 | 2023年3月16日 | 作为OpenAI的重要资助者，微软的office产品势必与GPT-4相结合。具体到Excel上，Copilot可以与用户进行自然语言的交互，帮助用户分析表格数据并自动创建可视化图表，甚至是创建新的工作表，比如可以向Copilot提出需求“分析本季度的销售状况并总结3个关键业务趋势”，“详细展示某个客户的销售业绩情况”。更多信息可以参考[知乎话题](https://www.zhihu.com/question/590269908/answer/2948688426?utm_id=0)。 | 如果说ChatExcel针对是Excel的基本函数操作，Copilot in Excel看上去希望更进一步，承担更高阶的分析能力，就像有个助手帮你分析Excel表格，画出精美的图表。不过官方的演示示例使用的也是标准的垂直表格，不知道对于更复杂表格的支持情况如何。 |
+
+
+## 8. 文档智能模型
+本项目希望构建一个专门面向表格智能任务的LLM，即训练LLM来代替人类处理表格数据。读到这里你或许已经意识到，这种思路对表格的处理局限在了【文本模态】，即必须将表格用某种表示方法转化为文本，然后才能交给LLM进行处理。但在不少现实场景中，表格不是独立存在的，而是某个文档的一部分。这种情况下，将表格单独提取并转化为文本进行处理可能就不是一个很好的思路，因为这既可能丢失重要的视觉信息，比如表格中单元格的字体、颜色等，又不利于建模表格与文档中其他元素的关系，比如表格与其相关段落的关系。
+
+针对上述场景，我们介绍另一种更宏大的从图像和文本两个模态处理表格的思路，即文档智能。**文档智能是指模型自动阅读、 理解以及分析商业文档的过程**，是自然语言处理和计算机视觉交叉领域的一个重要研究方向。如下图所示，文档中可能包含多种元素，包括文本、图片、表格等。
+![](./tabular_llm_figures/doc_image.png)
+
+面对复杂多样的文档元素，文档智能模型需要理解文档图像中的信息并完成下游任务，比如文档信息抽取、文档视觉问答等，这其中当然包括回答关于文档中表格的问题，比如百度提出的Ernie-Layout文档智能模型就可以用于表格抽取问答，大家也可以在其[demo](https://github.com/PaddlePaddle/PaddleNLP/blob/develop/model_zoo/ernie-layout/README_ch.md)里自己上传一个表格图片尝试一下。
+![](./tabular_llm_figures/ernie-layout-tqa.png)
+
+在模型方面，研究人员已经提出了一系列通用文档预训练模型，如[LayoutLM](https://arxiv.org/abs/1912.13318)（v1，v2，v3）、[LayoutXLM](https://arxiv.org/abs/2104.08836)、[Ernie-Layout](https://arxiv.org/abs/2210.06155)等，它们通过在大规模文档图像上的预训练来增强模型对于文档的理解，具体的模型设计我们就不再赘述，大家可以参考这篇来自微软亚研的[综述](http://jcip.cipsc.org.cn/CN/abstract/abstract3331.shtml)以及具体模型的论文。
+
+回顾“表格智能LLM”和“文档智能模型”两种思路，两者的适用场景有交集，也有不同。前者更关注表格独立存在的场景，用于专门处理表格这一种元素，可以对表格进行修改、问答、生成文本描述等；后者更关注表格存在于文档中的场景，用于综合处理表格、文本、图片等多种元素构成的文档图像，可以基于文档图片提取表格信息、进行问答。大家在构建产品时，应该结合具体应用场景选择最合适的技术路线。
+
