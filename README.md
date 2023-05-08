@@ -99,7 +99,7 @@ ChatGPT、文心一言等模型目前应该是采用Markdown格式来表示表�
 
 ### 2.4 HTML格式
 
-为了表示更复杂的表格结构，尤其是合并单元格，我们可以使用HTML格式来表示表格，每对【<tr>.....</tr>】标签之间为表格的一行，每对 【<td>....</td>】 标签之间为一行中不同列的单元格，利用【rowspan=m, colspan=n】参数指定某个单元格可以占据m行n列，如下所示。除了能表示合并单元格，HTML还可以设定单元格对齐、单元格背景颜色等表格样式。
+为了表示更复杂的表格结构，尤其是合并单元格，我们可以使用HTML格式来表示表格，每对【&lt;tr&gt;.....&lt;/tr&gt;】标签之间为表格的一行，每对 【&lt;td&gt;....&lt;/td&gt;】 标签之间为一行中不同列的单元格，利用【rowspan=m, colspan=n】参数指定某个单元格可以占据m行n列，如下所示。除了能表示合并单元格，HTML还可以设定单元格对齐、单元格背景颜色等表格样式。
 ![](./tabular_llm_figures/HTML_table.png)
 
 ### 2.5 Latex格式
@@ -171,16 +171,19 @@ output为：
 
 ## 4. 数据集统计（不断更新ing）
 
-在4.1中可以下载汇总后的数据和微调后的模型，在4.2至4.6中可以下载针对不同任务不同数据集的数据。“样本数量”代表本项目对原始数据集统一格式后获取到的样本的数量，未填代表待收集。大家可以基于“下载”中的链接获取整理好的数据（JSON文件），“Markdown格式”和“HTML格式”代表数据使用的表格表示方法。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
+在4.1中可以下载汇总后的数据和微调后的模型，在4.2至4.6中可以下载针对不同任务不同数据集的数据，数据文件都采用JSON格式。
+
+“样本数量”代表本项目对原始数据集统一格式后获取到的样本的数量，未填代表待收集。“Markdown格式”和“HTML格式”代表数据使用的表格表示方法。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
 
 ### 4.1 下载
+截止日期：2023-0508
 
-汇总数据下载：
-| 类别 | 样本数量 | 链接 | 备注 |
-| --- | --- | --- | --- |
-| 所有数据 |    |    |    |
-| 表格问答 |    |    |    |
-| 表格事实验证 |     |      |      |
+不同任务的汇总数据：[huggingface地址](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/all-data)
+| 类别 | JSON文件下载链接(样本数量)    |  备注 |
+| --- | --- | --- |
+| 所有数据 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_train_data.json)(272,249)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_test_data.json)(41,313)   |     
+| 表格问答 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_train_data.json)(148,475)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_test_data.json)(26,674)  |    |   
+| 表格事实验证 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_train_data.json)(123,774)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_test_data.json)(14,639)    |      |      
 
 模型下载：
 | 模型 | 描述 | 链接 | 
@@ -189,7 +192,7 @@ output为：
 
 ### 4.2 表格问答
 
-| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | 下载 | 备注 |
+| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | huggingface地址 | 备注 |
 | --- | --- | --- | ------------ | :---: | --- | --- |---|
 | [WTQ](https://ppasupat.github.io/WikiTableQuestions/) | ACL 2015 | 训练集：17689，测试集：4344 | 从Wikipedia里随机选择超过8行5列的表格，由众包人员提出问题并给出答案。 | 英文 | Compositional Semantic Parsing on Semi-Structured Tables |[Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/WTQ)  |  |
 | [AIT-QA](https://github.com/IBM/AITQA) | NAACL 2022 | 训练集：511，测试集：无 | 来自航空公司年报的层级表格 | 英文 | AIT-QA: Question Answering Dataset over Complex Tables in the Airline Industry | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/AIT-QA) | 将层级表格中的合并单元格拆分为多个子单元格，然后用markdown格式表示。 |
@@ -205,7 +208,7 @@ output为：
 
 ### 4.3 表格事实验证
 
-| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | 下载 | 备注 |
+| 数据集 | 会议 | 样本数量 | 简介 | 语言 | 论文 | huggingface地址 | 备注 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [TABFACT](https://tabfact.github.io/) | ICLR 2020 | 训练集：105436，测试集：12839 | 表格来自Wikipedia | 英文 | TabFact: A Large-scale Dataset for Table-based Fact Verification | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Fact-Verification/Tabfact)  |  |
 | [Infotab](https://infotabs.github.io/) | ACL 2020 | 训练集：18338，测试集：1800 | 来源于Wikipedia infobox ，属于entity table；三分类；除了train/dev/test还有对抗和跨领域测试集 | 英文 | INFOTABS: Inference on Tables as Semi-structured Data | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Fact-Verification/Infotabs)  |  |
@@ -235,8 +238,14 @@ output为：
 
 ## 8. 文档智能模型
 本项目希望构建一个专门面向表格智能任务的LLM，即训练LLM来代替人类处理表格数据。读到这里你或许已经意识到，这种思路对表格的处理局限在了【文本模态】，即必须将表格用某种表示方法转化为文本，然后才能交给LLM进行处理。但在不少现实场景中，表格不是独立存在的，而是某个文档的一部分。这种情况下，将表格单独提取并转化为文本进行处理可能就不是一个很好的思路，因为这既可能丢失重要的视觉信息，比如表格中单元格的字体、颜色等，又不利于建模表格与文档中其他元素的关系，比如表格与其相关段落的关系。
-针对上述场景，我们介绍另一种更宏大的从图像和文本两个模态处理表格的思路，即文档智能。**文档智能是指模型自动阅读、 理解以及分析商业文档的过程**, 是自然语言处理和计算机视觉交叉领域的一个重要研究方向。如下图所示，文档中可能包含多种元素，包括文本、图片、表格等。
-面对复杂多样的文档元素，文档智能模型需要理解文档图像中的信息并完成下游任务，比如文档信息抽取、文档视觉问答等，这其中当然包括回答关于文档中表格的问题，比如百度提出的Ernie-Layout文档智能模型就可以用于表格抽取问答，大家也可以在其[demo]((https://github.com/PaddlePaddle/PaddleNLP/blob/develop/model_zoo/ernie-layout/README_ch.md))里自己上传一个表格图片尝试一下。
+
+针对上述场景，我们介绍另一种更宏大的从图像和文本两个模态处理表格的思路，即文档智能。**文档智能是指模型自动阅读、 理解以及分析商业文档的过程**，是自然语言处理和计算机视觉交叉领域的一个重要研究方向。如下图所示，文档中可能包含多种元素，包括文本、图片、表格等。
+![](./tabular_llm_figures/doc_image.png)
+
+面对复杂多样的文档元素，文档智能模型需要理解文档图像中的信息并完成下游任务，比如文档信息抽取、文档视觉问答等，这其中当然包括回答关于文档中表格的问题，比如百度提出的Ernie-Layout文档智能模型就可以用于表格抽取问答，大家也可以在其[demo](https://github.com/PaddlePaddle/PaddleNLP/blob/develop/model_zoo/ernie-layout/README_ch.md)里自己上传一个表格图片尝试一下。
+![](./tabular_llm_figures/ernie-layout-tqa.png)
+
 在模型方面，研究人员已经提出了一系列通用文档预训练模型，如[LayoutLM](https://arxiv.org/abs/1912.13318)（v1，v2，v3）、[LayoutXLM](https://arxiv.org/abs/2104.08836)、[Ernie-Layout](https://arxiv.org/abs/2210.06155)等，它们通过在大规模文档图像上的预训练来增强模型对于文档的理解，具体的模型设计我们就不再赘述，大家可以参考这篇来自微软亚研的[综述](http://jcip.cipsc.org.cn/CN/abstract/abstract3331.shtml)以及具体模型的论文。
+
 回顾“表格智能LLM”和“文档智能模型”两种思路，两者的适用场景有交集，也有不同。前者更关注表格独立存在的场景，用于专门处理表格这一种元素，可以对表格进行修改、问答、生成文本描述等；后者更关注表格存在于文档中的场景，用于综合处理表格、文本、图片等多种元素构成的文档图像，可以基于文档图片提取表格信息、进行问答。大家在构建产品时，应该结合具体应用场景选择最合适的技术路线。
 
