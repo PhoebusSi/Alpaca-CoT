@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import bitsandbytes as bnb
 from dataclasses import dataclass, field
-from datasets import load_dataset
+from datasets import load_dataset, concatenate_datasets, DatasetDict
 import transformers
 from collections import namedtuple
 
@@ -130,11 +130,15 @@ def get_data_model(args):
 
         return _PEFT_CLASSES[peft_type] # tokenizer, model
 
-    data_file_path = DATA_PATH.get(args.data, None)
+    data = DatasetDict()
+    if len(args.data) == 1:
+        data_file_path = DATA_PATH.get(args.data[0], None)
+        assert data_file_path, "Error: Wrong type of data."
+        data = load_dataset("json", data_files=data_file_path)
+    else:
+        merge_data = concatenate_datasets([load_dataset("json", data_files=fname)["train"] for fname in args.data])
+        data = DatasetDict({"train":merge_data})
 
-    assert data_file_path, "Error: Wrong type of data."
-
-    data = load_dataset("json", data_files=data_file_path)
 
     print(data)
 
@@ -410,7 +414,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--size', type=str, help='the size of llama model')
-    parser.add_argument('--data', type=str, help='the data used for instructing tuning')
+    parser.add_argument('--data', type=str, nargs="*", help='the data used for instructing tuning')
     parser.add_argument('--local_rank', default=-1, type=int, help='node rank for distributed training')
     parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'bloom', 'moss'])
     parser.add_argument('--model_name_or_path', default="decapoda-research/llama-7b-hf", type=str)

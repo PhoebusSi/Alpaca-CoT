@@ -175,6 +175,8 @@ python3 uniform_finetune.py --model_type llama --model_name_or_path decapoda-res
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
     
 ```
+Note: for multiple datasets, you can use `--data` like `--data ./data/alpaca.json ./data/finance.json <path2yourdata_1>`
+
 - for ChatGLM
 ```
 python3 uniform_finetune.py   --model_type chatglm --model_name_or_path THUDM/chatglm-6b \
