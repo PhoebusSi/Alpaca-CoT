@@ -126,12 +126,12 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 | [camel](https://github.com/lightaime/camel)                                    | 760620   | EN           | MT        | SI         | 物理生物化学编程，数学，社会等领域的角色扮演对话人工标注的数据集的收集         | gpt-3.5-turbo 生成                        | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/camel)                 |
 | [FLAN-Muffin](https://huggingface.co/datasets/Muennighoff/flan)                | 1764800  | EN           | MT        | COL        | 60种nlp任务                                                              | 人工标注的数据集的收集                      | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/FLAN-Muffin)           |
 | [COIG](https://huggingface.co/datasets/BAAI/COIG)                              | 298428   | CN           | MT        | COL        | 考试，翻译，价值观指令数据集搜集，基于知识图谱的反事实对话                    | 自动化工具+人工验证                         | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/COIG)                 |
-| [FastChat](https://github.com/lm-sys/FastChat)                                 |          | EN           | MT        | MIX        | 通用指令                          | 众包收集ChatGPT与人的交互 (ShareGPT)       |                          |
-| [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          |              |           |            |                                  |                                           |                          |
-| [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    |          |              |           |            |                                  |                                           |                          |
-| [MOSS](https://github.com/OpenLMLab/MOSS)                                      |          |              |           |            |                                  |                                           |                          |
-| [ultrachat](https://github.com/thunlp/UltraChat)                               |          |              |           |            |                                  |                                           |                          |
-
+| [GPT4Tools](https://github.com/StevenGrove/GPT4Tools)                          | 71446    | EN           | MT        | SI         | a collection of tool-related instructions                               | gpt-3.5-turbo                                | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/gpt4tools)             |
+| [ShareChat](https://huggingface.co/datasets/RyokoAI/ShareGPT52K)               | 1663241  | EN           | MT        | MIX        | general instruct                                                         | 收集ShareGPT                                 | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/ShareGPT)              |
+| [Auto CoT](https://github.com/amazon-science/auto-cot)                         |          | EN           |           |            |                                                                          |                                            | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Auto-CoT)              |
+| [MOSS](https://github.com/OpenLMLab/MOSS)                                      | 1583595  | EN/CN        | SI        |            |                                                                          |                                            | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/MOSS)                  |
+| [ultrachat](https://github.com/thunlp/UltraChat)                               | 28247446 | EN           |           |            |                                                                          |                                            | [下载](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/ultrachat)             |
+| [StackLLaMA](https://huggingface.co/datasets/lvwerra/stack-exchange-paired)    | todo     | EN           |           |            |                                                                          |                                            |                                                                                                 |
 
 
 该集合仍在不断更新和扩增中。可在以下链接下载和查看更多数据细节：https://github.com/PhoebusSi/alpaca-CoT/tree/main/data
@@ -175,9 +175,9 @@ python3 uniform_finetune.py --model_type llama --model_name_or_path decapoda-res
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
     
 ```
-Note: for multiple datasets, you can use `--data` like `--data ./data/alpaca.json ./data/finance.json <path2yourdata_1>`
 
 - for ChatGLM
+Note: for multiple datasets, you can use `--data` like `--data ./data/alpaca.json ./data/finance.json <path2yourdata_1>`
 ```
 python3 uniform_finetune.py   --model_type chatglm --model_name_or_path THUDM/chatglm-6b \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
