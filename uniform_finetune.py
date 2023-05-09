@@ -131,7 +131,7 @@ def get_data_model(args):
         return _PEFT_CLASSES[peft_type] # tokenizer, model
 
     data = DatasetDict()
-    if len(args.data) == 1:
+    if len(args.data) == 1 and not args.data[0].endswith(".json"):
         data_file_path = DATA_PATH.get(args.data[0], None)
         assert data_file_path, "Error: Wrong type of data."
         data = load_dataset("json", data_files=data_file_path)
@@ -242,7 +242,7 @@ def train(args):
                 "labels": copy.deepcopy(input_ids)
             }
         def completion_tokenize(completion):
-            input_ids = tokenizer.encode(completion) #, add_special_tokens=False)
+            input_ids = tokenizer.encode(completion, max_length=args.cutoff_len)#, add_special_tokens=False)
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids)
@@ -341,7 +341,8 @@ def train(args):
 
 
     model_name = args.model_name_or_path.split( '/')[-1]
-    output_dir = f"saved_models/{model_name}_{args.data}/{args.peft_type}"
+    data_name = "+".join([d.split("/")[-1].strip(".json") for d in args.data])
+    output_dir = f"saved_models/{model_name}_{data_name}/{args.peft_type}"
 
 
 
@@ -395,10 +396,10 @@ def train(args):
     )
     model.config.use_cache = False
 
-    old_state_dict = model.state_dict
-    model.state_dict = (
-        lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())
-    ).__get__(model, type(model))
+    # old_state_dict = model.state_dict
+    # model.state_dict = (
+    #     lambda self, *_, **__: get_peft_model_state_dict(self, old_state_dict())
+    # ).__get__(model, type(model))
 
     if torch.__version__ >= "2" and sys.platform != "win32":
         model = torch.compile(model)
