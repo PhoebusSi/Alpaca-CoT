@@ -19,7 +19,7 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 ## News
 -  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
 
--  🚀5.5: A new branch [`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm) is created to build a Tabular LLM.
+-  🚀5.5: A new branch [`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm) is created to build a Tabular LLM. We collect instruction fine-tuning data for table-related tasks like table question answering and use them to fine-tune LLMs in this repo.
 -  🚀5.4: All parameter-efficient methods in PEFT (e.g., p-tuning) were merged, which can be set by hyper-parameter directly.
 -  🚀5.4: LLM `MOSS` was merged.
 -  4.21: Datasets `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG` are collected and formatted.
