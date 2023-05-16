@@ -146,7 +146,7 @@ with block as demo:
     #top_p, temperature
     with gr.Accordion("Parameters", open=False):
         top_p = gr.Slider( minimum=-0, maximum=1.0, value=0.75, step=0.05, interactive=True, label="Top-p (nucleus sampling)",)
-        temperature = gr.Slider( minimum=-0, maximum=5.0, value=0.1, step=0.1, interactive=True, label="Temperature",)
+        temperature = gr.Slider( minimum=-0, maximum=5.0, value=1.0, step=0.1, interactive=True, label="Temperature",)
 
     chatbot = gr.Chatbot(label="Alpaca-CoT")
     message = gr.Textbox()
