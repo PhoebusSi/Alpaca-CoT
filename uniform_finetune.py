@@ -31,6 +31,7 @@ from peft import (
 
 import argparse
 from utils.device import get_device_map
+from utils.save import SavePeftModelCallback
 
 device_map = "auto"
 world_size = int(os.environ.get("WORLD_SIZE", 1))
@@ -400,6 +401,7 @@ def train(args):
             ddp_find_unused_parameters=False if ddp else None,
         ),
         data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, return_tensors="pt", padding=True),
+        callbacks=[SavePeftModelCallback],
     )
     model.config.use_cache = False
 
