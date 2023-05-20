@@ -1,3 +1,4 @@
+import wandb
 import os
 import re
 import sys
@@ -30,6 +31,7 @@ from peft import (
 
 import argparse
 from utils.device import get_device_map
+from utils.save import SavePeftModelCallback
 
 device_map = "auto"
 world_size = int(os.environ.get("WORLD_SIZE", 1))
@@ -342,7 +344,13 @@ def train(args):
 
     model_name = args.model_name_or_path.split( '/')[-1]
     data_name = "+".join([d.split("/")[-1].strip(".json") for d in args.data])
-    output_dir = f"saved_models/{model_name}_{data_name}/{args.peft_type}"
+    lr_str = str(args.learning_rate)
+    output_dir = f"saved_models/{model_name}_{data_name}_{lr_str}/{args.peft_type}"
+
+    wandb.init(
+        project = f"instruct_{model_name}_{data_name}_{lr_str}",
+        config={"args": str(args),}
+    )
 
 
 
@@ -393,6 +401,7 @@ def train(args):
             ddp_find_unused_parameters=False if ddp else None,
         ),
         data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, return_tensors="pt", padding=True),
+        callbacks=[SavePeftModelCallback],
     )
     model.config.use_cache = False
 
