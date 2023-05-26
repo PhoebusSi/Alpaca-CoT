@@ -348,8 +348,9 @@ def train(args):
     output_dir = f"saved_models/{model_name}_{data_name}_{lr_str}/{args.peft_type}"
 
     wandb.init(
-        project = f"instruct_{model_name}_{data_name}_{lr_str}",
-        config={"args": str(args),}
+        project = "Alpaca-CoT",
+        config = args,
+        name = f"{model_name}_{data_name}_{lr_str}"
     )
 
 

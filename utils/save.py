@@ -9,5 +9,8 @@ class SavePeftModelCallback(TrainerCallback):
         
         pytorch_model_path = os.path.join(checkpoint_folder, "pytorch_model.bin")
         if os.path.exists(pytorch_model_path):
-            os.remove(pytorch_model_path)
+            try:
+                os.remove(pytorch_model_path)
+            except:
+                pass
         return control
