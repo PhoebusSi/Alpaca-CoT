@@ -193,6 +193,10 @@ python3 uniform_finetune.py   ---model_type moss --model_name_or_path fnlp/moss-
 Note that you can also pass the local path (where LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.
 
 **Multiple GPUs**
+``` bash
+torchrun --nnodes 1 --nproc_per_node $ngpu uniform_finetune.py $args --data $data 
+```
+
 - for LLaMA
 ```
 python3 -m torch.distributed.launch --nproc_per_node 4  \
