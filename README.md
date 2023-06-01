@@ -170,25 +170,31 @@ output为：
 ```
 
 ## 4. 数据集统计（不断更新ing）
+**提示**：TABMWP之外的数据集在构建时没有考虑到指令泛化，即使用不同的指令模板，后续会进行更新，使用不同的指令重新构造数据，以使模型具备更好的指令泛化能力（2023-0601）。
 
 在4.1中可以下载汇总后的数据和微调后的模型，在4.2至4.6中可以下载针对不同任务不同数据集的数据，数据文件都采用JSON格式。
 
 “样本数量”代表本项目对原始数据集统一格式后获取到的样本的数量，未填代表待收集。“Markdown格式”和“HTML格式”代表数据使用的表格表示方法。我们遵照原始数据划分分开训练数据和测试数据，以备未来使用测试集测试模型效果（如果有验证集则默认合并至训练数据）。
 
 ### 4.1 下载
-截止日期：2023-0508
+最近更新日期：2023-0601
 
 不同任务的汇总数据：[huggingface地址](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/all-data)
-| 类别 | JSON文件下载链接(样本数量)    |  备注 |
-| --- | --- | --- |
-| 所有数据 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_train_data.json)(272,249)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_test_data.json)(41,313)   |     
-| 表格问答 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_train_data.json)(148,475)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_test_data.json)(26,674)  |    |   
-| 表格事实验证 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_train_data.json)(123,774)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_test_data.json)(14,639)    |      |      
+| 类别 | JSON文件下载链接(样本数量)  |  更新时间  |
+| --- | --- | --- | 
+| 所有数据 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_train_data.json)(272,249)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/all_test_data.json)(41,313)   |      2023-0508  |
+| 表格问答 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_train_data.json)(148,475)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_test_data.json)(26,674)  |     2023-0508  |  
+| 表格事实验证 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_train_data.json)(123,774)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_test_data.json)(14,639)    |       2023-0508  |     
 
 模型下载：
+
+下载训练自各种类型instruction数据的LoRA权重，然后，在`generate.py`中将`LoRA_Weights`设置成下载路径，即可直接运行模型的inference以查看模型效果，更详细的模型训练与测试指南见[Alpaca-CoT](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)项目。
+
 | 模型 | 描述 | 链接 | 
 | --- | --- | --- |
-|     |     |     |
+| saved-bloomz-7b-mt_TQA  | 在TQA数据上采用LoRA方式微调bloomz-7b-mt得到的LoRA权重，训练时将instruction和input拼接作为输入 |     |
+| saved-llama-7b-hf_TQA  | 在TQA数据上采用LoRA方式微调llama-7b-hf得到的LoRA权重，训练时将instruction和input拼接作为输入 |     |
+
 
 ### 4.2 表格问答
 
@@ -204,7 +210,7 @@ output为：
 | [HiTab](https://github.com/microsoft/HiTab) | ACL 2020 |  | 层级表格数据集，包含TQA和Table-to-text两种任务 | 英文 | HiTab : A Hierarchical Table Dataset for Question Answering and Natural Language Generation |  |  |
 | [PACIFIC](https://github.com/dengyang17/pacific) | EMNLP 2022 |  | 基于TAT-QA构建的对话数据集 | 英文 | PACIFIC: Towards Proactive Conversational Question Answering over Tabular and Textual Data in Finance |  |  |
 | [FINQA](https://github.com/czyssrs/FinQA#finqa) | EMNLP 2021 |  | 面向金融数据的table-text数值推理数据集 | 英文 | FINQA: A Dataset of Numerical Reasoning over Financial Data |  |  |
-| [TabMWP](https://promptpg.github.io/index.html#home) | ICLR 2023 |  | 基于表格数据的数学应用题，标注了具体的思维链推导过程。 | 英文 | Dynamic Prompt Learning via Policy Gradient for Semi-structured Mathematical Reasoning |  |  |
+| [TabMWP](https://promptpg.github.io/index.html#home) | ICLR 2023 | 训练集：30745，测试集：7686 | 基于表格数据的数学应用题，标注了具体的思维链推导过程。 | 英文 | Dynamic Prompt Learning via Policy Gradient for Semi-structured Mathematical Reasoning | [Markdown格式](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Data/Table-Question-Answering/TABMWP) |  |
 
 ### 4.3 表格事实验证
 
