@@ -336,6 +336,7 @@ def train(args):
             if "chatglm" in args.model_type:
                 tokenized_with_response = completion_tokenize(prompt_with_response)
                 tokenized_with_response["input_ids"] = tokenized_result['input_ids'] + tokenized_with_response["input_ids"][source_len-2:-2]
+                tokenized_with_response["labels"] = tokenized_result['labels'] + tokenized_with_response["labels"][source_len-2:-2]
             else:
                 tokenized_with_response = tokenize(prompt_with_response)
             tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][source_len:]
