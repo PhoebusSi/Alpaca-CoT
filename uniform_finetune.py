@@ -32,6 +32,7 @@ from peft import (
 import argparse
 from utils.device import get_device_map
 from utils.save import SavePeftModelCallback
+from utils.input import ChatGLMCollator
 
 device_map = "auto"
 world_size = int(os.environ.get("WORLD_SIZE", 1))
@@ -331,7 +332,6 @@ def train(args):
 
             source_len = len(tokenized_result['input_ids'])
             prompt_with_response = prompt_no_resp + " " + data_point["output"]
-            # if "llama" in args.model_type:
             prompt_with_response += " " + tokenizer.eos_token
             if "chatglm" in args.model_type:
                 tokenized_with_response = completion_tokenize(prompt_with_response)
@@ -351,7 +351,7 @@ def train(args):
     wandb.init(
         project = "Alpaca-CoT",
         config = args,
-        name = f"{model_name}_{data_name}_{lr_str}"
+        name = f"{model_name}_{data_name}_{lr_str}_{args.peft_type}"
     )
 
 
@@ -402,7 +402,7 @@ def train(args):
             load_best_model_at_end=True if args.val_set_size > 0 else False,
             ddp_find_unused_parameters=False if ddp else None,
         ),
-        data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, return_tensors="pt", padding=True),
+        data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, return_tensors="pt", padding=True) if args.model_type not in ["chatglm"] else ChatGLMCollator(tokenizer),
         callbacks=[SavePeftModelCallback],
     )
     model.config.use_cache = False
