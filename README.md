@@ -186,14 +186,14 @@ output为：
 | 表格问答 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_train_data.json)(148,475)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TQA_test_data.json)(26,674)  |     2023-0508  |  
 | 表格事实验证 | [训练集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_train_data.json)(123,774)  [测试集](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/resolve/main/Tabular-LLM-Data/all-data/TFV_test_data.json)(14,639)    |       2023-0508  |     
 
-**不同模型的权重**： 
+**基于不同数据进行微调得到的LoRA权重**：[huggingface地址](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Model)
 
-下载训练自各种类型instruction数据的LoRA权重，然后，在`generate.py`中将`LoRA_Weights`设置成下载路径，即可直接运行模型的inference以查看模型效果，更详细的模型训练与测试指南见[Alpaca-CoT](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)项目。
+下载基于不同数据进行微调得到的LoRA权重，然后，在`generate.py`中将`LoRA_Weights`设置成下载路径，即可直接运行模型的inference以查看模型效果，更详细的模型训练与测试指南见[Alpaca-CoT](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/CN_README.md)项目。
 
 | 模型 | 描述 | 链接 | 
 | --- | --- | --- |
-| saved-bloomz-7b-mt_TQA  | 在TQA数据上采用LoRA方式微调bloomz-7b-mt得到的LoRA权重，训练时将instruction和input拼接作为输入 |     |
-| saved-llama-7b-hf_TQA  | 在TQA数据上采用LoRA方式微调llama-7b-hf得到的LoRA权重，训练时将instruction和input拼接作为输入 |     |
+| saved-bloomz-7b-mt_TQA  | 在TQA数据上采用LoRA方式微调bloomz-7b-mt得到的LoRA权重，训练时将instruction和input拼接作为输入 | [LoRA权重](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Model/saved-bloomz-7b-mt_TQA)    |
+| saved-llama-7b-hf_TQA  | 在TQA数据上采用LoRA方式微调llama-7b-hf得到的LoRA权重，训练时将instruction和input拼接作为输入 | [LoRA权重](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main/Tabular-LLM-Model/saved-llama-7b-hf_TQA)    |
 
 
 ### 4.2 表格问答
