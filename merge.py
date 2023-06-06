@@ -49,6 +49,8 @@ if lora_type == 'q_v_proj':
     else:
         model.save_pretrained(args.merged_dir)
 elif lora_type == 'query_key_value':
-    print("query_key_value type merge is building")
+    lora_model = lora_model.merge_and_unload()
+    lora_model.train(False)
+    model.save_pretrained(args.merged_dir)
 else:
     print("lora info error! check path")
