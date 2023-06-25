@@ -1,0 +1,7 @@
+[
+    {
+        "question": "请你写出一个可以生成五个不同随机数的 Python 程序。",
+        "std_answer": "要生成五个不同的随机数，可以使用 Python 的 random 模块中的 randint() 函数生成随机整数，然后检查是否重复，直到有五个不同的数为止。\n下面是一个可以生成五个不同随机数的 Python 程序：\n```python\nimport random\n# 定义一个空列表，用于存放随机数\nnums = []\n# 循环生成随机数，直到有五个不同的数\nwhile len(nums) < 5:\n    a = random.randint(1, 10)\n    if a not in nums:\n        nums.append(a)\n# 输出生成的随机数\nprint(nums)\n```\n程序生成的随机数在 1 到 10 之间，输出类似于这样：\n```\n[3, 2, 8, 10, 9]\n```\n这个程序首先导入了 random 模块，然后定义了一个空列表 nums。程序使用 while 循环，每次生成一个新的随机数 a，然后检查它是否已经存在于 nums 中。如果不存在，就把 a 加入到 nums 中。\n循环结束后，列表 nums 中就包含了五个不同的随机数。程序使用 print() 函数将这些数输出到屏幕上。要生成五个不同的随机数，可以使用 Python 的 random 模块中的 randint() 函数生成随机整数，然后检查是否重复，直到有五个不同的数为止。",
+        "class": "code"
+    }
+]
