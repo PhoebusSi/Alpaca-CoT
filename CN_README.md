@@ -16,6 +16,7 @@
 您也可以选择加入我们的群聊(WeChat)，和更多的同好研究者们交流。目前群聊人数过多，需要好友邀请才能入群，请扫码加我为好友，拉您入群。
 
 ## News
+- 🚀6.25: 新增模型评估代码，包括belle和MMCU。
 - 🚀5.5: 新建了一个分支[`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm)来构造可以处理多种表格智能任务的大型语言模型。
 - 🚀5.4: PEFT中所有parameter-efficient方法（如P-tuning）均被集成进来，可通过超参简单设置。
 - 🚀5.4: LLM `MOSS`已被集成进来。
