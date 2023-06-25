@@ -20,6 +20,7 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 ## News
 -  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
 
+-  6.25: Add model evaluation code, including belle and MMCU.
 -  5.20: fixs bugs in model saving and add wandb support.
 -  5.15: more datasets like `GPT4Tools`, `Auto CoT`, `pCLUE` are add.
 -  🚀5.5: A new branch [`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm) is created to build a Tabular LLM. We collect instruction fine-tuning data for table-related tasks like table question answering and use them to fine-tune LLMs in this repo.
