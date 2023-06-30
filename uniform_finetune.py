@@ -428,7 +428,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--size', type=str, help='the size of llama model')
     parser.add_argument('--data', type=str, nargs="*", help='the data used for instructing tuning')
-    parser.add_argument('--local_rank', default=-1, type=int, help='node rank for distributed training')
+    parser.add_argument('--local_rank', '--local-rank', default=-1, type=int, help='node rank for distributed training') # alias required for PyTorch 2.x
     parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'bloom', 'moss'])
     parser.add_argument('--model_name_or_path', default="decapoda-research/llama-7b-hf", type=str)
     parser.add_argument('--per_gpu_train_batch_size', default=4, type=int, help='Batch size per GPU/CPU for training.')
