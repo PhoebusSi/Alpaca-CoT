@@ -1,10 +1,11 @@
 import copy
-import json
 import logging
 from typing import List, Optional
 
 import torch
 from datasets import load_dataset
+from transformers import GenerationConfig, AutoConfig, BitsAndBytesConfig, PreTrainedModel
+
 from peft import (
     prepare_model_for_int8_training,
     LoraConfig,
@@ -12,14 +13,12 @@ from peft import (
     PeftModel,
     TaskType
 )
-from transformers import GenerationConfig, AutoConfig, BitAndBytesConfig, PreTrainedModel
-from transformers.trainer import TRAINER_STATE_NAME
 from .config import *
 from .device import get_device_map
-
 from transformers.utils.versions import require_version
 
 logging = logging.getLogger(__name__)
+
 
 def generate_prompt(data_point):
     prompt_ = PROMPT_DICT['prompt_input'] if data_point["input"] else PROMPT_DICT['prompt_no_input']
@@ -180,17 +179,27 @@ def get_predict_data(args):
 
 
 def get_fine_tuned_model(args):
-    def _get_model_class(llm_type, model_path):
-        if llm_type not in AVAILABLE_MODEL:
-            llm_type = "Auto"
-            return MODEL_CLASSES[llm_type], model_path
-        else:
-            load_path = llm_type + "_" + model_path
-            if llm_type in ['moss']:
-                load_path = llm_type
-            return MODEL_CLASSES[llm_type], COMMON_PATH + MODEL_PATHS[load_path]
+    if (args.model_type == "baichuan"):
+        def _get_model_class(llm_type):
+            if llm_type not in AVAILABLE_MODEL:
+                llm_type = "Auto"
+            return MODEL_CLASSES[llm_type]
 
-    model_class, model_path = _get_model_class(args.model_type, args.size)
+        model_path = args.model_path
+        model_class = _get_model_class(args.model_type)
+    else:
+        def _get_model_class(llm_type, model_path):
+            if llm_type not in AVAILABLE_MODEL:
+                llm_type = "Auto"
+                return MODEL_CLASSES[llm_type], model_path
+            else:
+                load_path = llm_type + "_" + model_path
+                if llm_type in ['moss']:
+                    load_path = llm_type
+                return MODEL_CLASSES[llm_type], COMMON_PATH + MODEL_PATHS[load_path]
+
+        model_class, model_path = _get_model_class(args.model_type, args.size)
+
     if args.model_type == "chatglm":
         model = model_class.model.from_pretrained(model_path,
                                                   trust_remote_code=True,
@@ -216,15 +225,83 @@ def get_fine_tuned_model(args):
                                                   trust_remote_code=True,
                                                   load_in_8bit=False,
                                                   torch_dtype=torch.float16,
-                                                  device_map= get_device_map(model_type="moss", load_in_8bit=True))
+                                                  device_map=get_device_map(model_type="moss", load_in_8bit=True))
 
-        tokenizer = model_class.tokenizer.from_pretrained(model_path,trust_remote_code=True)
+        tokenizer = model_class.tokenizer.from_pretrained(model_path, trust_remote_code=True)
         if args.lora_dir != 'none':
             model = PeftModel.from_pretrained(
                 model,
                 args.lora_dir,
                 device_map={"": DEVICE_TYPE}
             )
+    elif args.model_type == "baichuan":
+        baichuan_config = AutoConfig.from_pretrained(model_path,
+                                                     trust_remote_code=True, )
+        tokenizer = model_class.tokenizer.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+            use_fast=False)
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token_id = 0  # set as the <unk> token
+
+        config_kwargs = {}
+        # Quantization configurations by bitsandbytes
+        if args.quantization_bit is not None:
+            if args.quantization_bit == 8:
+                require_version("bitsandbytes>=0.37.0", "To fix: pip install bitsandbytes>=0.37.0")
+                config_kwargs["load_in_8bit"] = True
+                config_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_8bit=True,
+                    llm_int8_threshold=6.0
+                )
+
+            elif args.quantization_bit == 4:
+                require_version("bitsandbytes>=0.39.0", "To fix: pip install bitsandbytes>=0.39.0")
+                require_version("transformers>=4.30.1", "To fix: pip install transformers>=4.30.1")
+                require_version("accelerate>=0.20.3", "To fix: pip install accelerate>=0.20.3")
+                require_version("peft>=0.4.0.dev0", "To fix: pip install git+https://github.com/huggingface/peft.git")
+                config_kwargs["load_in_4bit"] = True
+                config_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=None,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4"
+                )
+
+            config_kwargs["device_map"] = {"": int(os.environ.get("LOCAL_RANK", "0"))}
+            print("Quantizing model to {} bit.".format(args.quantization_bit))
+
+        # `device_map=auto` should be used for inference only
+        config_kwargs["device_map"] = "auto"
+
+        # Load and prepare pretrained models (without valuehead).
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model_name_or_path,
+            config=baichuan_config,
+            torch_dtype=torch.bfloat16 if args.compute_dtype == "bf16" else torch.float16,
+            low_cpu_mem_usage=True,
+            trust_remote_code=True,
+            **config_kwargs
+        )
+        model.generation_config = GenerationConfig.from_pretrained(args.model_name_or_path)
+
+        # Register auto class to save the custom code files.
+        if hasattr(baichuan_config, "auto_map") and "AutoConfig" in baichuan_config.auto_map:
+            baichuan_config.__class__.register_for_auto_class()
+        if hasattr(baichuan_config, "auto_map") and "AutoTokenizer" in baichuan_config.auto_map:
+            tokenizer.__class__.register_for_auto_class()
+        if hasattr(baichuan_config, "auto_map") and "AutoModelForCausalLM" in baichuan_config.auto_map:
+            model.__class__.register_for_auto_class()
+
+        if args.lora_dir != "none":
+            print("loading LoRA weight")
+            model = PeftModel.from_pretrained(
+                model,
+                args.lora_dir,
+                device_map={"": DEVICE_TYPE}
+            )
+            model.requires_grad_(False)
+
     else:
         model = model_class.model.from_pretrained(model_path,
                                                   load_in_8bit=False,
@@ -238,7 +315,7 @@ def get_fine_tuned_model(args):
                 args.lora_dir,
                 device_map={"": DEVICE_TYPE}
             )
-    model.half()
+    model.half() if args.quantization_bit is None else model
     return model, tokenizer
 
 
@@ -272,7 +349,8 @@ def get_lora_model(args):
     else:
         lora_model = None
 
-    if 'q_proj' in MODEL_LORA_TARGET_MODULES[args.model_type] and 'v_proj' in MODEL_LORA_TARGET_MODULES[args.model_type]:
+    if 'q_proj' in MODEL_LORA_TARGET_MODULES[args.model_type] and 'v_proj' in MODEL_LORA_TARGET_MODULES[
+        args.model_type]:
         lora_type = 'q_v_proj'
     elif 'query_key_value' in MODEL_LORA_TARGET_MODULES[args.model_type]:
         lora_type = 'query_key_value'
@@ -289,11 +367,13 @@ def generate_service_prompt(instruction, llm, lora):
             return PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT['prompt_format_after']
     else:
         if llm in ['moss']:
-            return META_INSTRUCTION.get('moss',"") + PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT['prompt_format_after']
+            return META_INSTRUCTION.get('moss', "") + PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT[
+                'prompt_format_after']
         return PROMPT_DICT['prompt_format_before'] + instruction + PROMPT_DICT['prompt_format_after']
 
 
 def get_generation_config(llm):
+
     generation_configs = GenerationConfig(
         temperature=GENERATE_CONFIG['temperature'],
         top_p=GENERATE_CONFIG['top_p'],
@@ -320,9 +400,9 @@ def prepare_model_for_training(
         model: PreTrainedModel,
         output_embedding_layer_name: Optional[str] = "lm_head",
         use_gradient_checkpointing: Optional[bool] = True,
-        layer_norm_names: Optional[List[str]] = ["norm", "ln_f", "ln_attn", "ln_mlp"] # for LLaMA, BLOOM and Falcon settings
+        layer_norm_names: Optional[List[str]] = ["norm", "ln_f", "ln_attn", "ln_mlp"]
+        # for LLaMA, BLOOM and Falcon settings
 ) -> PreTrainedModel:
-
     for name, param in model.named_parameters():
         if param.ndim == 1 and any(layer_norm_name in name for layer_norm_name in layer_norm_names):
             param.data = param.data.to(torch.float32)
@@ -333,10 +413,11 @@ def prepare_model_for_training(
         else:
             def make_inputs_require_grad(module, input, output):
                 output.requires_grad_(True)
+
             model.get_input_embeddings().register_forward_hook(make_inputs_require_grad)
 
         model.gradient_checkpointing_enable()
-        model.config.use_cache = False # turn off when gradient checkpointing is enabled
+        model.config.use_cache = False  # turn off when gradient checkpointing is enabled
 
     if hasattr(model, output_embedding_layer_name):
         output_embedding_layer: torch.nn.Linear = getattr(model, output_embedding_layer_name)
