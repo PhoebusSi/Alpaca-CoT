@@ -11,7 +11,8 @@ from datasets import load_dataset, concatenate_datasets, DatasetDict
 from transformers import (
     LlamaForCausalLM, LlamaTokenizer,
     AutoModel, AutoTokenizer, AutoModelForCausalLM,
-    BloomForCausalLM, BloomTokenizerFast, AutoConfig)
+    BloomForCausalLM, BloomTokenizerFast, AutoConfig, BitsAndBytesConfig, )
+from transformers.utils.versions import require_version
 
 from peft import (
     prepare_model_for_int8_training,
@@ -25,6 +26,7 @@ from peft import (
 from utils.device import get_device_map
 from utils.input import ChatGLMCollator
 from utils.save import SavePeftModelCallback
+from utils.tools import prepare_model_for_training
 
 device_map = "auto"
 world_size = int(os.environ.get("WORLD_SIZE", 1))
@@ -158,53 +160,56 @@ def get_data_model(args):
                                                   device_map=get_device_map(model_type="moss", load_in_8bit=True))
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, trust_remote_code=True)
     elif args.model_type in ['baichuan']:
-        baichuan_config = AutoConfig.from_pretrained(args.model_name_or_path,
-                                                     trust_remote_code=True, )
-        model = model_class.model.from_pretrained(
-            args.model_name_or_path,
-            torch_dtype=torch.float16,
-            low_cpu_mem_usage=True,
-            device_map=device_map,
-            load_in_8bit=True,
-            config=baichuan_config,
-            trust_remote_code=True,
-        )
-        # casting type
-        casting_type = False
-        if (casting_type):
-            for name, param in model.named_parameters():
-                if param.ndim == 1 and any(
-                        layer_norm_name in name for layer_norm_name in ["norm", "ln_f", "ln_attn", "ln_mlp"]):
-                    param.data = param.data.to(torch.float32)
-            output_embedding_layer_name = "lm_head"
-            if hasattr(model, output_embedding_layer_name):
-                output_embedding_layer: torch.nn.Linear = getattr(model, output_embedding_layer_name)
-                input_dtype = output_embedding_layer.weight.dtype
-
-                class CastOutputToFloat(torch.nn.Sequential):
-
-                    def forward(self, x: torch.Tensor) -> torch.Tensor:
-                        return super().forward(x.to(input_dtype)).to(torch.float32)
-
-                setattr(model, output_embedding_layer_name, CastOutputToFloat(output_embedding_layer))
-
-        # prepare for gradient_accumulation
-        if args.gradient_accumulation_steps > 1:
-            if hasattr(model, "enable_input_require_grads"):
-                model.enable_input_require_grads()
-            else:
-                def make_inputs_require_grad(module, input, output):
-                    output.requires_grad_(True)
-
-                model.get_input_embeddings().register_forward_hook(make_inputs_require_grad)
-
-            model.gradient_checkpointing_enable()
-            model.config.use_cache = False  # turn off when gradient checkpointing is enabled
-
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path,
                                                           trust_remote_code=True,
                                                           use_fast=False)
+        baichuan_config = AutoConfig.from_pretrained(args.model_name_or_path,
+                                                     trust_remote_code=True, )
+        config_kwargs = {}
+        # Quantization configurations by bitsandbytes
+        if args.quantization_bit is not None:
+            if args.quantization_bit == 8:
+                require_version("bitsandbytes>=0.37.0", "To fix: pip install bitsandbytes>=0.37.0")
+                config_kwargs["load_in_8bit"] = True
+                config_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_8bit=True,
+                    llm_int8_threshold=6.0
+                )
 
+            elif args.quantization_bit == 4:
+                require_version("bitsandbytes>=0.39.0", "To fix: pip install bitsandbytes>=0.39.0")
+                require_version("transformers>=4.30.1", "To fix: pip install transformers>=4.30.1")
+                require_version("accelerate>=0.20.3", "To fix: pip install accelerate>=0.20.3")
+                require_version("peft>=0.4.0.dev0", "To fix: pip install git+https://github.com/huggingface/peft.git")
+                config_kwargs["load_in_4bit"] = True
+                config_kwargs["quantization_config"] = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=args.compute_dtype,
+                    bnb_4bit_use_double_quant=args.double_quantization,
+                    bnb_4bit_quant_type=args.quantization_type
+                )
+
+            config_kwargs["device_map"] = {"": int(os.environ.get("LOCAL_RANK", "0"))}
+            print("Quantizing model to {} bit.".format(args.quantization_bit))
+
+        # Load and prepare pretrained models (without valuehead).
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model_name_or_path,
+            config=baichuan_config,
+            torch_dtype=torch.bfloat16 if args.compute_dtype == "bf16" else torch.float16,
+            low_cpu_mem_usage=True,
+            trust_remote_code=True,
+            **config_kwargs
+        )
+
+        # Register auto class to save the custom code files.
+        if hasattr(baichuan_config, "auto_map") and "AutoConfig" in baichuan_config.auto_map:
+            baichuan_config.__class__.register_for_auto_class()
+        if hasattr(baichuan_config, "auto_map") and "AutoTokenizer" in baichuan_config.auto_map:
+            tokenizer.__class__.register_for_auto_class()
+        if hasattr(baichuan_config, "auto_map") and "AutoModelForCausalLM" in baichuan_config.auto_map:
+            model.__class__.register_for_auto_class()
+        model = prepare_model_for_training(model)
     else:
         model = model_class.model.from_pretrained(args.model_name_or_path,
                                                   load_in_8bit=True,
@@ -217,8 +222,8 @@ def get_data_model(args):
         tokenizer.pad_token_id = 0  # unk_id in llama. we want this to be different from the eos token
     if args.model_type in ['baichuan'] and tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = 0  # set as the <unk> token
-
-    model = prepare_model_for_int8_training(model)
+    if args.model_type not in ['baichuan']:
+        model = prepare_model_for_int8_training(model)
 
     if args.peft_type == 'lora':
         config = peft_class(
@@ -454,7 +459,8 @@ def train(args):
             warmup_steps=warmup_steps,
             num_train_epochs=args.epochs,
             learning_rate=args.learning_rate,
-            fp16=True,
+            fp16=True if args.compute_dtype == "fp16" else False,
+            bf16=True if args.compute_dtype == "bf16" else False,
             logging_steps=20,
             evaluation_strategy="steps" if args.val_set_size > 0 else "no",
             save_strategy="steps",
@@ -525,6 +531,8 @@ if __name__ == "__main__":
                         help='resume from the specified or the latest checkpoint, e.g. `--resume_from_checkpoint [path]` or `--resume_from_checkpoint`')
     parser.add_argument('--report_to', type=str, default="wandb",
                         help='The list/str of integrations to report the results and logs to')
+    parser.add_argument('--quantization_bit', default=None, type=int, help="The number of bits to quantize the model.")
+    parser.add_argument('--compute_dtype', default="fp16", type=str)
 
     args, _ = parser.parse_known_args()
     print(args)

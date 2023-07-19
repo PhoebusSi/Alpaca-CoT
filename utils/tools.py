@@ -1,4 +1,8 @@
 import copy
+import json
+import logging
+from typing import List, Optional
+
 import torch
 from datasets import load_dataset
 from peft import (
@@ -8,11 +12,14 @@ from peft import (
     PeftModel,
     TaskType
 )
-from transformers import GenerationConfig
+from transformers import GenerationConfig, AutoConfig, BitAndBytesConfig, PreTrainedModel
+from transformers.trainer import TRAINER_STATE_NAME
 from .config import *
 from .device import get_device_map
 
+from transformers.utils.versions import require_version
 
+logging = logging.getLogger(__name__)
 
 def generate_prompt(data_point):
     prompt_ = PROMPT_DICT['prompt_input'] if data_point["input"] else PROMPT_DICT['prompt_no_input']
@@ -309,3 +316,37 @@ def generate_service_output(output, prompt, llm, lora):
         return output.split("### Response:")[1].strip()
 
 
+def prepare_model_for_training(
+        model: PreTrainedModel,
+        output_embedding_layer_name: Optional[str] = "lm_head",
+        use_gradient_checkpointing: Optional[bool] = True,
+        layer_norm_names: Optional[List[str]] = ["norm", "ln_f", "ln_attn", "ln_mlp"] # for LLaMA, BLOOM and Falcon settings
+) -> PreTrainedModel:
+
+    for name, param in model.named_parameters():
+        if param.ndim == 1 and any(layer_norm_name in name for layer_norm_name in layer_norm_names):
+            param.data = param.data.to(torch.float32)
+
+    if use_gradient_checkpointing:
+        if hasattr(model, "enable_input_require_grads"):
+            model.enable_input_require_grads()
+        else:
+            def make_inputs_require_grad(module, input, output):
+                output.requires_grad_(True)
+            model.get_input_embeddings().register_forward_hook(make_inputs_require_grad)
+
+        model.gradient_checkpointing_enable()
+        model.config.use_cache = False # turn off when gradient checkpointing is enabled
+
+    if hasattr(model, output_embedding_layer_name):
+        output_embedding_layer: torch.nn.Linear = getattr(model, output_embedding_layer_name)
+        input_dtype = output_embedding_layer.weight.dtype
+
+        class CastOutputToFloat(torch.nn.Sequential):
+
+            def forward(self, x: torch.Tensor) -> torch.Tensor:
+                return super().forward(x.to(input_dtype)).to(torch.float32)
+
+        setattr(model, output_embedding_layer_name, CastOutputToFloat(output_embedding_layer))
+
+    return model
