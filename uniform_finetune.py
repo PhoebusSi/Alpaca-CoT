@@ -11,7 +11,7 @@ from datasets import load_dataset, concatenate_datasets, DatasetDict
 from transformers import (
     LlamaForCausalLM, LlamaTokenizer,
     AutoModel, AutoTokenizer, AutoModelForCausalLM,
-    BloomForCausalLM, BloomTokenizerFast, AutoConfig, BitsAndBytesConfig, )
+    BloomForCausalLM, BloomTokenizerFast, AutoConfig, BitsAndBytesConfig, GenerationConfig)
 from transformers.utils.versions import require_version
 
 from peft import (
@@ -184,9 +184,9 @@ def get_data_model(args):
                 config_kwargs["load_in_4bit"] = True
                 config_kwargs["quantization_config"] = BitsAndBytesConfig(
                     load_in_4bit=True,
-                    bnb_4bit_compute_dtype=args.compute_dtype,
-                    bnb_4bit_use_double_quant=args.double_quantization,
-                    bnb_4bit_quant_type=args.quantization_type
+                    bnb_4bit_compute_dtype=None,
+                    bnb_4bit_use_double_quant=True,
+                    bnb_4bit_quant_type="nf4"
                 )
 
             config_kwargs["device_map"] = {"": int(os.environ.get("LOCAL_RANK", "0"))}
@@ -201,6 +201,7 @@ def get_data_model(args):
             trust_remote_code=True,
             **config_kwargs
         )
+        model.generation_config = GenerationConfig.from_pretrained(args.model_name_or_path)
 
         # Register auto class to save the custom code files.
         if hasattr(baichuan_config, "auto_map") and "AutoConfig" in baichuan_config.auto_map:
@@ -410,10 +411,15 @@ def train(args):
 
             return tokenized_with_response
 
-    model_name = args.model_name_or_path.split('/')[-1]
-    data_name = "+".join([d.split("/")[-1].strip(".json") for d in args.data])
-    lr_str = str(args.learning_rate)
-    output_dir = f"saved_models/{model_name}_{data_name}_{lr_str}/{args.peft_type}"
+    if args.output_dir == "none":
+        model_name = args.model_name_or_path.split('/')[-1]
+        data_name = "+".join([d.split("/")[-1].strip(".json") for d in args.data])
+        lr_str = str(args.learning_rate)
+        output_dir = f"saved_models/{model_name}_{data_name}_{lr_str}/{args.peft_type}"
+        logging_name = f"{model_name}_{data_name}_{lr_str}_{args.peft_type}"
+    else:
+        output_dir = args.output_dir
+        logging_name = f"{output_dir}_{args.peft_type}"
 
     # control logging
     if args.report_to == "wandb":
@@ -421,7 +427,7 @@ def train(args):
         wandb.init(
             project="Alpaca-CoT",
             config=args,
-            name=f"{model_name}_{data_name}_{lr_str}_{args.peft_type}"
+            name=logging_name
         )
 
     # 2. split dataset
@@ -533,8 +539,12 @@ if __name__ == "__main__":
                         help='The list/str of integrations to report the results and logs to')
     parser.add_argument('--quantization_bit', default=None, type=int, help="The number of bits to quantize the model.")
     parser.add_argument('--compute_dtype', default="fp16", type=str)
+    parser.add_argument('--output_dir', default="none", type=str)
+
 
     args, _ = parser.parse_known_args()
-    print(args)
+    # print arguments
+    for k, v in sorted(vars(args).items()):
+        print(k, '=', v)
 
     train(args)
