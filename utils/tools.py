@@ -276,14 +276,14 @@ def get_fine_tuned_model(args):
 
         # Load and prepare pretrained models (without valuehead).
         model = AutoModelForCausalLM.from_pretrained(
-            args.model_name_or_path,
+            model_path,
             config=baichuan_config,
             torch_dtype=torch.bfloat16 if args.compute_dtype == "bf16" else torch.float16,
             low_cpu_mem_usage=True,
             trust_remote_code=True,
             **config_kwargs
         )
-        model.generation_config = GenerationConfig.from_pretrained(args.model_name_or_path)
+        model.generation_config = GenerationConfig.from_pretrained(model_path)
 
         # Register auto class to save the custom code files.
         if hasattr(baichuan_config, "auto_map") and "AutoConfig" in baichuan_config.auto_map:
@@ -315,7 +315,7 @@ def get_fine_tuned_model(args):
                 args.lora_dir,
                 device_map={"": DEVICE_TYPE}
             )
-    model.half() if args.quantization_bit is None else model
+    model = model.half() if args.quantization_bit is None else model
     return model, tokenizer
 
 
