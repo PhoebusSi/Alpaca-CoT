@@ -40,11 +40,14 @@ _MODEL_CLASSES = {
     "llama": ModelClass(**{
         "tokenizer": LlamaTokenizer,
         "model": LlamaForCausalLM,
-
     }),
     "chatglm": ModelClass(**{
-        "tokenizer": AutoTokenizer,  # ChatGLMTokenizer,
-        "model": AutoModel,  # ChatGLMForConditionalGeneration,
+        "tokenizer": AutoTokenizer,
+        "model": AutoModel,
+    }),
+    "chatglm2": ModelClass(**{
+        "tokenizer": AutoTokenizer,
+        "model": AutoModel,
     }),
     "bloom": ModelClass(**{
         "tokenizer": BloomTokenizerFast,
@@ -123,7 +126,7 @@ def generate_prompt(data_point):
 def get_data_model(args):
     def get_model_class(model_type):
 
-        if model_type not in ['bloom', 'llama', 'chatglm', 'moss', 'baichuan']:
+        if model_type not in ['bloom', 'llama', 'chatglm', 'chatglm2', 'moss', 'baichuan']:
             model_type = "Auto"
 
         return _MODEL_CLASSES[model_type]  # tokenizer, model
@@ -146,25 +149,17 @@ def get_data_model(args):
     model_class = get_model_class(args.model_type)
     peft_class = get_peft_class(args.peft_type)
 
-    if args.model_type in ["chatglm"]:
+    if args.model_type in ["chatglm", "chatglm2"]:
         # chatglm can not set load_in_8bit=True: ChatGLMForConditionalGeneration does not support gradient checkpointing.
-        model = model_class.model.from_pretrained(args.model_name_or_path,
-                                                  trust_remote_code=True,
-                                                  device_map=device_map)
-        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path,
-                                                          trust_remote_code=True)  # default add_eos_token=False
+        model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, local_files_only=True, device_map=device_map)
+        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, local_files_only=True, trust_remote_code=True,  add_bos_token=True)  
+        # default add_eos_token=False, trust_remote_code=True)  
     elif args.model_type in ["moss"]:
-        model = model_class.model.from_pretrained(args.model_name_or_path,
-                                                  trust_remote_code=True,
-                                                  load_in_8bit=True,
-                                                  device_map=get_device_map(model_type="moss", load_in_8bit=True))
+        model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, load_in_8bit=True, device_map=get_device_map(model_type="moss", load_in_8bit=True))
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, trust_remote_code=True)
     elif args.model_type in ['baichuan']:
-        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path,
-                                                          trust_remote_code=True,
-                                                          use_fast=False)
-        baichuan_config = AutoConfig.from_pretrained(args.model_name_or_path,
-                                                     trust_remote_code=True, )
+        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, trust_remote_code=True, use_fast=False)
+        baichuan_config = AutoConfig.from_pretrained(args.model_name_or_path, trust_remote_code=True, )
         config_kwargs = {}
         # Quantization configurations by bitsandbytes
         if args.quantization_bit is not None:
@@ -289,7 +284,6 @@ def train(args):
             input_ids = tokenizer.encode(prompt,
                                          truncation=True,
                                          max_length=args.cutoff_len,
-                                         #    padding="max_length",
                                          padding=False,
                                          )
             return {
@@ -298,19 +292,17 @@ def train(args):
             }
 
         def completion_tokenize(completion):
-            input_ids = tokenizer.encode(completion, max_length=args.cutoff_len)  # , add_special_tokens=False)
+            input_ids = tokenizer.encode(completion,
+                                         max_length=args.cutoff_len, 
+                                         add_special_tokens=False,
+                                         )
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids)
             }
     elif "moss" in args.model_type:
         def tokenize(prompt):
-            result = tokenizer(
-                prompt,
-                truncation=True,
-                max_length=args.cutoff_len,
-                # padding="max_length",
-            )
+            result = tokenizer(prompt, truncation=True, max_length=args.cutoff_len, )
             return {
                 "input_ids": result["input_ids"],
                 "labels": copy.deepcopy(result["input_ids"]),
@@ -318,24 +310,14 @@ def train(args):
             }
     elif 'baichuan' in args.model_type:
         def tokenize(prompt):
-            input_ids = tokenizer.encode(
-                text=prompt,
-                truncation=True,
-                max_length=args.cutoff_len,
-                add_special_tokens=True,
-            )
+            input_ids = tokenizer.encode(text=prompt, truncation=True, max_length=args.cutoff_len, add_special_tokens=True, )
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids),
             }
     else:
         def tokenize(prompt):
-            result = tokenizer(prompt,
-                               truncation=True,
-                               max_length=args.cutoff_len,
-                               #    padding="max_length",
-                               padding=False,
-                               )
+            result = tokenizer(prompt, truncation=True, max_length=args.cutoff_len, padding=False,)
             return {
                 "input_ids": result["input_ids"],
                 "attention_mask": result["attention_mask"],
@@ -397,17 +379,20 @@ def train(args):
             source_len = len(tokenized_result['input_ids'])
             prompt_with_response = prompt_no_resp + " " + data_point["output"]
             prompt_with_response += " " + tokenizer.eos_token
-            if "chatglm" in args.model_type:
+
+            if "chatglm2" in args.model_type:
+                question = tokenized_result
+                answer = completion_tokenize(data_point["output"])
+                tokenized_with_response = {}
+                tokenized_with_response["input_ids"] = question['input_ids'] + answer["input_ids"] + [tokenizer.eos_token_id]
+                tokenized_with_response["labels"] = copy.deepcopy(tokenized_with_response["input_ids"])
+            elif "chatglm" in args.model_type:
                 tokenized_with_response = completion_tokenize(prompt_with_response)
-                tokenized_with_response["input_ids"] = tokenized_result['input_ids'] + tokenized_with_response[
-                                                                                           "input_ids"][
-                                                                                       source_len - 2:-2]
-                tokenized_with_response["labels"] = tokenized_result['labels'] + tokenized_with_response["labels"][
-                                                                                 source_len - 2:-2]
+                tokenized_with_response["input_ids"] = tokenized_result['input_ids'] + tokenized_with_response["input_ids"][source_len - 2:-2]
+                tokenized_with_response["labels"] = tokenized_result['labels'] + tokenized_with_response["labels"][source_len - 2:-2]
             else:
                 tokenized_with_response = tokenize(prompt_with_response)
-            tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][
-                                                                              source_len:]
+            tokenized_with_response["labels"] = [IGNORE_INDEX] * source_len + tokenized_with_response["labels"][source_len:]
 
             return tokenized_with_response
 
@@ -478,9 +463,7 @@ def train(args):
             ddp_find_unused_parameters=False if ddp else None,
             report_to=args.report_to,  # ["tensorboard", "wandb", "none"]
         ),
-        data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, return_tensors="pt",
-                                                          padding=True) if args.model_type not in [
-            "chatglm"] else ChatGLMCollator(tokenizer),
+        data_collator=transformers.DataCollatorForSeq2Seq(tokenizer, return_tensors="pt", padding=True) if args.model_type not in ["chatglm"] else ChatGLMCollator(tokenizer),
         callbacks=[SavePeftModelCallback],
     )
     model.config.use_cache = False
@@ -506,7 +489,7 @@ if __name__ == "__main__":
     parser.add_argument('--data', type=str, nargs="*", help='the data used for instructing tuning')
     parser.add_argument('--local_rank', '--local-rank', default=-1, type=int,
                         help='node rank for distributed training')  # alias required for PyTorch 2.x
-    parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'bloom', 'moss', 'baichuan'])
+    parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'chatglm2', 'bloom', 'moss', 'baichuan'])
     parser.add_argument('--model_name_or_path', default="decapoda-research/llama-7b-hf", type=str)
     parser.add_argument('--per_gpu_train_batch_size', default=4, type=int, help='Batch size per GPU/CPU for training.')
     parser.add_argument('--gradient_accumulation_steps', default=32, type=int)
