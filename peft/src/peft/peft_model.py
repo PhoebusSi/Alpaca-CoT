@@ -149,7 +149,7 @@ class PeftModel(PushToHubMixin, torch.nn.Module):
                     - A path to a directory containing a Lora configuration file saved using the `save_pretrained`
                       method (`./my_lora_config_directory/`).
         """
-        from .common import MODEL_TYPE_TO_PEFT_MODEL_MAPPING, PEFT_TYPE_TO_CONFIG_MAPPING
+        from .peft_access import MODEL_TYPE_TO_PEFT_MODEL_MAPPING, PEFT_TYPE_TO_CONFIG_MAPPING
 
         # load the config
         config = PEFT_TYPE_TO_CONFIG_MAPPING[
@@ -334,7 +334,7 @@ class PeftModel(PushToHubMixin, torch.nn.Module):
             _set_trainable(self, adapter_name)
 
     def load_adapter(self, model_id, adapter_name, is_trainable=False, **kwargs):
-        from .common import PEFT_TYPE_TO_CONFIG_MAPPING
+        from .peft_access import PEFT_TYPE_TO_CONFIG_MAPPING
 
         if adapter_name not in self.peft_config:
             # load the config

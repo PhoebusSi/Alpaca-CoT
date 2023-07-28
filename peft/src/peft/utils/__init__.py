@@ -19,6 +19,7 @@
 
 from .config import PeftConfig, PeftType, PromptLearningConfig, TaskType
 from .other import (
+    is_bnb_available,
     _set_trainable,
     bloom_model_postprocess_past_key_value,
     prepare_model_for_int8_training,

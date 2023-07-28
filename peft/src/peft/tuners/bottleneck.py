@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..utils import PeftConfig, PeftType, transpose
+from ..utils import PeftConfig, PeftType, transpose, is_bnb_available
 from transformers.activations import ACT2FN
 
 
@@ -22,10 +22,6 @@ TRANSFORMERS_MODELS_TO_ADAPTER_TYPE_MAPPING = {
     # "opt": {"fc1":"mh_adapter", "fc2":"output_adapter"},
     "chatglm": {"dense_h_to_4h": "mh_adapter", "dense_4h_to_h": "output_adapter"},
 }
-
-def is_bnb_available():
-    return importlib.util.find_spec("bitsandbytes") is not None
-
 
 if is_bnb_available():
     import bitsandbytes as bnb

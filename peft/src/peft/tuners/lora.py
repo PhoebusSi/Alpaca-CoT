@@ -24,7 +24,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers.pytorch_utils import Conv1D
 
-from ..import_utils import is_bnb_available
 from ..utils import (
     TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING,
     ModulesToSaveWrapper,
@@ -33,6 +32,7 @@ from ..utils import (
     _freeze_adapter,
     _get_submodules,
     transpose,
+    is_bnb_available
 )
 
 
