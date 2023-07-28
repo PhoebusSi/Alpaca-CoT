@@ -19,11 +19,6 @@
 
 from .config import PeftConfig, PeftType, PromptLearningConfig, TaskType
 from .other import (
-    TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING,
-    TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING,
-    TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING,
-    CONFIG_NAME,
-    WEIGHTS_NAME,
     _set_trainable,
     bloom_model_postprocess_past_key_value,
     prepare_model_for_int8_training,
@@ -32,6 +27,16 @@ from .other import (
     _get_submodules,
     _set_adapter,
     _freeze_adapter,
-    ModulesToSaveWrapper,
+    ModulesToSaveWrapper
+)
+from .mapping import (
+    TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING,
+    TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING,
+    CONFIG_NAME,
+    WEIGHTS_NAME
 )
 from .save_and_load import get_peft_model_state_dict, set_peft_model_state_dict
