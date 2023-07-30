@@ -69,6 +69,15 @@ TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING = {
     "chatglm": ["query_key_value"],
 }
 
+TRANSFORMERS_MODELS_TO_ADAPTER_TYPE_MAPPING = {
+    "bloom": {"dense_h_to_4h": "mh_adapter", "dense_4h_to_h": "output_adapter"},
+    # "gptj": {"fc_in":"mh_adapter", "fc_out":"output_adapter"},
+    # "gpt_neo": {"c_fc":"mh_adapter", "c_proj":"output_adapter"},
+    "llama": {"gate_proj": "mh_adapter", "up_proj":"mh_adapter", "down_proj":"output_adapter"},
+    # "opt": {"fc1":"mh_adapter", "fc2":"output_adapter"},
+    "chatglm": {"dense_h_to_4h": "mh_adapter", "dense_4h_to_h": "output_adapter"},
+}
+
 TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING = {
     "bloom": bloom_model_postprocess_past_key_value,
 }
