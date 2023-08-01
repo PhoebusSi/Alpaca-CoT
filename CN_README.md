@@ -486,6 +486,7 @@ ___实验结果：___
 ## 6. Quantitative Analysis
 <details><summary>注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。</summary>
 <p>
+    
 ![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
 当前的instruction-finetuning数据集合主要包含以下三个部分：
 - `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
