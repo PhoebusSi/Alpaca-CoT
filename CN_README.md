@@ -274,9 +274,9 @@ python3 web.py --model_type chatglm --lora_dir xxx
 ```
 
 
-## 5. 中文LLMs实验结果
+region {## 5. 中文LLMs实验结果
 注: 以下实验结果均来自于 ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.
-
+}
 ### 评测基准（Benchmarks）
 我们选择了两个评估基准，Belle-eval和MMCU，来全面评估LLM中文能力。
 
