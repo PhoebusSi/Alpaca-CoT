@@ -282,7 +282,9 @@ python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 ```
 
 ## Experimental Results of Open Chinese LLMs (As of June 25th)
-Note: The following experimental results are all obtained from ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.
+<details><summary>Note: The following experimental results are all obtained from ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.</summary>
+<p>
+
 ### Benchmarks
 This paper selects two evaluation benchmarks, Belle-eval and MMCU, to comprehensively evaluate LLM competencies in Chinese.
 
@@ -480,9 +482,14 @@ Figure 5 compares the results of instruction-tuning with and without human-value
 
 ___Experimental Results:___ The human-value alignment results in a slight performance drop. How to balance the harmlessness and performance of LLMs is a research direction worth exploring in the future.
 
-## Quantitative Analysis
 
-Note: The following figure shows the statistics of the dataset collected as of March 26, which is only displayed as a motivation of data collection. More datasets have been collected, such as financial related instruction datasets.
+</p>
+</details> 
+
+## Quantitative Analysis
+<details><summary>Note: The following figure shows the statistics of the dataset collected as of March 26, which is only displayed as a motivation of data collection. More datasets have been collected, such as financial related instruction datasets.</summary>
+<p>
+
 ![data collection statistics](./figures/piechart.png)
 The current collection of instruction-finetuning datasets consists mainly of three parts:
 - `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
@@ -543,7 +550,8 @@ From the above table, several observations can be found:
 From the above table, we find that:
 - Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English intructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.
 
-
+</p>
+</details> 
 
 
 
