@@ -281,7 +281,7 @@ python3 predict.py --model_type chatglm --size 6b --data for_dict_data --lora_di
 python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 ```
 
-## Experimental Results of Open Chinese LLMs (As of June 25th)
+## Empirical Study of Instruction-tuning Open LLMs in Chinese (As of June 25th)
 <details><summary>Note: The following experimental results are all obtained from ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.</summary>
 <p>
 
@@ -304,22 +304,19 @@ Three Main Factors: LLM bases, Parameter-efficient Methods, Chinese Instruction 
 #### LLM Bases
 For open LLMs, we test existing LLMs and LLMs fine-tuned with LoRA on Alpaca-GPT4 on Belle-eval and MMCU, respectively.
 
-<p align="center">
+
+
+
+___Experimental Results:___
+
+1. Evaluation of Existing LLMs
+
+   <p align="center">
     <img src="./figures/chinesellms-llms1.png" width="80%">
     <img src="./figures/chinesellms-llms2.png" width="40%">
 </p>
 
 Table 2 shows the scores of open LLMs on Belle-eval. Table 3 shows the accuracy of LLMs on MMCU. They fine-tune all the open LLMs with the same parameter-efficient method LoRA and the same instruction dataset Alpaca-GPT4. 
-
-<p align="center">
-    <img src="./figures/chinesellms-llms3.png" width="40%">
-</p>
-
-The performance results are shown in Figure 1.
-
-___Experimental Results:___
-
-1. Evaluation of Existing LLMs
 
     ___Performance on Belle-eval___
 
@@ -341,7 +338,16 @@ ___Experimental Results:___
 
     (3) Among the four disciplines, law is the most challenging for LLMs.
 
-2. Instruction-tuning Different LLMs
+
+
+3. Instruction-tuning Different LLMs
+
+   <p align="center">
+    <img src="./figures/chinesellms-llms3.png" width="40%">
+</p>
+
+The performance results of LLMs after instruction-tuning on Alpaca-GPT4-zh are shown in Figure 1.
+
 
     (1) On Belle-eval, the performance improvement of sft LLMs brought by instruction-tuning is not as significant as that of base LLMs, except for sft Bloomz and Bloomz-mt.
 
