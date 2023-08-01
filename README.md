@@ -305,18 +305,16 @@ Three Main Factors: LLM bases, Parameter-efficient Methods, Chinese Instruction 
 For open LLMs, we test existing LLMs and LLMs fine-tuned with LoRA on Alpaca-GPT4 on Belle-eval and MMCU, respectively.
 
 
-
-
-___Experimental Results:___
-
-1. Evaluation of Existing LLMs
-
    <p align="center">
     <img src="./figures/chinesellms-llms1.png" width="80%">
     <img src="./figures/chinesellms-llms2.png" width="40%">
 </p>
 
 Table 2 shows the scores of open LLMs on Belle-eval. Table 3 shows the accuracy of LLMs on MMCU. They fine-tune all the open LLMs with the same parameter-efficient method LoRA and the same instruction dataset Alpaca-GPT4. 
+
+___Experimental Results:___
+1. Evaluation of Existing LLMs
+
 
     ___Performance on Belle-eval___
 
@@ -340,13 +338,14 @@ Table 2 shows the scores of open LLMs on Belle-eval. Table 3 shows the accuracy 
 
 
 
-3. Instruction-tuning Different LLMs
-
    <p align="center">
     <img src="./figures/chinesellms-llms3.png" width="40%">
 </p>
 
 The performance results of LLMs after instruction-tuning on Alpaca-GPT4-zh are shown in Figure 1.
+
+2. Instruction-tuning Different LLMs
+
 
 
     (1) On Belle-eval, the performance improvement of sft LLMs brought by instruction-tuning is not as significant as that of base LLMs, except for sft Bloomz and Bloomz-mt.
