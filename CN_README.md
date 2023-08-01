@@ -274,9 +274,11 @@ python3 web.py --model_type chatglm --lora_dir xxx
 ```
 
 
-region {## 5. 中文LLMs实验结果
+<details><summary>## 5. 中文LLMs实验结果</summary>
+<p>
+## 5. 中文LLMs实验结果
 注: 以下实验结果均来自于 ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.
-}
+
 ### 评测基准（Benchmarks）
 我们选择了两个评估基准，Belle-eval和MMCU，来全面评估LLM中文能力。
 
@@ -289,7 +291,8 @@ MMCU是医学、法律、心理学和教育（如高考）四个专业学科的�
 </p>
 
 Belle-eval和MMCU的统计数据展示于上表。
-
+</p>
+</details> 
 ### 主要因素
 三个主要因素：基座模型（LLM Bases），参数高效方法（Parameter-efficient Methods），中文指令数据集（Chinese Instruction Datasets）。
 
