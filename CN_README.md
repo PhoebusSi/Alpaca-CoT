@@ -273,7 +273,7 @@ python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --re
 python3 web.py --model_type chatglm --lora_dir xxx
 ```
 
-## 5. 中文LLMs实验结果
+## 5. 中文指令微调的Empirical Study
 <details><summary>注: 以下实验结果均来自于 ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.</summary>
 <p>
 
