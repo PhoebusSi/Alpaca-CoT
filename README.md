@@ -20,6 +20,8 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 ## News
 -  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
 
+-  7.24: LLM `ChatGLM v2` was merged.
+-  7.20: LLM `Baichuan` was merged.
 -  6.25: Add model evaluation code, including belle and MMCU.
 -  5.20: fixs bugs in model saving and add wandb support.
 -  5.15: more datasets like `GPT4Tools`, `Auto CoT`, `pCLUE` are add.
