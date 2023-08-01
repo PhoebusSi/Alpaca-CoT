@@ -281,7 +281,7 @@ python3 predict.py --model_type chatglm --size 6b --data for_dict_data --lora_di
 python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 ```
 
-## Experimental Results of Chinese LLMs
+## Experimental Results of Open Chinese LLMs (As of June 25th)
 Note: The following experimental results are all obtained from ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.
 ### Benchmarks
 This paper selects two evaluation benchmarks, Belle-eval and MMCU, to comprehensively evaluate LLM competencies in Chinese.
@@ -300,7 +300,7 @@ Data statistics of Belle-eval and MMCU are shown in the table above.
 Three Main Factors: LLM bases, Parameter-efficient Methods, Chinese Instruction Datasets.
 
 #### LLM Bases
-For open LLMs, the authors test existing LLMs and LLMs fine-tuned with LoRA on Alpaca-GPT4 on Belle-eval and MMCU, respectively.
+For open LLMs, we test existing LLMs and LLMs fine-tuned with LoRA on Alpaca-GPT4 on Belle-eval and MMCU, respectively.
 
 <p align="center">
     <img src="./figures/chinesellms-llms1.png" width="80%">
