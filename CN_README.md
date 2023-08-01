@@ -278,7 +278,7 @@ python3 web.py --model_type chatglm --lora_dir xxx
 <p>
 
 
-### 评测基准（Benchmarks）
+### 5.1 评测基准（Benchmarks）
 我们选择了两个评估基准，Belle-eval和MMCU，来全面评估LLM中文能力。
 
 Belle-eval是使用ChatGPT self-instruct构建的，它有1000条不同的指令，涉及10个类别，涵盖常见的NLP任务（如QA）和具有挑战性的任务（如代码和数学）。我们使用ChatGPT根据黄金答案对模型响应进行评分。该基准评估了指令跟随能力。
@@ -291,10 +291,10 @@ MMCU是医学、法律、心理学和教育（如高考）四个专业学科的�
 
 Belle-eval和MMCU的统计数据展示于上表。
 
-### 主要因素
+### 5.2 主要因素
 三个主要因素：基座模型（LLM Bases），参数高效方法（Parameter-efficient Methods），中文指令数据集（Chinese Instruction Datasets）。
 
-#### 基座模型（LLM Bases）
+#### 5.2.1 基座模型（LLM Bases）
 针对开源LLM，我们在Belle-eval和MMCU上分别测试了现有的LLMs和在Alpaca-GPT4上使用LoRA微调的LLMs。
 
 <p align="center">
@@ -344,7 +344,7 @@ ___实验结果：___
 
     (4) 经过指令微调后，Bloom显著改进，在两个基准测试中都表现良好。尽管ChatGLM始终击败Bloom，但在指令微调后性能下降。因此，在所有开源LLM中，Bloom最适合作为后续实验的基础模型，用于中文指令微调探索。
 
-#### 参数高效方法（Parameter-efficient Methods）
+#### 5.2.2 参数高效方法（Parameter-efficient Methods）
 针对参数高效方法，我们使用一系列参数高效方法在Alpaca-GPT4数据集上指令微调Bloom。
 
 <p align="center">
@@ -372,7 +372,7 @@ ___实验结果：___
 
     (3) 其他方法可以在训练数据上快速收敛并很好地拟合数据。
 
-#### 中文指令数据集（Chinese Instruction Datasets）
+#### 5.2.3 中文指令数据集（Chinese Instruction Datasets）
 针对中文指令数据集，我们收集了开源中文指令数据集，在这些数据集上使用LoRA微调Bloom。
 
 <p align="center">
@@ -411,10 +411,10 @@ ___实验结果：___
 
     (4) COIG-exam带来了最大的准确性提高，得益于与MMCU类似的任务格式。
 
-### 其他因素
+### 5.3 其他因素
 四个其他因素：思维链（CoT），中文词表扩充（Expansion of Chinese Vocabulary），提示语言（Language of Prompts），人类价值对齐（Human-value Alignment）。
 
-#### 思维链（CoT）
+#### 5.3.1 思维链（CoT）
 针对CoT，对在指令微调中添加CoT数据前后的性能进行了比较。
 
 ___实验设置：___
@@ -433,7 +433,7 @@ ___实验结果：___
 
 2. “Alpaca-GPT4+CoT*”的简单提示进一步提高了模型在Code和Education任务中的表现，而Math中结果略低于“Alpaca-GPT4+CoT”。
 
-#### 中文词表扩充（Expansion of Chinese Vocabulary）
+#### 5.3.2 中文词表扩充（Expansion of Chinese Vocabulary）
 针对中文词表扩充，文章对tokenizer词汇中的中文token数量对各种LLM在中文表达能力上的影响进行了实验。
 直观地说，tokenizer词汇中的中文token数量会影响LLM表达中文的能力。
 
@@ -451,7 +451,7 @@ ___实验结果：___
 
 2. 然而，与直觉相反，在MMCU上训练的“llama-voc-pre- 1”(100B)效果比“llama-voc-pre”(20B)更差。这表明，在更多数据上进行预训练不一定能使LLM在学业考试领域上得到更好的表现。
 
-#### 提示语言（Language of Prompts）
+#### 5.3.3 Prompt语种（Language of Prompts）
 
 针对提示语言，文章对指令微调对使用中文prompts的适应性进行了实验。
 
@@ -467,7 +467,7 @@ ___实验结果：___
 
 2. 对于中文能力较好的模型（如Bloom），使用英语prompts（LLMs更擅长的语言）可以更好地引导模型理解使用指令进行微调的过程。
 
-#### 人类价值对齐（Human-value Alignment）
+#### 5.3.4 人类价值对齐（Human-value Alignment）
 为避免LLMs生成有害内容，人类价值对齐十分重要。文章将由COIG构建的人类价值对齐数据集加入到指令微调中，针对其产生的影响进行实验。
 
 <p align="center">
