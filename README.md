@@ -285,7 +285,7 @@ python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 <details><summary>Note: The following experimental results are all obtained from ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.</summary>
 <p>
 
-### Benchmarks
+### 1. Benchmarks
 This paper selects two evaluation benchmarks, Belle-eval and MMCU, to comprehensively evaluate LLM competencies in Chinese.
 
 Belle-eval is constructed by self-instruct with ChatGPT, which has 1,000 diverse instructions that involve 10 categories covering common NLP tasks (e.g., QA) and challenging tasks (e.g., code and math). The authors use ChatGPT to rate the model responses based on the golden answers. This benchmark is considered to be as the assessment of AGI (instruction-following) capability.
@@ -298,10 +298,10 @@ MMCU is a collection of Chinese multiple choice questions in four professional d
 
 Data statistics of Belle-eval and MMCU are shown in the table above.
 
-### Main Factors
+### 2. Main Factors
 Three Main Factors: LLM bases, Parameter-efficient Methods, Chinese Instruction Datasets.
 
-#### LLM Bases
+#### 2.1 LLM Bases
 For open LLMs, we test existing LLMs and LLMs fine-tuned with LoRA on Alpaca-GPT4 on Belle-eval and MMCU, respectively.
 
 
@@ -356,7 +356,7 @@ The performance results of LLMs after instruction-tuning on Alpaca-GPT4-zh are s
 
     (4) After instruction-tuning, Bloom has significant improvements and performs well on both benchmarks. Although ChatGLM beats Bloom consistently, it suffers performance drop during instruction-tuning. Therefore, among all open LLMs, Bloom is most suitable as a foundation model in the subsequent experiments for Chinese instruction-tuning exploration.
 
-#### Parameter-efficient Methods
+#### 2.2 Parameter-efficient Methods
 For parameter-efficient methods other than LoRA, the paper collects a range of parameter-efficient methods to instruction-tune Bloom on the Alpaca-GPT4 dataset.
 
 <p align="center">
@@ -384,7 +384,7 @@ ___Experimental Results:___
 
     (3) The other methods can quickly converge on training data and fit it well.
 
-#### Chinese instruction Datasets
+#### 2.3 Chinese instruction Datasets
 For the impact of various types of Chinese instruction datasets, authors gather popular open Chinese instructions (as shown in Table 5) to fine-tune Bloom with LoRA.
 
 <p align="center">
@@ -423,10 +423,10 @@ ___Experimental Results:___
     
     (4) COIG-exam brings the greatest accuracy improvement, benefiting from the similar task format as MMCU.
 
-### Other Factors
+### 3. Other Factors
 Four Other Factors: CoT, Expansion of Chinese Vocabulary, Language of Prompts and Human-value Alignment
 
-#### CoT
+#### 3.1 CoT
 For CoT, authors compare the performance before and after adding CoT data during instruction-tuning.
 
 ___Experiment Settings:___
@@ -445,7 +445,7 @@ ___Experimental Results:___
 
 2. As shown in the line of "Alpaca-GPT4+CoT*", the simple sentence can further improve the performance of reasoning tasks Code and Education, while the Math performance is slightly inferior to "Alpaca-GPT4+CoT". This may require further exploring of more robust prompts.
 
-#### Expansion of Chinese Vocabulary
+#### 3.2 Expansion of Chinese Vocabulary
 For expansion of Chinese vocabulary, authors test the influence of the number of Chinese tokens in the tokenizer’s vocabulary on LLMs’ ability to express Chinese. For example, if a Chinese character is in the vocabulary, it can be represented by a single token, otherwise it may require multiple tokens to represent it.
 
 ___Experiment Settings:___ Authors mainly conduct experiments on LLaMA, which uses SentencePiece(32K vocabulary size of Chinese characters) covering fewer Chinese characters than Bloom(250K).
@@ -460,7 +460,7 @@ ___Experimental Results:___
 
 2. And counterintuitively, "llama-voc-pre-l" (100B) is inferior to "llama-voc-pre" (20B) on MMCU, which shows that pre-training on more data may not necessarily lead to higher performance for academic exams.
 
-#### Language of Prompts
+#### 3.3 Language of Prompts
 
 For the language of prompts, authors test the suitability of instruction fine-tuning for using Chinese prompts.
 
@@ -476,7 +476,7 @@ ___Experimental Results:___
 
 2. For models with good Chinese abilities (e.g., Bloom), using prompts in English (the language they are better at) can better guide the model to understand the process of fine-tuning with instructions.
 
-#### Human-value Alignment
+#### 3.4 Human-value Alignment
 To avoid LLMs generating toxic content, aligning them with human values is a crucial issue. The authors add human-value alignment data built by COIG into instruction-tuning to explore its impact. 
 
 <p align="center">
