@@ -1,45 +1,34 @@
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
-
-from collections import defaultdict
 import copy
-import json
-import os
-from os.path import exists, join, isdir
-from dataclasses import dataclass, field
-import sys
-from typing import Optional, Dict, Sequence
-import numpy as np
-from tqdm import tqdm
-import logging
 import bitsandbytes as bnb
-import pandas as pd
 import importlib
-from packaging import version
-from packaging.version import parse
+import re
+import warnings
+from dataclasses import dataclass, field
+from typing import Optional, Dict, Sequence
 
 import torch
-import transformers
-from torch.nn.utils.rnn import pad_sequence
-import argparse
-from transformers import (
-    AutoTokenizer,
-    AutoModelForCausalLM,
-    set_seed,
-    Seq2SeqTrainer,
-    BitsAndBytesConfig,
-    LlamaTokenizer
+import torch.nn as nn
+import torch.nn.functional as F
+from transformers.pytorch_utils import Conv1D
 
+from ..utils import (
+    TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING,
+    PeftType,
+    _freeze_adapter,
+    _get_submodules,
+    transpose,
+    is_bnb_available
 )
 
-from peft import (
-    prepare_model_for_kbit_training,
+from .lora import (
     LoraConfig,
-    get_peft_model,
-    PeftModel
+    LoraLayer,
+    LoraModel,
+    mark_only_lora_as_trainable,
 )
-from peft.tuners.lora import LoraLayer
-from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
+
+if is_bnb_available():
+    import bitsandbytes as bnb
 
 
 def is_ipex_available():
@@ -65,10 +54,6 @@ def is_ipex_available():
     return True
     
 
-if torch.cuda.is_available():   
-    torch.backends.cuda.matmul.allow_tf32 = True
-
-logger = logging.getLogger(__name__)
 
 IGNORE_INDEX = -100
 DEFAULT_PAD_TOKEN = "[PAD]"
@@ -405,295 +390,284 @@ ALPACA_PROMPT_DICT = {
 }
 
 
-def make_data_module(tokenizer: transformers.PreTrainedTokenizer, args) -> Dict:
+@dataclass
+class QLoraConfig(LoraConfig):
     """
-    Make dataset and collator for supervised fine-tuning.
-    Datasets are expected to have the following columns: { `input`, `output` }
+    This is the configuration class to store the configuration of a [`~peft.AdaLora`].
 
-    Available datasets to be selected with `dataset` argument:
-        - alpaca, 52002 examples
-        - alpaca cleaned, 51942 examples
-        - chip2 (OIG), 210289 examples
-        - self-instruct, 82612 examples
-        - hh-rlhf (Anthropic), 160800 examples
-        - longform, 23.7k examples
-        - oasst1 (OpenAssistant) primary message tree only, 9,846 examples
-
-    Coming soon:
-        - unnatural instructions core, 66010 examples
-        - unnatural instructions full, 240670 examples
-        - alpaca-gpt4, 52002 examples
-        - unnatural-instructions-gpt4, 9000 examples
-        - supernatural-instructions, 69624 examples (same as paper with 100 ex/task more can be used)
-        - flan (FLAN v2), up to 20M examples available
-        - vicuna
-
+    Args:
+        target_r (`int`): The target average rank of incremental matrix.
+        init_r (`int`): The initial rank for each incremental matrix.
+        tinit (`int`): The steps of initial fine-tuning warmup.
+        tfinal (`int`): The step of final fine-tuning.
+        deltaT (`int`): The time internval between two budget allocations.
+        beta1 (`float`): The hyperparameter of EMA for sensitivity smoothing.
+        beta2 (`float`): The hyperparameter of EMA for undertainty quantification.
+        orth_reg_weight (`float`): The coefficient of orthogonal regularization.
+        total_step (`int`): The total training steps that should be specified before training.
+        rank_pattern (`list`): The allocated rank for each weight matrix by RankAllocator.
     """
-    def load_data(dataset_name):
-        if dataset_name == 'alpaca':
-            return load_dataset("tatsu-lab/alpaca")
-        elif dataset_name == 'alpaca-clean':
-            return load_dataset("yahma/alpaca-cleaned")
-        elif dataset_name == 'chip2':
-            return load_dataset("laion/OIG", data_files='unified_chip2.jsonl')
-        elif dataset_name == 'self-instruct':
-            return load_dataset("yizhongw/self_instruct", name='self_instruct')
-        elif dataset_name == 'hh-rlhf':
-            return load_dataset("Anthropic/hh-rlhf")
-        elif dataset_name == 'longform':
-            return load_dataset("akoksal/LongForm")
-        elif dataset_name == 'oasst1':
-            return load_dataset("timdettmers/openassistant-guanaco")
-        elif dataset_name == 'vicuna':
-            raise NotImplementedError("Vicuna data was not released.")
-        else:
-            if os.path.exists(dataset_name):
-                try:
-                    args.dataset_format = args.dataset_format if args.dataset_format else "input-output"
-                    full_dataset = local_dataset(dataset_name)
-                    return full_dataset
-                except:
-                    raise ValueError(f"Error loading dataset from {dataset_name}")
-            else:
-                raise NotImplementedError(f"Dataset {dataset_name} not implemented yet.")
 
-    def format_dataset(dataset, dataset_format):
-        if (
-            dataset_format == 'alpaca' or dataset_format == 'alpaca-clean' or
-            (dataset_format is None and args.dataset in ['alpaca', 'alpaca-clean'])
-        ):
-            dataset = dataset.map(extract_alpaca_dataset, remove_columns=['instruction'])
-        elif dataset_format == 'chip2' or (dataset_format is None and args.dataset == 'chip2'):
-            dataset = dataset.map(lambda x: {
-                'input': x['text'].split('\n<bot>: ')[0].replace('<human>: ', ''),
-                'output': x['text'].split('\n<bot>: ')[1],
-            })
-        elif dataset_format == 'self-instruct' or (dataset_format is None and args.dataset == 'self-instruct'):
-            for old, new in [["prompt", "input"], ["completion", "output"]]:
-                dataset = dataset.rename_column(old, new)
-        elif dataset_format == 'hh-rlhf' or (dataset_format is None and args.dataset == 'hh-rlhf'):
-            dataset = dataset.map(lambda x: {
-                'input': '',
-                'output': x['chosen']
-            })
-        elif dataset_format == 'oasst1' or (dataset_format is None and args.dataset == 'oasst1'):
-            dataset = dataset.map(lambda x: {
-                'input': '',
-                'output': x['text'],
-            })
-        elif dataset_format == 'input-output':
-            # leave as is
-            pass
-        # Remove unused columns.
-        dataset = dataset.remove_columns(
-            [col for col in dataset.column_names['train'] if col not in ['input', 'output']]
-        )
-        return dataset
+    target_r: int = field(default=8, metadata={"help": "Target Lora matrix dimension."})
+    init_r: int = field(default=12, metadata={"help": "Intial Lora matrix dimension."})
+    tinit: int = field(default=0, metadata={"help": "The steps of initial warmup."})
+    tfinal: int = field(default=0, metadata={"help": "The steps of final warmup."})
+    deltaT: int = field(default=1, metadata={"help": "Step interval of rank allocation."})
+    beta1: float = field(default=0.85, metadata={"help": "Hyperparameter of EMA."})
+    beta2: float = field(default=0.85, metadata={"help": "Hyperparameter of EMA."})
+    orth_reg_weight: float = field(default=0.5, metadata={"help": "The orthogonal regularization coefficient."})
+    total_step: Optional[int] = field(default=None, metadata={"help": "The total training steps."})
+    rank_pattern: Optional[dict] = field(default=None, metadata={"help": "The saved rank pattern."})
 
-     # Load dataset.
-    dataset = load_data(args.dataset)
-    dataset = format_dataset(dataset, args.dataset_format)
+    def __post_init__(self):
+        self.peft_type = PeftType.QLORA
 
-    # Split train/eval, reduce size
-    if args.do_eval or args.do_predict:
-        if 'eval' in dataset:
-            eval_dataset = dataset['eval']
-        else:
-            print('Splitting train dataset in train and validation according to `eval_dataset_size`')
-            dataset = dataset["train"].train_test_split(
-                test_size=args.eval_dataset_size, shuffle=True, seed=42
+class QLoraModel(LoraModel):
+    """
+    Creates AdaLoRA (Adaptive LoRA) model from a pretrained transformers model. Paper:
+    https://openreview.net/pdf?id=lq62uWRJjiY
+
+    Args:
+        model ([`transformers.PreTrainedModel`]): The model to be adapted.
+        config ([`AdaLoraConfig`]): The configuration of the AdaLora model.
+
+    Returns:
+        `torch.nn.Module`: The AdaLora model.
+
+    Example::
+
+        >>> from transformers import AutoModelForSeq2SeqLM, LoraConfig >>> from peft import AdaLoraModel, AdaLoraConfig
+        >>> config = AdaLoraConfig(
+                peft_type="ADALORA", task_type="SEQ_2_SEQ_LM", r=8, lora_alpha=32, target_modules=["q", "v"],
+                lora_dropout=0.01,
             )
-            eval_dataset = dataset['test']
-        if args.max_eval_samples is not None and len(eval_dataset) > args.max_eval_samples:
-            eval_dataset = eval_dataset.select(range(args.max_eval_samples))
-        if args.group_by_length:
-            eval_dataset = eval_dataset.map(lambda x: {'length': len(x['input']) + len(x['output'])})
-    if args.do_train:
-        train_dataset = dataset['train']
-        if args.max_train_samples is not None and len(train_dataset) > args.max_train_samples:
-            train_dataset = train_dataset.select(range(args.max_train_samples))
-        if args.group_by_length:
-            train_dataset = train_dataset.map(lambda x: {'length': len(x['input']) + len(x['output'])})
+        >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base") >>> model = AdaLoraModel(config, model)
 
-    data_collator = DataCollatorForCausalLM(
-        tokenizer=tokenizer,
-        source_max_len=args.source_max_len,
-        target_max_len=args.target_max_len,
-        train_on_source=args.train_on_source,
-        predict_with_generate=args.predict_with_generate,
-    )
-    return dict(
-        train_dataset=train_dataset if args.do_train else None,
-        eval_dataset=eval_dataset if args.do_eval else None,
-        predict_dataset=eval_dataset if args.do_predict else None,
-        data_collator=data_collator
-    )
+    **Attributes**:
+        - **model** ([`transformers.PreTrainedModel`]) -- The model to be adapted.
+        - **peft_config** ([`AdaLoraConfig`]): The configuration of the AdaLora model.
+    """
 
-def get_last_checkpoint(checkpoint_dir):
-    if isdir(checkpoint_dir):
-        is_completed = exists(join(checkpoint_dir, 'completed'))
-        if is_completed: return None, True # already finished
-        max_step = 0
-        for filename in os.listdir(checkpoint_dir):
-            if isdir(join(checkpoint_dir, filename)) and filename.startswith('checkpoint'):
-                max_step = max(max_step, int(filename.replace('checkpoint-', '')))
-        if max_step == 0: return None, is_completed # training started, but no checkpoint
-        checkpoint_dir = join(checkpoint_dir, f'checkpoint-{max_step}')
-        print(f"Found a previous checkpoint at: {checkpoint_dir}")
-        return checkpoint_dir, is_completed # checkpoint found!
-    return None, False # first training
+    def __init__(self, model, config, adapter_name):
+        nn.Module.__init__(self)
+        self.model = model
+        self.peft_config = config
+        self.add_adapter(adapter_name, self.peft_config[adapter_name])
 
-def train():
-    hfparser = transformers.HfArgumentParser((
-        ModelArguments, DataArguments, TrainingArguments, GenerationArguments
-    ))
-    model_args, data_args, training_args, generation_args, extra_args = \
-        hfparser.parse_args_into_dataclasses(return_remaining_strings=True)
-    training_args.generation_config = transformers.GenerationConfig(**vars(generation_args))
-    args = argparse.Namespace(
-        **vars(model_args), **vars(data_args), **vars(training_args)
-    )
-    print(args)
-    
-    checkpoint_dir, completed_training = get_last_checkpoint(args.output_dir)
-    if completed_training:
-        print('Detected that training was already completed!')
+    def add_adapter(self, adapter_name, config=None):
+        if config is not None:
+            model_config = self.model.config.to_dict() if hasattr(self.model.config, "to_dict") else self.model.config
+            config = self._prepare_adalora_config(config, model_config)
+            self.peft_config[adapter_name] = config
+        self._find_and_replace(adapter_name)
+        if len(self.peft_config) > 1 and self.peft_config[adapter_name].bias != "none":
+            raise ValueError(
+                "AdaLoraModel supports only 1 adapter with bias. When using multiple adapters, set bias to 'none' for all adapters."
+            )
+        traininable_mode_counter = 0
+        for config in self.peft_config.values():
+            if not config.inference_mode:
+                traininable_mode_counter += 1
 
-    model, tokenizer = get_accelerate_model(args, checkpoint_dir)
+        if traininable_mode_counter > 1:
+            raise ValueError(
+                "AdaLoraModel supports only 1 trainable adapter. "
+                "When using multiple adapters, set inference_mode to True for all adapters except the one you want to train."
+            )
 
-    model.config.use_cache = False
-    print('loaded model')
-    set_seed(args.seed)
+        mark_only_lora_as_trainable(self.model, self.peft_config[adapter_name].bias)
+        if self.peft_config[adapter_name].inference_mode:
+            _freeze_adapter(self.model, adapter_name)
+        else:
+            self.trainable_adapter_name = adapter_name
+            self.rankallocator = RankAllocator(self.model, self.peft_config[adapter_name], self.trainable_adapter_name)
 
-    data_module = make_data_module(tokenizer=tokenizer, args=args)
-    
-    trainer = Seq2SeqTrainer(
-        model=model,
-        tokenizer=tokenizer,
-        args=training_args,
-        **{k:v for k,v in data_module.items() if k != 'predict_dataset'},
-    )
+    def _find_and_replace(self, adapter_name):
+        lora_config = self.peft_config[adapter_name]
+        loaded_in_8bit = getattr(self.model, "is_loaded_in_8bit", False)
+        if loaded_in_8bit and not is_bnb_available():
+            raise ImportError(
+                "To use Lora with 8-bit quantization, please install the `bitsandbytes` package. "
+                "You can install it with `pip install bitsandbytes`."
+            )
+        is_target_modules_in_base_model = False
+        kwargs = {
+            "r": lora_config.init_r,
+            "lora_alpha": lora_config.lora_alpha,
+            "lora_dropout": lora_config.lora_dropout,
+            "fan_in_fan_out": lora_config.fan_in_fan_out,
+            "init_lora_weights": lora_config.init_lora_weights,
+        }
+        key_list = [key for key, _ in self.model.named_modules()]
+        for key in key_list:
+            if isinstance(lora_config.target_modules, str):
+                target_module_found = re.fullmatch(lora_config.target_modules, key)
+            else:
+                target_module_found = any(key.endswith(target_key) for target_key in lora_config.target_modules)
+            if target_module_found:
+                if not is_target_modules_in_base_model:
+                    is_target_modules_in_base_model = True
+                parent, target, target_name = _get_submodules(self.model, key)
+                bias = target.bias is not None
+                if isinstance(target, LoraLayer):
+                    target.update_layer(
+                        adapter_name,
+                        lora_config.init_r,
+                        lora_config.lora_alpha,
+                        lora_config.lora_dropout,
+                        lora_config.init_lora_weights,
+                    )
+                else:
+                    if loaded_in_8bit and isinstance(target, bnb.nn.Linear8bitLt):
+                        kwargs.update(
+                            {
+                                "has_fp16_weights": target.state.has_fp16_weights,
+                                "memory_efficient_backward": target.state.memory_efficient_backward,
+                                "threshold": target.state.threshold,
+                                "index": target.index,
+                            }
+                        )
+                        new_module = SVDLinear8bitLt(
+                            adapter_name, target.in_features, target.out_features, bias=bias, **kwargs
+                        )
+                    else:
+                        if isinstance(target, torch.nn.Linear):
+                            in_features, out_features = target.in_features, target.out_features
+                            if kwargs["fan_in_fan_out"]:
+                                warnings.warn(
+                                    "fan_in_fan_out is set to True but the target module is `torch.nn.Linear`. "
+                                    "Setting fan_in_fan_out to False."
+                                )
+                                kwargs["fan_in_fan_out"] = lora_config.fan_in_fan_out = False
+                        elif isinstance(target, Conv1D):
+                            in_features, out_features = (
+                                target.weight.ds_shape if hasattr(target.weight, "ds_shape") else target.weight.shape
+                            )
+                            if not kwargs["fan_in_fan_out"]:
+                                warnings.warn(
+                                    "fan_in_fan_out is set to False but the target module is `Conv1D`. "
+                                    "Setting fan_in_fan_out to True."
+                                )
+                                kwargs["fan_in_fan_out"] = lora_config.fan_in_fan_out = True
+                        else:
+                            raise ValueError(
+                                f"Target module {target} is not supported. "
+                                f"Currently, only `torch.nn.Linear` and `Conv1D` are supported."
+                            )
+                        new_module = SVDLinear(adapter_name, in_features, out_features, bias=bias, **kwargs)
 
-    # Callbacks
-    if not args.full_finetune:
-        trainer.add_callback(SavePeftModelCallback)
-    if args.do_mmlu_eval:
-        if args.mmlu_dataset == 'mmlu-zs':
-            mmlu_dataset = load_dataset("json", data_files={
-                'eval': 'data/mmlu/zero_shot_mmlu_val.json',
-                'test': 'data/mmlu/zero_shot_mmlu_test.json',
-            })
-            mmlu_dataset = mmlu_dataset.remove_columns('subject')
-        # MMLU Five-shot (Eval/Test only)
-        elif args.mmlu_dataset == 'mmlu' or args.mmlu_dataset == 'mmlu-fs':
-            mmlu_dataset = load_dataset("json", data_files={
-                'eval': 'data/mmlu/five_shot_mmlu_val.json',
-                'test': 'data/mmlu/five_shot_mmlu_test.json',
-            })
-            # mmlu_dataset = mmlu_dataset.remove_columns('subject')
-        mmlu_dataset = mmlu_dataset[args.mmlu_split]
-        if args.max_mmlu_samples is not None:
-            mmlu_dataset = mmlu_dataset.select(range(args.max_mmlu_samples))
-        abcd_idx = [
-            tokenizer("A", add_special_tokens=False).input_ids[0],
-            tokenizer("B", add_special_tokens=False).input_ids[0],
-            tokenizer("C", add_special_tokens=False).input_ids[0],
-            tokenizer("D", add_special_tokens=False).input_ids[0],
-        ]
-        accuracy = evaluate.load("accuracy")
-        class MMLUEvalCallback(transformers.TrainerCallback):
-            def on_evaluate(self, args, state, control, model, **kwargs):
-                data_loader = trainer.get_eval_dataloader(mmlu_dataset)
-                source_max_len = trainer.data_collator.source_max_len
-                trainer.data_collator.source_max_len = args.mmlu_source_max_len
-                trainer.model.eval()
-                preds, refs = [], []
-                loss_mmlu = 0
-                for batch in tqdm(data_loader, total=len(data_loader)):
-                    (loss, logits, labels) = trainer.prediction_step(trainer.model,batch,prediction_loss_only=False,)
-                    # There are two tokens, the output, and eos token.
-                    for i, logit in enumerate(logits):
-                        label_non_zero_id = (batch['labels'][i] != -100).nonzero()[0][0]
-                        logit_abcd = logit[label_non_zero_id-1][abcd_idx]
-                        preds.append(torch.argmax(logit_abcd).item())
-                    labels = labels[labels != IGNORE_INDEX].view(-1, 2)[:,0]
-                    refs += [abcd_idx.index(label) for label in labels.tolist()]
-                    loss_mmlu += loss.item()
-                # Extract results by subject.
-                results = {'mmlu_loss':loss_mmlu/len(data_loader)}
-                subject = mmlu_dataset['subject']
-                subjects = {s:{'refs':[], 'preds':[]} for s in set(subject)}
-                for s,p,r in zip(subject, preds, refs):
-                    subjects[s]['preds'].append(p)
-                    subjects[s]['refs'].append(r)
-                subject_scores = []
-                for subject in subjects:
-                    subject_score = accuracy.compute(
-                        references=subjects[subject]['refs'],
-                        predictions=subjects[subject]['preds']
-                    )['accuracy']
-                    results[f'mmlu_{args.mmlu_split}_accuracy_{subject}'] = subject_score
-                    subject_scores.append(subject_score)
-                results[f'mmlu_{args.mmlu_split}_accuracy'] = np.mean(subject_scores)
-                trainer.log(results)
-                trainer.data_collator.source_max_len = source_max_len
+                    self._replace_module(parent, target_name, new_module, target)
+        if not is_target_modules_in_base_model:
+            raise ValueError(
+                f"Target modules {lora_config.target_modules} not found in the base model. "
+                f"Please check the target modules and try again."
+            )
 
-        trainer.add_callback(MMLUEvalCallback)
+    def __getattr__(self, name: str):
+        """Forward missing attributes to the wrapped module."""
+        try:
+            return super().__getattr__(name)  # defer to nn.Module's logic
+        except AttributeError:
+            return getattr(self.model, name)
 
-    # Verifying the datatypes and parameter counts before training.
-    print_trainable_parameters(args, model)
-    dtypes = {}
-    for _, p in model.named_parameters():
-        dtype = p.dtype
-        if dtype not in dtypes: dtypes[dtype] = 0
-        dtypes[dtype] += p.numel()
-    total = 0
-    for k, v in dtypes.items(): total+= v
-    for k, v in dtypes.items():
-        print(k, v, v/total)
+    def forward(self, *args, **kwargs):
+        outputs = self.model.forward(*args, **kwargs)
 
-    all_metrics = {"run_name": args.run_name}
-    # Training
-    if args.do_train:
-        logger.info("*** Train ***")
-        # Note: `resume_from_checkpoint` not supported for adapter checkpoints by HF.
-        # Currently adapter checkpoint is reloaded as expected but optimizer/scheduler states are not.
-        train_result = trainer.train()
-        metrics = train_result.metrics
-        trainer.log_metrics("train", metrics)
-        trainer.save_metrics("train", metrics)
-        trainer.save_state()
-        all_metrics.update(metrics)
-    # Evaluation
-    if args.do_eval:
-        logger.info("*** Evaluate ***")
-        metrics = trainer.evaluate(metric_key_prefix="eval")
-        trainer.log_metrics("eval", metrics)
-        trainer.save_metrics("eval", metrics)
-        all_metrics.update(metrics)
-    # Prediction
-    if args.do_predict:
-        logger.info("*** Predict ***")
-        prediction_output = trainer.predict(test_dataset=data_module['predict_dataset'],metric_key_prefix="predict")
-        prediction_metrics = prediction_output.metrics
-        predictions = prediction_output.predictions
-        predictions = np.where(predictions != -100, predictions, tokenizer.pad_token_id)
-        predictions = tokenizer.batch_decode(
-            predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
-        )
-        with open(os.path.join(args.output_dir, 'predictions.jsonl'), 'w') as fout:
-            for i, example in enumerate(data_module['predict_dataset']):
-                example['prediction_with_input'] = predictions[i].strip()
-                example['prediction'] = predictions[i].replace(example['input'], '').strip()
-                fout.write(json.dumps(example) + '\n')
-        print(prediction_metrics)
-        trainer.log_metrics("predict", prediction_metrics)
-        trainer.save_metrics("predict", prediction_metrics)
-        all_metrics.update(prediction_metrics)
+        # Calculate the orthogonal regularization
+        orth_reg_weight = self.peft_config[self.trainable_adapter_name].orth_reg_weight
+        assert orth_reg_weight > 0
 
-    if (args.do_train or args.do_eval or args.do_predict):
-        with open(os.path.join(args.output_dir, "metrics.json"), "w") as fout:
-            fout.write(json.dumps(all_metrics))
+        if hasattr(outputs, "loss"):
+            regu_loss = 0
+            num_param = 0
+            for n, p in self.model.named_parameters():
+                if ("lora_A" in n or "lora_B" in n) and self.trainable_adapter_name in n:
+                    para_cov = p @ p.T if "lora_A" in n else p.T @ p
+                    I = torch.eye(*para_cov.size(), out=torch.empty_like(para_cov))
+                    I.requires_grad = False
+                    num_param += 1
+                    regu_loss += torch.norm(para_cov - I, p="fro").to("cuda:0")# set default gpu
+            regu_loss = regu_loss / num_param
+            outputs.loss += orth_reg_weight * regu_loss
+        return outputs
 
-if __name__ == "__main__":
-    train()
+    def resize_modules_by_rank_pattern(self, rank_pattern, adapter_name):
+        lora_config = self.peft_config[adapter_name]
+        for name, rank_idx in rank_pattern.items():
+            if isinstance(rank_idx, list):
+                rank = sum(rank_idx)
+            elif isinstance(rank_idx, torch.Tensor):
+                rank_idx = rank_idx.view(-1)
+                rank = rank_idx.sum().item()
+            else:
+                raise ValueError("Unexcepted type of rank_idx")
+            key = ".".join(name.split(".")[0:-2]) if adapter_name in name else ".".join(name.split(".")[0:-1])
+            _, target, _ = _get_submodules(self.model, key)
+            lora_E_weights = target.lora_E[adapter_name][rank_idx]
+            lora_A_weights = target.lora_A[adapter_name][rank_idx]
+            lora_B_weights = target.lora_B[adapter_name][:, rank_idx]
+            ranknum = target.ranknum[adapter_name]
+            target.update_layer(
+                adapter_name,
+                rank,
+                lora_config.lora_alpha,
+                lora_config.lora_dropout,
+                lora_config.init_lora_weights,
+            )
+            with torch.no_grad():
+                if rank > 0:
+                    target.lora_E[adapter_name].copy_(lora_E_weights)
+                    target.lora_A[adapter_name].copy_(lora_A_weights)
+                    target.lora_B[adapter_name].copy_(lora_B_weights)
+                    # The scaling is exactly as the previous
+                    target.ranknum[adapter_name].copy_(ranknum)
+
+    def resize_state_dict_by_rank_pattern(self, rank_pattern, state_dict, adapter_name):
+        for name, rank_idx in rank_pattern.items():
+            rank = sum(rank_idx)
+            prefix = ".".join(name.split(".")[0:-2]) if adapter_name in name else ".".join(name.split(".")[0:-1])
+            for layer in ["lora_E", "lora_A", "lora_B"]:
+                key = f"base_model.model.{prefix}.{layer}.{adapter_name}"
+                if layer != "lora_B":
+                    state_dict[key] = (
+                        state_dict[key][rank_idx] if rank != state_dict[key].shape[0] else state_dict[key]
+                    )
+                else:
+                    state_dict[key] = (
+                        state_dict[key][:, rank_idx] if rank != state_dict[key].shape[1] else state_dict[key]
+                    )
+        return state_dict
+
+    def update_and_allocate(self, global_step):
+        lora_config = self.peft_config[self.trainable_adapter_name]
+        # Update the importance score and allocate the budget
+        if global_step < lora_config.total_step - lora_config.tfinal:
+            _, rank_pattern = self.rankallocator.update_and_allocate(self.model, global_step)
+            if rank_pattern:
+                lora_config.rank_pattern = rank_pattern
+        # Finalize the budget allocation
+        elif global_step == lora_config.total_step - lora_config.tfinal:
+            _, rank_pattern = self.rankallocator.update_and_allocate(self.model, global_step, force_mask=True)
+            # for some reason, this freezes the trainable parameters and nothing gets updates
+            # self.resize_modules_by_rank_pattern(rank_pattern, self.trainable_adapter_name)
+            lora_config.rank_pattern = rank_pattern
+            self.rankallocator.reset_ipt()
+        # Currently using inefficient way to mask the unimportant weights using the rank pattern
+        #  due to problem mentioned above
+        elif global_step > lora_config.total_step - lora_config.tfinal:
+            self.rankallocator.mask_using_rank_pattern(self.model, lora_config.rank_pattern)
+        # Pass the function and do forward propagation
+        else:
+            return None
+
+    @staticmethod
+    def _prepare_adalora_config(peft_config, model_config):
+        if peft_config.target_modules is None:
+            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING:
+                raise ValueError("Please specify `target_modules` in `peft_config`")
+            peft_config.target_modules = TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING[
+                model_config["model_type"]
+            ]
+        if peft_config.inference_mode:
+            peft_config.merge_weights = True
+        return peft_config

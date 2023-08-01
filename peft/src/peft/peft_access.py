@@ -20,7 +20,7 @@ from .peft_model import (
     PeftModelForSequenceClassification,
     PeftModelForTokenClassification,
 )
-from .tuners import AdaLoraConfig, LoraConfig, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig, BottleneckConfig
+from .tuners import AdaLoraConfig, LoraConfig, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig, BottleneckConfig, QLoraConfig
 from .utils import (
     PromptLearningConfig,
     TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING,
@@ -41,6 +41,7 @@ PEFT_TYPE_TO_CONFIG_MAPPING = {
     "P_TUNING": PromptEncoderConfig,
     "LORA": LoraConfig,
     "ADALORA": AdaLoraConfig,
+    "QLORA": QLoraConfig,
     "BOTTLENECK": BottleneckConfig,
 }
 
