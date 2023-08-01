@@ -273,11 +273,10 @@ python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --re
 python3 web.py --model_type chatglm --lora_dir xxx
 ```
 
-
-<details><summary>## 5. 中文LLMs实验结果</summary>
-<p>
 ## 5. 中文LLMs实验结果
-注: 以下实验结果均来自于 ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.
+<details><summary>注: 以下实验结果均来自于 ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.</summary>
+<p>
+
 
 ### 评测基准（Benchmarks）
 我们选择了两个评估基准，Belle-eval和MMCU，来全面评估LLM中文能力。
@@ -291,8 +290,7 @@ MMCU是医学、法律、心理学和教育（如高考）四个专业学科的�
 </p>
 
 Belle-eval和MMCU的统计数据展示于上表。
-</p>
-</details> 
+
 ### 主要因素
 三个主要因素：基座模型（LLM Bases），参数高效方法（Parameter-efficient Methods），中文指令数据集（Chinese Instruction Datasets）。
 
@@ -482,8 +480,12 @@ ___实验结果：___
 
 加入人类价值对齐后，反而产生了轻微的性能下降。如何平衡LLMs的无害性和良好性能仍然需要继续探索。
 
+</p>
+</details> 
+
 ## 6. Quantitative Analysis
-注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。
+<details><summary>注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。</summary>
+<p>
 ![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
 当前的instruction-finetuning数据集合主要包含以下三个部分：
 - `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
@@ -514,7 +516,8 @@ ___实验结果：___
 
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图8.png)
 
-
+</p>
+</details> 
 
 
 
