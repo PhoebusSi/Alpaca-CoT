@@ -127,8 +127,8 @@ class LoraModel(torch.nn.Module):
     def __init__(self, model, config, adapter_name):
         super().__init__()
         self.model = model
-        self.forward = self.model.forward
         self.peft_config = config
+        self.forward = self.model.forward
         self.add_adapter(adapter_name, self.peft_config[adapter_name])
 
     def add_adapter(self, adapter_name, config=None):

@@ -99,13 +99,19 @@ class BottleneckModel(torch.nn.Module):
         - **peft_config** (`BottleneckConfig`): The configuration of the Bottleneck adapter.
     """
 
-    def __init__(self, config, model):
+    def __init__(self, model, config, adapter_name):
         super().__init__()
         self.model = model
         self.peft_config = config
+        self.forward = self.model.forward
         self._find_and_replace()
         mark_only_adapter_as_trainable(self.model, self.peft_config.bias)
-        self.forward = self.model.forward
+
+    def add_adapter(self, adapter_name, config=None):
+        self._find_and_replace()
+        mark_only_adapter_as_trainable(self.model, self.peft_config.bias)
+        # if self.peft_config[adapter_name].inference_mode:
+        #     _freeze_adapter(self.model, adapter_name)
 
     def _find_and_replace(self):
         loaded_in_8bit = getattr(self.model, "is_loaded_in_8bit", False)
@@ -233,7 +239,7 @@ class BottleneckModel(torch.nn.Module):
 # had to adapt it for `adapter_only` to work 
 def mark_only_adapter_as_trainable(model: nn.Module, bias: str = "none") -> None:
     for n, p in model.named_parameters():
-        if "adapter_" not in n: # name里不含"adapter_"的都不参与训练
+        if "adapter_" not in n:
             p.requires_grad = False
     if bias == "none":
         return
