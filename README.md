@@ -1,5 +1,6 @@
 [**中文**](./CN_README.md) | [**English**](./README.md)
 
+试一下
 ![Alpaca-CoT](./figures/Alpaca-CoT-2.jpg)
 # Alpaca-CoT: An Instruction-Tuning Platform with Unified Interface of Instruction Collection, Parameter-efficient Methods, and Large Language Models
 [![LICENSE](https://img.shields.io/github/license/PhoebusSi/Alpaca-CoT)](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/LICENSE.txt)
