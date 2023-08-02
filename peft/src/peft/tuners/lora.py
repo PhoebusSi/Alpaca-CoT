@@ -255,7 +255,7 @@ class LoraModel(torch.nn.Module):
             if inference:
                 config["inference_mode"] = True
         config_dict[key] = config
-        return config
+        return config_dict
 
     def _set_adapter_layers(self, enabled=True):
         for module in self.model.modules():
