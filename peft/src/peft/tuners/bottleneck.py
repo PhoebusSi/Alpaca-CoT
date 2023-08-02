@@ -117,7 +117,7 @@ class BottleneckModel(torch.nn.Module):
             self.peft_config[adapter_name] = config
 
         self._find_and_replace(adapter_name)
-        mark_only_adapter_as_trainable(self.model, self.peft_config[adapter_name].bias)
+        mark_only_bottleneck_as_trainable(self.model, self.peft_config[adapter_name].bias)
         if self.peft_config[adapter_name].inference_mode:
             _freeze_adapter(self.model, adapter_name)
 
@@ -268,7 +268,7 @@ class BottleneckModel(torch.nn.Module):
 
 # Copy from lora.py
 # had to adapt it for `adapter_only` to work 
-def mark_only_adapter_as_trainable(model: nn.Module, bias: str = "none") -> None:
+def mark_only_bottleneck_as_trainable(model: nn.Module, bias: str = "none") -> None:
     for n, p in model.named_parameters():
         if "adapter_" not in n:
             p.requires_grad = False
