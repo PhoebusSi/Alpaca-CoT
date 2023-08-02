@@ -16,6 +16,7 @@
 您也可以选择加入我们的群聊(WeChat)，和更多的同好研究者们交流。目前群聊人数过多，需要好友邀请才能入群，请扫码加我为好友，拉您入群。
 
 ## News
+- 🚀7.24 LLM `Baichuan`和`ChatGLM v2`已被集成进来。
 - 🚀6.25: 新增模型评估代码，包括belle和MMCU。
 - 🚀5.5: 新建了一个分支[`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm)来构造可以处理多种表格智能任务的大型语言模型。
 - 🚀5.4: PEFT中所有parameter-efficient方法（如P-tuning）均被集成进来，可通过超参简单设置。
@@ -272,9 +273,220 @@ python3 predict.py --model_type chatglm --data for_dict_data --lora_dir xxx --re
 python3 web.py --model_type chatglm --lora_dir xxx
 ```
 
+## 5. 中文指令微调的Empirical Study
+<details><summary>注: 以下实验结果均来自于 ___An Empirical Study of Instruction-tuning Large Language Models in Chinese___.</summary>
+<p>
 
-## 5. Quantitative Analysis
-注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。
+
+### 5.1 评测基准（Benchmarks）
+我们选择了两个评估基准，Belle-eval和MMCU，来全面评估LLM中文能力。
+
+Belle-eval是使用ChatGPT self-instruct构建的，它有1000条不同的指令，涉及10个类别，涵盖常见的NLP任务（如QA）和具有挑战性的任务（如代码和数学）。我们使用ChatGPT根据黄金答案对模型响应进行评分。该基准评估了指令跟随能力。
+
+MMCU是医学、法律、心理学和教育（如高考）四个专业学科的语文选择题集。它允许LLM以多项选择测试的方式参加人类社会的考试，使其适合评估LLM在多个学科中的知识广度和深度。
+
+<p align="center">
+    <img src="./figures/chinesellms-benchmarks.png" width="35%">
+</p>
+
+Belle-eval和MMCU的统计数据展示于上表。
+
+### 5.2 主要因素
+三个主要因素：基座模型（LLM Bases），参数高效方法（Parameter-efficient Methods），中文指令数据集（Chinese Instruction Datasets）。
+
+#### 5.2.1 基座模型（LLM Bases）
+针对开源LLM，我们在Belle-eval和MMCU上分别测试了现有的LLMs和在Alpaca-GPT4上使用LoRA微调的LLMs。
+
+<p align="center">
+    <img src="./figures/chinesellms-llms1.png" width="80%">
+    <img src="./figures/chinesellms-llms2.png" width="40%">
+</p>
+
+表2展示了Belle-eval上开源LLMs的表现。表3展示了MMCU上开源LLMs的表现。
+
+<p align="center">
+    <img src="./figures/chinesellms-llms3.png" width="40%">
+</p>
+
+在Alpaca-GPT4上使用LoRA微调的LLMs的结果展示在图1
+
+___实验结果：___
+
+1. 评估现有LLMs
+
+    ___在Belle-eval上的表现___
+
+    (1) 对于base LLMs，Bloom表现最好。
+
+    (2) 对于sft LLMs，ChatGLM凭借其使用最多的中文tokens和HFRL进行训练，在性能上大幅超越其他模型。
+    
+    (3) Open QA、Math、CloseQA和Extract类别对于现有的开源LLMs来说仍然非常具有挑战性。
+
+    (4) Vicuna和moss-sft与它们的基础模型LLaMA和moss-base相比有明显的改善。
+
+    (5) 相比之下，与基础模型Bloom相比，sft模型Bloomz和Bloomz-mt的性能有所下降，因为它们往往会产生较短的响应。
+
+    ___在MMCU上的表现___
+
+    (1) 所有基础LLM都表现不佳，因为在微调（例如输出选项号）之前，几乎很难生成指定格式的内容。
+
+    (2) 所有sft LLM分别优于相应的基础LLM。特别是Bloomz表现最好（甚至超过了ChatGLM），得益于其监督微调数据集xP3的数据特性，它可以根据需要直接生成选项号，而不生成其他无关内容。
+
+    (3) 在这四个学科中，法律是LLM最具挑战性的学科。
+
+2. 指令微调不同的LLMs
+
+    (1) 在Belle-eval上，除了sft-Bloomz和Bloomz-mt之外，指令调优带来的sft-LLM的性能提升不如基础LLM显著。
+
+    (2) Vicuna和ChatGLM在指令调整后会出现性能下降，因为Vicuna是根据真实的人类ChatGPT对话进行训练的，质量比Alpaca-GPT4更好。ChatGLM采用了HFRL，这可能不再适合进一步的指令调整。
+
+    (3) 在MMCU上，除了Bloomz和Bloomz-mt意外地显著降低了性能外，大多数LLM在指令调优后都实现了性能提升。
+
+    (4) 经过指令微调后，Bloom显著改进，在两个基准测试中都表现良好。尽管ChatGLM始终击败Bloom，但在指令微调后性能下降。因此，在所有开源LLM中，Bloom最适合作为后续实验的基础模型，用于中文指令微调探索。
+
+#### 5.2.2 参数高效方法（Parameter-efficient Methods）
+针对参数高效方法，我们使用一系列参数高效方法在Alpaca-GPT4数据集上指令微调Bloom。
+
+<p align="center">
+    <img src="./figures/chinesellms-para1.png" width="40%">
+    <img src="./figures/chinesellms-para2.png" width="40%">
+</p>
+
+___实验结果：___
+
+1. 参数高效方法的对比
+
+    (1) SadapterH在所有参数高效方法中表现最好，可以作为LoRA的替代。
+
+    (2) P-tuning和prompt-tuning相比其他方法差距明显，这表明仅在嵌入层中添加可训练层不足以支持LLMs进行生成任务。
+
+    (3) 尽管AdaLoRA是LoRA的改进，但其性能明显下降，这可能是因为LoRA的LLM可训练参数不适合进一步减少。
+
+    (4) 比较上下两部分，可以看出，增加顺序适配器（即SadapterP和SadapterH）的可训练参数数量不会带来增益，而并行适配器（即P-adapter）则相反。
+
+2. 训练损失
+
+    (1) Prompt-tuning和P-tuning收敛最慢，收敛后损失最大。这表明仅嵌入适配器不适用于指令调优LLM。
+
+    (2) AdaLoRA的初始损失非常高，因为它需要同时学习参数预算分配，这使得模型无法很好地拟合训练数据。
+
+    (3) 其他方法可以在训练数据上快速收敛并很好地拟合数据。
+
+#### 5.2.3 中文指令数据集（Chinese Instruction Datasets）
+针对中文指令数据集，我们收集了开源中文指令数据集，在这些数据集上使用LoRA微调Bloom。
+
+<p align="center">
+    <img src="./figures/chinesellms-data1.png" width="80%">
+    <img src="./figures/chinesellms-data2.png" width="80%">
+    <img src="./figures/chinesellms-data3.png" width="40%">
+</p>
+
+表5展示了现有中文指令数据集的细节。表6和表7分别展示了Bloom对不同指令数据集的微调在Belle-eval和MMCU上的表现。
+
+___实验结果：___
+
+1. 在Belle-eval上的表现
+
+    (1) 由ChatGPT构建的指令数据（例如，使用self-insturction方法或收集真实的人类-ChatGPT对话）都增强了指令跟随能力，得分提高了3.1～11点。
+
+    (2) 在这些数据集中，Belle的性能最好，因为它的指令数据量最大。然而，在包含了更多以类似方式构造的数据的moss-sft-data上训练的模型的性能并不令人满意。
+
+    (3) Alpaca-GPT4 指令带来的性能是次优的，大小只有 49K 却与 1.54M Belle 相当。
+
+    (4) Instinwild 性能提升最少，因为从 Tweet（“野外”）爬取的种子指令不如人类精心设计的种子指令（比如 Alpaca）。
+
+    (5) 这些基于ChatGPT的数据主要对开放式生成任务（如Brain Storm和generation）有显著的改进，而在阅读理解技能要求较高的任务（如Close QA和Extract）上性能显著削弱。
+
+    (6) 基于数据集的指令数据集会损害模型的指令遵循能力，因为每个NLP任务或考试数据集的形式和意图都是单一的，很容易被过度拟合。
+
+    (7) 其中，COIG trans表现最好，因为它涉及2000多个不同的任务，任务指令种类繁多。相比之下，xP3和COIG-ccmc对模型性能的负面影响最为严重。它们都只涉及少数类型的任务（前者涉及翻译和QA，后者涉及反事实纠正对话），几乎不涉及人类常用的指令和任务。
+
+2. 在MMCU上的表现
+
+    (1) 对每个数据集进行指令微调总是可以提高性能。
+
+    (2) 在上半部分显示的基于ChatGPT的数据中，ShareGPT-zh的表现远远逊于其他数据。这可能是因为真正的用户很少提出关于学术主题的多项选择问题。
+
+    (3) 在下半部分显示的数据集收集数据中，HC3和COIG-ccmc的准确率最低，因为HC3的唯一问题只有13K，并且COIG-ccmc的任务格式与MMCU有显著差异。
+
+    (4) COIG-exam带来了最大的准确性提高，得益于与MMCU类似的任务格式。
+
+### 5.3 其他因素
+四个其他因素：思维链（CoT），中文词表扩充（Expansion of Chinese Vocabulary），提示语言（Language of Prompts），人类价值对齐（Human-value Alignment）。
+
+#### 5.3.1 思维链（CoT）
+针对CoT，对在指令微调中添加CoT数据前后的性能进行了比较。
+
+___实验设置：___
+
+文章从FLAN中收集了9个CoT数据集及其提示，然后使用谷歌翻译将其翻译成中文。比较了在指令调优过程中添加CoT数据前后的性能。
+
+将加入CoT数据的方式记为Alpaca-GPT4+CoT”；另外，文章提出在每条指令的末尾添加一句“先思考，再决定”，以引导模型根据CoT对指令做出响应，并将这种方式记为“Alpaca-GPT4+CoT*”。
+
+<p align="center">
+    <img src="./figures/chinesellms-cot.png" width="40%">
+</p>
+
+___实验结果：___ 
+
+1. “Alpaca-GPT4+CoT”在需要较强推理能力的Code和Math任务中表现优于“Alpaca-GPT4”。此外，MMCU Education任务也有显著提高。
+
+2. “Alpaca-GPT4+CoT*”的简单提示进一步提高了模型在Code和Education任务中的表现，而Math中结果略低于“Alpaca-GPT4+CoT”。
+
+#### 5.3.2 中文词表扩充（Expansion of Chinese Vocabulary）
+针对中文词表扩充，文章对tokenizer词汇中的中文token数量对各种LLM在中文表达能力上的影响进行了实验。
+直观地说，tokenizer词汇中的中文token数量会影响LLM表达中文的能力。
+
+___实验设置：___
+
+文章主要在LLaMA上进行实验。LLaMA使用的是SentencePiec（中文词汇量为32K），与Bloom（250K）相比覆盖的汉字较少。
+
+<p align="center">
+    <img src="./figures/chinesellms-voc.png" width="45%">
+</p>
+
+___实验结果：___
+
+1. 在更多包含更丰富中文词汇的中文语料库中进行预训练，有助于提升LLM的指令跟随能力。
+
+2. 然而，与直觉相反，在MMCU上训练的“llama-voc-pre- 1”(100B)效果比“llama-voc-pre”(20B)更差。这表明，在更多数据上进行预训练不一定能使LLM在学业考试领域上得到更好的表现。
+
+#### 5.3.3 Prompt语种（Language of Prompts）
+
+针对提示语言，文章对指令微调对使用中文prompts的适应性进行了实验。
+
+<p align="center">
+    <img src="./figures/chinesellms-lan.png" width="60%">
+</p>
+
+图4显示了基于LLaMA和Bloom使用中文和英文prompts的结果。当对LLaMA进行指令微调时，与英语prompts相比，使用中文prompts时均能得到更好的性能；而在Bloom上则出现了相反的现象。 
+
+___实验结果：___
+
+1. 对于中文能力较弱的模型（如LLaMA），使用中文prompts可以有效地帮助LLMs使用中文回答问题。
+
+2. 对于中文能力较好的模型（如Bloom），使用英语prompts（LLMs更擅长的语言）可以更好地引导模型理解使用指令进行微调的过程。
+
+#### 5.3.4 人类价值对齐（Human-value Alignment）
+为避免LLMs生成有害内容，人类价值对齐十分重要。文章将由COIG构建的人类价值对齐数据集加入到指令微调中，针对其产生的影响进行实验。
+
+<p align="center">
+    <img src="./figures/chinesellms-human.png" width="30%">
+</p>
+
+图5展示了在指令微调中加入和没有加入人类价值对齐的结果。
+
+___实验结果：___ 
+
+加入人类价值对齐后，反而产生了轻微的性能下降。如何平衡LLMs的无害性和良好性能仍然需要继续探索。
+
+</p>
+</details> 
+
+## 6. Quantitative Analysis
+<details><summary>注意：下图是截止到3.26日收集到的数据集的统计情况，仅作为motivation展示。目前已收集了更多数据集，如金融相关的指令数据集。</summary>
+<p>
+    
 ![data collection statistics](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/piechart.png)
 当前的instruction-finetuning数据集合主要包含以下三个部分：
 - `alpaca_data_cleaned.json`: about 52K English instruction-following training samples.
@@ -305,7 +517,8 @@ python3 web.py --model_type chatglm --lora_dir xxx
 
 ![ablation-cot](https://github.com/PhoebusSi/alpaca-CoT/blob/main/figures/图8.png)
 
-
+</p>
+</details> 
 
 
 
