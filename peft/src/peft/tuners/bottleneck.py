@@ -12,9 +12,13 @@ import torch.nn.functional as F
 
 from ..utils import (
     TRANSFORMERS_MODELS_TO_ADAPTER_TYPE_MAPPING,
+    TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING,
     PeftConfig,
     PeftType, 
     transpose, 
+    _freeze_adapter,
     is_bnb_available
 )
 from transformers.activations import ACT2FN
@@ -104,16 +108,21 @@ class BottleneckModel(torch.nn.Module):
         self.model = model
         self.peft_config = config
         self.forward = self.model.forward
-        self._find_and_replace()
-        mark_only_adapter_as_trainable(self.model, self.peft_config.bias)
+        self.add_adapter(adapter_name, self.peft_config[adapter_name])
 
     def add_adapter(self, adapter_name, config=None):
-        self._find_and_replace()
-        mark_only_adapter_as_trainable(self.model, self.peft_config.bias)
-        # if self.peft_config[adapter_name].inference_mode:
-        #     _freeze_adapter(self.model, adapter_name)
+        if config is not None:
+            model_config = self.model.config.to_dict() if hasattr(self.model.config, "to_dict") else self.model.config
+            config = self._prepare_bottleneck_config(config, model_config)
+            self.peft_config[adapter_name] = config
 
-    def _find_and_replace(self):
+        self._find_and_replace(adapter_name)
+        mark_only_adapter_as_trainable(self.model, self.peft_config[adapter_name].bias)
+        if self.peft_config[adapter_name].inference_mode:
+            _freeze_adapter(self.model, adapter_name)
+
+    def _find_and_replace(self, adapter_name):
+        bottleneck_config = self.peft_config[adapter_name]
         loaded_in_8bit = getattr(self.model, "is_loaded_in_8bit", False)
         if loaded_in_8bit and not is_bnb_available():
             raise ImportError(
@@ -123,24 +132,24 @@ class BottleneckModel(torch.nn.Module):
         is_target_modules_in_base_model = False
         is_hf_device_map_available = hasattr(self.model, "hf_device_map")
         kwargs = {
-            "bottleneck_size": self.peft_config.bottleneck_size,
-            "non_linearity": self.peft_config.non_linearity,
-            "adapter_dropout": self.peft_config.adapter_dropout,
-            "scaling": self.peft_config.scaling,
-            "init_weights": self.peft_config.init_weights,
+            "bottleneck_size": bottleneck_config.bottleneck_size,
+            "non_linearity": bottleneck_config.non_linearity,
+            "adapter_dropout": bottleneck_config.adapter_dropout,
+            "scaling": bottleneck_config.scaling,
+            "init_weights": bottleneck_config.init_weights,
         }
         key_list = [key for key, _ in self.model.named_modules()]
         for key in key_list:
-            if isinstance(self.peft_config.target_modules, str): # regex expression
-                target_module_found = re.fullmatch(self.peft_config.target_modules, key)
+            if isinstance(bottleneck_config.target_modules, str): # regex expression
+                target_module_found = re.fullmatch(bottleneck_config.target_modules, key)
             else: # List of module names
-                target_module_found = any(key.endswith(target_key) for target_key in self.peft_config.target_modules)
+                target_module_found = any(key.endswith(target_key) for target_key in bottleneck_config.target_modules)
             if target_module_found:
                 if not is_target_modules_in_base_model:
                     is_target_modules_in_base_model = True
                 parent, target, target_name = self._get_submodules(key)
                 # determine the type of adapter to be used, this will effect the forward pass
-                if self.peft_config.use_parallel_adapter:
+                if bottleneck_config.use_parallel_adapter:
                     adapter_type = "parallel_adapter"
                 else:
                     adapter_type = TRANSFORMERS_MODELS_TO_ADAPTER_TYPE_MAPPING[self.model.config.model_type][target_name]
@@ -172,7 +181,7 @@ class BottleneckModel(torch.nn.Module):
                 self._replace_module(parent, target_name, new_module, target)
         if not is_target_modules_in_base_model:
             raise ValueError(
-                f"Target modules {self.peft_config.target_modules} not found in the base model. "
+                f"Target modules {bottleneck_config.target_modules} not found in the base model. "
                 f"Please check the target modules and try again."
             )
 
@@ -223,6 +232,28 @@ class BottleneckModel(torch.nn.Module):
 
     def disable_adapter_layers(self):
         self._set_adapter_layers(enabled=False)
+
+    def set_adapter(self, adapter_name):
+        for module in self.model.modules():
+            if isinstance(module, AdapterLayer):
+                module.active_adapter = adapter_name
+
+    @staticmethod
+    def _prepare_bottleneck_config(peft_config, model_config):
+        if peft_config.target_modules is None:
+            if peft_config.use_parallel_adapter:
+                if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING:
+                    raise ValueError("Please specify `target_modules` in `peft_config`")
+                peft_config.target_modules = TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING[model_config["model_type"]]
+            elif peft_config.use_adapterp:
+                if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING:
+                    raise ValueError("Please specify `target_modules` in `peft_config`")
+                peft_config.target_modules = TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING[model_config["model_type"]]
+            else:
+                if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING:
+                    raise ValueError("Please specify `target_modules` in `peft_config`")
+                peft_config.target_modules = TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING[model_config["model_type"]]
+        return peft_config
 
 
 # Below code is based on https://github.com/adapter-hub/adapter-transformers/blob/master/src/transformers/adapters/modeling.py and lora.py from huggingfance PEFT

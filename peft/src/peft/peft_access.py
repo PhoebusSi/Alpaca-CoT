@@ -23,9 +23,6 @@ from .peft_model import (
 from .tuners import AdaLoraConfig, LoraConfig, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig, BottleneckConfig, QLoraConfig
 from .utils import (
     PromptLearningConfig,
-    TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING,
-    TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING,
-    TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING
 )
 
 MODEL_TYPE_TO_PEFT_MODEL_MAPPING = {
@@ -98,25 +95,8 @@ def _prepare_prompt_learning_config(peft_config, model_config):
 
     return peft_config
 
-def _prepare_bottleneck_config(peft_config, model_config):
-    if peft_config.target_modules is None:
-        if peft_config.use_parallel_adapter:
-            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING:
-                raise ValueError("Please specify `target_modules` in `peft_config`")
-            peft_config.target_modules = TRANSFORMERS_MODELS_TO_PARALLEL_ADAPTER_TARGET_MODULES_MAPPING[model_config["model_type"]]
-        elif peft_config.use_adapterp:
-            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING:
-                raise ValueError("Please specify `target_modules` in `peft_config`")
-            peft_config.target_modules = TRANSFORMERS_MODELS_TO_ADAPTERP_TARGET_MODULES_MAPPING[model_config["model_type"]]
-        else:
-            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING:
-                raise ValueError("Please specify `target_modules` in `peft_config`")
-            peft_config.target_modules = TRANSFORMERS_MODELS_TO_BOTTLENECK_TARGET_MODULES_MAPPING[model_config["model_type"]]
 
-    return peft_config
-
-
-def get_peft_model(model, peft_config):
+def get_peft_model(model, peft_config, adapter_name: str = "default"):
     """
     Returns a Peft model object from a model and a config.
 
@@ -127,11 +107,9 @@ def get_peft_model(model, peft_config):
     model_config = model.config.to_dict() if hasattr(model.config, "to_dict") else model.config
     peft_config.base_model_name_or_path = model.__dict__.get("name_or_path", None)
     
-    if peft_config.peft_type == "BOTTLENECK":
-        peft_config = _prepare_bottleneck_config(peft_config, model_config)
-    elif isinstance(peft_config, PromptLearningConfig):
+    if isinstance(peft_config, PromptLearningConfig):
         peft_config = _prepare_prompt_learning_config(peft_config, model_config)
     
     if peft_config.task_type not in MODEL_TYPE_TO_PEFT_MODEL_MAPPING.keys():
-        return PeftModel(model, peft_config)
-    return MODEL_TYPE_TO_PEFT_MODEL_MAPPING[peft_config.task_type](model, peft_config)
+        return PeftModel(model, peft_config, adapter_name=adapter_name)
+    return MODEL_TYPE_TO_PEFT_MODEL_MAPPING[peft_config.task_type](model, peft_config, adapter_name=adapter_name)
