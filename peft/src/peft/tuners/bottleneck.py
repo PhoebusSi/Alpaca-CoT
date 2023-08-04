@@ -212,15 +212,18 @@ class BottleneckModel(torch.nn.Module):
         except AttributeError:
             return getattr(self.model, name)
 
-    @property
-    def modules_to_save(self):
-        return None
-
+    # @property
+    # def modules_to_save(self):
+    #     return None
+    
     def get_peft_config_as_dict(self, inference: bool = False):
-        config = {k: v.value if isinstance(v, Enum) else v for k, v in asdict(self.peft_config).items()}
-        if inference:
-            config["inference_mode"] = True
-        return config
+        config_dict = {}
+        for key, value in self.peft_config.items():
+            config = {k: v.value if isinstance(v, Enum) else v for k, v in asdict(value).items()}
+            if inference:
+                config["inference_mode"] = True
+        config_dict[key] = config
+        return config_dict
 
     def _set_adapter_layers(self, enabled=True):
         for module in self.model.modules():
