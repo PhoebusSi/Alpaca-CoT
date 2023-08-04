@@ -79,6 +79,7 @@ class AdaLoraModel(LoraModel):
                 peft_type="ADALORA", task_type="SEQ_2_SEQ_LM", r=8, lora_alpha=32, target_modules=["q", "v"],
                 lora_dropout=0.01,
             )
+        >>> config = {"adapter_name" : config}
         >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base") >>> model = AdaLoraModel(config, model)
 
     **Attributes**:
