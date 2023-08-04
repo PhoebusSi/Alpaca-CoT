@@ -288,7 +288,7 @@ python3 web.py --model_type chatglm --size 6b --lora_dir xxx
 ### 1. Benchmarks
 This paper selects two evaluation benchmarks, Belle-eval and MMCU, to comprehensively evaluate LLM competencies in Chinese.
 
-Belle-eval is constructed by self-instruct with ChatGPT, which has 1,000 diverse instructions that involve 10 categories covering common NLP tasks (e.g., QA) and challenging tasks (e.g., code and math). The authors use ChatGPT to rate the model responses based on the golden answers. This benchmark is considered to be as the assessment of AGI (instruction-following) capability.
+Belle-eval is constructed by self-instruct with ChatGPT, which has 1,000 diverse instructions that involve 10 categories covering common NLP tasks (e.g., QA) and challenging tasks (e.g., code and math). We use ChatGPT to rate the model responses based on the golden answers. This benchmark is considered to be as the assessment of AGI (instruction-following) capability.
 
 MMCU is a collection of Chinese multiple choice questions in four professional disciplines of medicine, law, psychology and education (e.g., Gaokao examination). It allows LLMs to take exams in human society in a multiple-choice test manner, making it suitable for evaluating the breadth and depth of knowledge of LLMs across multiple disciplines. 
 
@@ -299,7 +299,7 @@ MMCU is a collection of Chinese multiple choice questions in four professional d
 Data statistics of Belle-eval and MMCU are shown in the table above.
 
 ### 2. Main Factors
-Three Main Factors: LLM bases, Parameter-efficient Methods, Chinese Instruction Datasets.
+We conduct experiments to study the three main factors in instruction-tuning LLMs: LLM bases, Parameter-efficient Methods, Chinese Instruction Datasets.
 
 #### 2.1 LLM Bases
 For open LLMs, we test existing LLMs and LLMs fine-tuned with LoRA on Alpaca-GPT4 on Belle-eval and MMCU, respectively.
@@ -431,7 +431,7 @@ For CoT, authors compare the performance before and after adding CoT data during
 
 ___Experiment Settings:___
 
-The authors collect 9 CoT datasets and their prompts from FLAN, and then translate them into Chinese using Google Translate. They compare the performance before and after adding CoT data during instruction-tuning.
+We collect 9 CoT datasets and their prompts from FLAN, and then translate them into Chinese using Google Translate. They compare the performance before and after adding CoT data during instruction-tuning.
 
 First note the way to add CoT data as "Alpaca-GPT4+CoT". In addition, add a sentence "先思考，再决定" ("think step by step" in Chinese) at the end of each instruction, to induce the model to respond to instructions based on the CoT, and label this way as "Alpaca-GPT4+CoT*".
 
@@ -477,7 +477,7 @@ ___Experimental Results:___
 2. For models with good Chinese abilities (e.g., Bloom), using prompts in English (the language they are better at) can better guide the model to understand the process of fine-tuning with instructions.
 
 #### 3.4 Human-value Alignment
-To avoid LLMs generating toxic content, aligning them with human values is a crucial issue. The authors add human-value alignment data built by COIG into instruction-tuning to explore its impact. 
+To avoid LLMs generating toxic content, aligning them with human values is a crucial issue. We add human-value alignment data built by COIG into instruction-tuning to explore its impact. 
 
 <p align="center">
     <img src="./figures/chinesellms-human.png" width="30%">
