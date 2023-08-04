@@ -114,9 +114,9 @@ class LoraModel(torch.nn.Module):
         ...     target_modules=["q", "v"],
         ...     lora_dropout=0.01,
         ... )
-        >>> config = {"adapter_name" : config}
+        
         >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base")
-        >>> lora_model = LoraModel(config, model)
+        >>> lora_model = get_peft_model(model, config)
         ```
 
     **Attributes**:
