@@ -74,12 +74,18 @@ class AdaLoraModel(LoraModel):
 
     Example::
 
-        >>> from transformers import AutoModelForSeq2SeqLM, LoraConfig >>> from peft import AdaLoraModel, AdaLoraConfig
+        >>> from transformers import AutoModelForSeq2SeqLM, LoraConfig 
+        >>> from peft import AdaLoraModel, AdaLoraConfig
+        
         >>> config = AdaLoraConfig(
-                peft_type="ADALORA", task_type="SEQ_2_SEQ_LM", r=8, lora_alpha=32, target_modules=["q", "v"],
+                peft_type="ADALORA", 
+                task_type="SEQ_2_SEQ_LM", 
+                r=8, 
+                lora_alpha=32, 
+                target_modules=["q", "v"],
                 lora_dropout=0.01,
             )
-        >>> config = {"adapter_name" : config}
+
         >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base") 
         >>> adalora_model = get_peft_model(model, config)
 

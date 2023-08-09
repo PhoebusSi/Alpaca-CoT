@@ -1,10 +1,9 @@
-import copy
 import bitsandbytes as bnb
 import importlib
 import re
 import warnings
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Sequence
+from typing import Optional, Dict
 
 import torch
 import torch.nn as nn
@@ -12,7 +11,7 @@ import torch.nn.functional as F
 from transformers.pytorch_utils import Conv1D
 
 from ..utils import (
-    TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING,
+    TRANSFORMERS_MODELS_TO_QLORA_TARGET_MODULES_MAPPING,
     PeftType,
     _freeze_adapter,
     _get_submodules,
@@ -284,168 +283,53 @@ def print_trainable_parameters(args, model):
         f"trainable: {100 * trainable_params / all_param}"
     )
 
-def smart_tokenizer_and_embedding_resize(
-    special_tokens_dict: Dict,
-    tokenizer: transformers.PreTrainedTokenizer,
-    model: transformers.PreTrainedModel,
-):
-    """Resize tokenizer and embedding.
-
-    Note: This is the unoptimized version that may make your embedding size not be divisible by 64.
-    """
-    num_new_tokens = tokenizer.add_special_tokens(special_tokens_dict)
-    model.resize_token_embeddings(len(tokenizer))
-    
-    if num_new_tokens > 0:
-        input_embeddings_data = model.get_input_embeddings().weight.data
-        output_embeddings_data = model.get_output_embeddings().weight.data
-
-        input_embeddings_avg = input_embeddings_data[:-num_new_tokens].mean(dim=0, keepdim=True)
-        output_embeddings_avg = output_embeddings_data[:-num_new_tokens].mean(dim=0, keepdim=True)
-
-        input_embeddings_data[-num_new_tokens:] = input_embeddings_avg
-        output_embeddings_data[-num_new_tokens:] = output_embeddings_avg
-
-@dataclass
-class DataCollatorForCausalLM(object):
-    tokenizer: transformers.PreTrainedTokenizer
-    source_max_len: int
-    target_max_len: int
-    train_on_source: bool
-    predict_with_generate: bool
-
-    def __call__(self, instances: Sequence[Dict]) -> Dict[str, torch.Tensor]:
-        # Extract elements
-        sources = [f"{self.tokenizer.bos_token}{example['input']}" for example in instances]
-        targets = [f"{example['output']}{self.tokenizer.eos_token}" for example in instances]
-        # Tokenize
-        tokenized_sources_with_prompt = self.tokenizer(
-            sources,
-            max_length=self.source_max_len,
-            truncation=True,
-            add_special_tokens=False,
-        )
-        tokenized_targets = self.tokenizer(
-            targets,
-            max_length=self.target_max_len,
-            truncation=True,
-            add_special_tokens=False,
-        )
-        # Build the input and labels for causal LM
-        input_ids = []
-        labels = []
-        for tokenized_source, tokenized_target in zip(
-            tokenized_sources_with_prompt['input_ids'],
-            tokenized_targets['input_ids']
-        ):
-            if not self.predict_with_generate:
-                input_ids.append(torch.tensor(tokenized_source + tokenized_target))
-                if not self.train_on_source:
-                    labels.append(
-                        torch.tensor([IGNORE_INDEX for _ in range(len(tokenized_source))] + copy.deepcopy(tokenized_target))
-                    )
-                else:
-                    labels.append(torch.tensor(copy.deepcopy(tokenized_source + tokenized_target)))
-            else:
-                input_ids.append(torch.tensor(tokenized_source))
-        # Apply padding
-        input_ids = pad_sequence(input_ids, batch_first=True, padding_value=self.tokenizer.pad_token_id)
-        labels = pad_sequence(labels, batch_first=True, padding_value=IGNORE_INDEX) if not self.predict_with_generate else None
-        data_dict = {
-            'input_ids': input_ids,
-            'attention_mask':input_ids.ne(self.tokenizer.pad_token_id),
-        }
-        if labels is not None:
-            data_dict['labels'] = labels
-        return data_dict
-
-def extract_unnatural_instructions_data(examples, extract_reformulations=False):
-    out = {
-        'input': [],
-        'output': [],
-    }
-    for example_instances in examples['instances']:
-        for instance in example_instances:
-            out['input'].append(instance['instruction_with_input'])
-            out['output'].append(instance['output'])
-    if extract_reformulations:
-        for example_reformulations in examples['reformulations']:
-            if example_reformulations is not None:
-                for instance in example_reformulations:
-                    out['input'].append(instance['instruction_with_input'])
-                    out['output'].append(instance['output'])
-    return out
-
-ALPACA_PROMPT_DICT = {
-    "prompt_input": (
-        "Below is an instruction that describes a task, paired with an input that provides further context. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response: "
-    ),
-    "prompt_no_input": (
-        "Below is an instruction that describes a task. "
-        "Write a response that appropriately completes the request.\n\n"
-        "### Instruction:\n{instruction}\n\n### Response: "
-    ),
-}
-
 
 @dataclass
 class QLoraConfig(LoraConfig):
     """
-    This is the configuration class to store the configuration of a [`~peft.AdaLora`].
+    This is the configuration class to store the configuration of a [`~peft.QLora`].
 
     Args:
         target_r (`int`): The target average rank of incremental matrix.
-        init_r (`int`): The initial rank for each incremental matrix.
-        tinit (`int`): The steps of initial fine-tuning warmup.
-        tfinal (`int`): The step of final fine-tuning.
-        deltaT (`int`): The time internval between two budget allocations.
-        beta1 (`float`): The hyperparameter of EMA for sensitivity smoothing.
-        beta2 (`float`): The hyperparameter of EMA for undertainty quantification.
-        orth_reg_weight (`float`): The coefficient of orthogonal regularization.
-        total_step (`int`): The total training steps that should be specified before training.
-        rank_pattern (`list`): The allocated rank for each weight matrix by RankAllocator.
+        ...
     """
 
     target_r: int = field(default=8, metadata={"help": "Target Lora matrix dimension."})
-    init_r: int = field(default=12, metadata={"help": "Intial Lora matrix dimension."})
-    tinit: int = field(default=0, metadata={"help": "The steps of initial warmup."})
-    tfinal: int = field(default=0, metadata={"help": "The steps of final warmup."})
-    deltaT: int = field(default=1, metadata={"help": "Step interval of rank allocation."})
-    beta1: float = field(default=0.85, metadata={"help": "Hyperparameter of EMA."})
-    beta2: float = field(default=0.85, metadata={"help": "Hyperparameter of EMA."})
-    orth_reg_weight: float = field(default=0.5, metadata={"help": "The orthogonal regularization coefficient."})
-    total_step: Optional[int] = field(default=None, metadata={"help": "The total training steps."})
-    rank_pattern: Optional[dict] = field(default=None, metadata={"help": "The saved rank pattern."})
+    # 需要什么参数补充上
 
     def __post_init__(self):
         self.peft_type = PeftType.QLORA
 
 class QLoraModel(LoraModel):
     """
-    Creates AdaLoRA (Adaptive LoRA) model from a pretrained transformers model. Paper:
-    https://openreview.net/pdf?id=lq62uWRJjiY
+    Creates QLoRA model from a pretrained transformers model. Paper:
+    https://arxiv.org/pdf/2305.14314.pdf
 
     Args:
         model ([`transformers.PreTrainedModel`]): The model to be adapted.
-        config ([`AdaLoraConfig`]): The configuration of the AdaLora model.
+        config ([`QLoraConfig`]): The configuration of the AdaLora model.
 
     Returns:
-        `torch.nn.Module`: The AdaLora model.
+        `torch.nn.Module`: The QLora model.
 
     Example::
 
-        >>> from transformers import AutoModelForSeq2SeqLM, LoraConfig >>> from peft import AdaLoraModel, AdaLoraConfig
-        >>> config = AdaLoraConfig(
-                peft_type="ADALORA", task_type="SEQ_2_SEQ_LM", r=8, lora_alpha=32, target_modules=["q", "v"],
-                lora_dropout=0.01,
+        >>> from transformers import AutoModelForSeq2SeqLM, LoraConfig 
+        >>> from peft import QLoraModel, QLoraConfig
+        >>> config = QLoraConfig(
+                peft_type="QLORA",
+                task_type="SEQ_2_SEQ_LM", 
+                r=8, 
+                lora_alpha=32, 
+                target_modules=["q", "v"],
+                lora_dropout=0.01
             )
-        >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base") >>> model = AdaLoraModel(config, model)
+        >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base") 
+        >>> qlora_model = get_peft_model(model, config)
 
     **Attributes**:
         - **model** ([`transformers.PreTrainedModel`]) -- The model to be adapted.
-        - **peft_config** ([`AdaLoraConfig`]): The configuration of the AdaLora model.
+        - **peft_config** ([`QLoraConfig`]): The configuration of the AdaLora model.
     """
 
     def __init__(self, model, config, adapter_name):
@@ -661,13 +545,11 @@ class QLoraModel(LoraModel):
             return None
 
     @staticmethod
-    def _prepare_adalora_config(peft_config, model_config):
+    def _prepare_qlora_config(peft_config, model_config):
         if peft_config.target_modules is None:
-            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING:
+            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_QLORA_TARGET_MODULES_MAPPING:
                 raise ValueError("Please specify `target_modules` in `peft_config`")
-            peft_config.target_modules = TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING[
-                model_config["model_type"]
-            ]
+            peft_config.target_modules = TRANSFORMERS_MODELS_TO_QLORA_TARGET_MODULES_MAPPING[model_config["model_type"]]
         if peft_config.inference_mode:
             peft_config.merge_weights = True
         return peft_config
