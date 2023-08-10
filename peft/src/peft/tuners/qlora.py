@@ -24,10 +24,13 @@ from .lora import (
     LoraLayer,
     LoraModel,
     mark_only_lora_as_trainable,
+    Linear8bitLt
 )
 
 if is_bnb_available():
     import bitsandbytes as bnb
+else:
+    warnings.warn("QLora needs bitsandbytes.")
 
 
 def is_ipex_available():
@@ -53,60 +56,6 @@ def is_ipex_available():
     return True
     
 
-
-IGNORE_INDEX = -100
-DEFAULT_PAD_TOKEN = "[PAD]"
-
-@dataclass
-class ModelArguments:
-    model_name_or_path: Optional[str] = field(
-        default="EleutherAI/pythia-12b"
-    )
-    trust_remote_code: Optional[bool] = field(
-        default=False,
-        metadata={"help": "Enable unpickling of arbitrary code in AutoModelForCausalLM#from_pretrained."}
-    )
-    use_auth_token: Optional[bool] = field(
-        default=False,
-        metadata={"help": "Enables using Huggingface auth token from Git Credentials."}
-    )
-
-@dataclass
-class DataArguments:
-    eval_dataset_size: int = field(
-        default=1024, metadata={"help": "Size of validation dataset."}
-    )
-    max_train_samples: Optional[int] = field(
-        default=None,
-        metadata={
-            "help": "For debugging purposes or quicker training, truncate the number of training examples to this "
-            "value if set."
-        },
-    )
-    max_eval_samples: Optional[int] = field(
-        default=None,
-        metadata={
-            "help": "For debugging purposes or quicker training, truncate the number of evaluation examples to this "
-            "value if set."
-        },
-    )
-    source_max_len: int = field(
-        default=1024,
-        metadata={"help": "Maximum source sequence length. Sequences will be right padded (and possibly truncated)."},
-    )
-    target_max_len: int = field(
-        default=256,
-        metadata={"help": "Maximum target sequence length. Sequences will be right padded (and possibly truncated)."},
-    )
-    dataset: str = field(
-        default='alpaca',
-        metadata={"help": "Which dataset to finetune on. See datamodule for options."}
-    )
-    dataset_format: Optional[str] = field(
-        default=None,
-        metadata={"help": "Which dataset format is used. [alpaca|chip2|self-instruct|hh-rlhf]"}
-    )
-
 def find_all_linear_names(args, model):
     cls = bnb.nn.Linear4bit if args.bits == 4 else (bnb.nn.Linear8bitLt if args.bits == 8 else torch.nn.Linear)
     lora_module_names = set()
@@ -120,39 +69,13 @@ def find_all_linear_names(args, model):
         lora_module_names.remove('lm_head')
     return list(lora_module_names)
 
-class SavePeftModelCallback(transformers.TrainerCallback):
-    def save_model(self, args, state, kwargs):
-        print('Saving PEFT checkpoint...')
-        if state.best_model_checkpoint is not None:
-            checkpoint_folder = os.path.join(state.best_model_checkpoint, "adapter_model")
-        else:
-            checkpoint_folder = os.path.join(args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{state.global_step}")
 
-        peft_model_path = os.path.join(checkpoint_folder, "adapter_model")
-        kwargs["model"].save_pretrained(peft_model_path)
-
-        pytorch_model_path = os.path.join(checkpoint_folder, "pytorch_model.bin")
-        if os.path.exists(pytorch_model_path):
-            os.remove(pytorch_model_path)
-
-    def on_save(self, args, state, control, **kwargs):
-        self.save_model(args, state, kwargs)
-        return control
-
-    def on_train_end(self, args, state, control, **kwargs):
-        def touch(fname, times=None):
-            with open(fname, 'a'):
-                os.utime(fname, times)
-
-        touch(join(args.output_dir, 'completed'))
-        self.save_model(args, state, kwargs)
-
-def get_accelerate_model(args, checkpoint_dir):
+def get_accelerate_model(args, checkpoint_dir): # 主要代码在这里
 
     if torch.cuda.is_available():
         n_gpus = torch.cuda.device_count()
-    if is_ipex_available() and torch.xpu.is_available():
-        n_gpus = torch.xpu.device_count()
+    # if is_ipex_available() and torch.xpu.is_available():
+    #     n_gpus = torch.xpu.device_count()
         
     max_memory = f'{args.max_memory_MB}MB'
     max_memory = {i: max_memory for i in range(n_gpus)}
@@ -242,7 +165,7 @@ def get_accelerate_model(args, checkpoint_dir):
             print("Loading adapters from checkpoint.")
             model = PeftModel.from_pretrained(model, join(checkpoint_dir, 'adapter_model'), is_trainable=True)
         else:
-            print(f'adding LoRA modules...')
+            print(f'adding LoRA modules...') # !!!!!
             modules = find_all_linear_names(args, model)
             config = LoraConfig(
                 r=args.lora_r,
@@ -266,23 +189,6 @@ def get_accelerate_model(args, checkpoint_dir):
                     module = module.to(torch.bfloat16)
     return model, tokenizer
 
-def print_trainable_parameters(args, model):
-    """
-    Prints the number of trainable parameters in the model.
-    """
-    trainable_params = 0
-    all_param = 0
-    for _, param in model.named_parameters():
-        all_param += param.numel()
-        if param.requires_grad:
-            trainable_params += param.numel()
-    if args.bits == 4: trainable_params /= 2
-    print(
-        f"trainable params: {trainable_params} || "
-        f"all params: {all_param} || "
-        f"trainable: {100 * trainable_params / all_param}"
-    )
-
 
 @dataclass
 class QLoraConfig(LoraConfig):
@@ -294,8 +200,11 @@ class QLoraConfig(LoraConfig):
         ...
     """
 
-    target_r: int = field(default=8, metadata={"help": "Target Lora matrix dimension."})
-    # 需要什么参数补充上
+    compute_bits: int = field(default=16, metadata={"help": "Target Lora matrix dimension."})
+    load_bits: int = field(default=4, metadata={"help": "Target Lora matrix dimension."})
+
+    double_quant: bool = field(default=True, metadata={"help": "Compress the quantization statistics through double quantization."})
+    quant_type: str = field(default="nf4",metadata={"help": "Quantization data type to use. Should be one of `fp4` or `nf4`."})
 
     def __post_init__(self):
         self.peft_type = PeftType.QLORA
@@ -324,7 +233,18 @@ class QLoraModel(LoraModel):
                 target_modules=["q", "v"],
                 lora_dropout=0.01
             )
-        >>> model = AutoModelForSeq2SeqLM.from_pretrained("t5-base") 
+        >>> nf4_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_compute_dtype=torch.bfloat16
+            )
+        >>> model = AutoModelForSeq2SeqLM.from_pretrained(
+                "t5-base", 
+                load_in_4bit=True,
+                load_in_8bit=args.bits == 8,
+                device_map='auto',
+                quantization_config=nf4_config) 
         >>> qlora_model = get_peft_model(model, config)
 
     **Attributes**:
@@ -346,7 +266,7 @@ class QLoraModel(LoraModel):
         self._find_and_replace(adapter_name)
         if len(self.peft_config) > 1 and self.peft_config[adapter_name].bias != "none":
             raise ValueError(
-                "AdaLoraModel supports only 1 adapter with bias. When using multiple adapters, set bias to 'none' for all adapters."
+                "QLoraModel supports only 1 adapter with bias. When using multiple adapters, set bias to 'none' for all adapters."
             )
         traininable_mode_counter = 0
         for config in self.peft_config.values():
@@ -355,7 +275,7 @@ class QLoraModel(LoraModel):
 
         if traininable_mode_counter > 1:
             raise ValueError(
-                "AdaLoraModel supports only 1 trainable adapter. "
+                "QLoraModel supports only 1 trainable adapter. "
                 "When using multiple adapters, set inference_mode to True for all adapters except the one you want to train."
             )
 
@@ -364,11 +284,16 @@ class QLoraModel(LoraModel):
             _freeze_adapter(self.model, adapter_name)
         else:
             self.trainable_adapter_name = adapter_name
-            self.rankallocator = RankAllocator(self.model, self.peft_config[adapter_name], self.trainable_adapter_name)
 
     def _find_and_replace(self, adapter_name):
         lora_config = self.peft_config[adapter_name]
+        loaded_in_4bit = getattr(self.model, "is_loaded_in_4bit", False)
         loaded_in_8bit = getattr(self.model, "is_loaded_in_8bit", False)
+        if loaded_in_4bit and not is_bnb_available():
+            raise ImportError(
+                "To use Lora with 4-bit quantization, please install the `bitsandbytes` package. "
+                "You can install it with `pip install bitsandbytes`."
+            )
         if loaded_in_8bit and not is_bnb_available():
             raise ImportError(
                 "To use Lora with 8-bit quantization, please install the `bitsandbytes` package. "
@@ -411,7 +336,7 @@ class QLoraModel(LoraModel):
                                 "index": target.index,
                             }
                         )
-                        new_module = SVDLinear8bitLt(
+                        new_module = Linear8bitLt(
                             adapter_name, target.in_features, target.out_features, bias=bias, **kwargs
                         )
                     else:
@@ -553,3 +478,64 @@ class QLoraModel(LoraModel):
         if peft_config.inference_mode:
             peft_config.merge_weights = True
         return peft_config
+
+# 可能理解错了 再看看
+# if is_bnb_available():
+
+#     class Linear4bitLt(bnb.nn.Linear4bit, LoraLayer):
+#         # Lora implemented in a dense layer
+#         def __init__(
+#             self,
+#             adapter_name,
+#             in_features,
+#             out_features,
+#             r: int = 0,
+#             lora_alpha: int = 1,
+#             lora_dropout: float = 0.0,
+#             **kwargs,
+#         ):
+#             bnb.nn.Linear4bit.__init__(
+#                 self,
+#                 in_features,
+#                 out_features,
+#                 bias=kwargs.get("bias", True),
+#                 compute_dtype = kwargs.get("compute_dtype", None),
+#                 compress_statistics = kwargs.get("compress_statistics", True), 
+#                 quant_type = kwargs.get("quant_type", 'fp4'),
+#                 device = kwargs.get("device", None)
+#             )
+#             LoraLayer.__init__(self, in_features=in_features, out_features=out_features)
+
+#             # Freezing the pre-trained weight matrix
+#             self.weight.requires_grad = False
+
+#             init_lora_weights = kwargs.pop("init_lora_weights", True)
+#             self.update_layer(adapter_name, r, lora_alpha, lora_dropout, init_lora_weights)
+#             self.active_adapter = adapter_name
+
+#         def forward(self, x: torch.Tensor):
+#             result = super().forward(x)
+
+#             if self.disable_adapters or self.active_adapter not in self.lora_A.keys():
+#                 return result
+#             elif self.r[self.active_adapter] > 0:
+#                 if not torch.is_autocast_enabled():
+#                     expected_dtype = result.dtype
+
+#                     if x.dtype != torch.float32:
+#                         x = x.float()
+#                     output = (
+#                         self.lora_B[self.active_adapter](
+#                             self.lora_A[self.active_adapter](self.lora_dropout[self.active_adapter](x))
+#                         ).to(expected_dtype)
+#                         * self.scaling[self.active_adapter]
+#                     )
+#                 else:
+#                     output = (
+#                         self.lora_B[self.active_adapter](
+#                             self.lora_A[self.active_adapter](self.lora_dropout[self.active_adapter](x))
+#                         )
+#                         * self.scaling[self.active_adapter]
+#                     )
+#                 result += output
+#             return result
