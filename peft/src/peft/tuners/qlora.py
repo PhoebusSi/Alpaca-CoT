@@ -11,7 +11,6 @@ import torch.nn.functional as F
 from transformers.pytorch_utils import Conv1D
 
 from ..utils import (
-    TRANSFORMERS_MODELS_TO_QLORA_TARGET_MODULES_MAPPING,
     PeftType,
     _freeze_adapter,
     _get_submodules,
@@ -200,7 +199,7 @@ class QLoraConfig(LoraConfig):
         ...
     """
 
-    compute_bits: int = field(default=16, metadata={"help": "Target Lora matrix dimension."})
+    compute_dtype: torch.dtype = field(default=torch.float16, metadata={"help": "Target Lora matrix dimension."})
     load_bits: int = field(default=4, metadata={"help": "Target Lora matrix dimension."})
 
     double_quant: bool = field(default=True, metadata={"help": "Compress the quantization statistics through double quantization."})
@@ -261,7 +260,7 @@ class QLoraModel(LoraModel):
     def add_adapter(self, adapter_name, config=None):
         if config is not None:
             model_config = self.model.config.to_dict() if hasattr(self.model.config, "to_dict") else self.model.config
-            config = self._prepare_adalora_config(config, model_config)
+            config = self._prepare_lora_config(config, model_config)
             self.peft_config[adapter_name] = config
         self._find_and_replace(adapter_name)
         if len(self.peft_config) > 1 and self.peft_config[adapter_name].bias != "none":
@@ -469,15 +468,6 @@ class QLoraModel(LoraModel):
         else:
             return None
 
-    @staticmethod
-    def _prepare_qlora_config(peft_config, model_config):
-        if peft_config.target_modules is None:
-            if model_config["model_type"] not in TRANSFORMERS_MODELS_TO_QLORA_TARGET_MODULES_MAPPING:
-                raise ValueError("Please specify `target_modules` in `peft_config`")
-            peft_config.target_modules = TRANSFORMERS_MODELS_TO_QLORA_TARGET_MODULES_MAPPING[model_config["model_type"]]
-        if peft_config.inference_mode:
-            peft_config.merge_weights = True
-        return peft_config
 
 # 可能理解错了 再看看
 # if is_bnb_available():
