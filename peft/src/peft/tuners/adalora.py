@@ -75,7 +75,7 @@ class AdaLoraModel(LoraModel):
     Example::
 
         >>> from transformers import AutoModelForSeq2SeqLM, LoraConfig 
-        >>> from peft import AdaLoraModel, AdaLoraConfig
+        >>> from peft import AdaLoraModel, AdaLoraConfig, get_peft_model
         
         >>> config = AdaLoraConfig(
                 peft_type="ADALORA", 
@@ -94,7 +94,7 @@ class AdaLoraModel(LoraModel):
         - **peft_config** ([`AdaLoraConfig`]): The configuration of the AdaLora model.
     """
 
-    def __init__(self, model, config, adapter_name):
+    def __init__(self, model, config, adapter_name="default"):
         nn.Module.__init__(self)
         self.model = model
         self.peft_config = config

@@ -14,11 +14,7 @@
 # limitations under the License.
 
 import copy
-import importlib
 import torch
-
-def is_bnb_available():
-    return importlib.util.find_spec("bitsandbytes") is not None
 
 # needed for prefix-tuning of bloom model
 def bloom_model_postprocess_past_key_value(past_key_values):

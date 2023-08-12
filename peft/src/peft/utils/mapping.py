@@ -7,7 +7,7 @@ TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING = {
     "bart": ["q_proj", "v_proj"],
     "gpt2": ["c_attn"],
     "bloom": ["query_key_value"],
-    "blip-2": ["q", "v", "q_proj", "v_proj"], # *
+    "blip-2": ["q", "v", "q_proj", "v_proj"],
     "opt": ["q_proj", "v_proj"],
     "gptj": ["q_proj", "v_proj"],
     "gpt_neox": ["query_key_value"],
@@ -19,8 +19,13 @@ TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING = {
     "deberta-v2": ["query_proj", "value_proj"],
     "deberta": ["in_proj"],
     "layoutlm": ["query", "value"],
-    "llama": ["q_proj", "v_proj"], # **
-    "chatglm": ["query_key_value"], # **
+    "llama": ["q_proj", "v_proj"],
+    "chatglm": ["query_key_value"],
+    "gpt_bigcode": ["c_attn"],
+    "mpt": ["Wqkv"],
+    "RefinedWebModel": ["query_key_value"],
+    "RefinedWeb": ["query_key_value"],
+    "falcon": ["query_key_value"],
 }
 
 TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING = {
@@ -82,5 +87,8 @@ TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING = {
     "bloom": bloom_model_postprocess_past_key_value,
 }
 
+COMMON_LAYERS_PATTERN = ["layers", "h", "block", "blocks", "layer"]
+
 WEIGHTS_NAME = "adapter_model.bin"
 CONFIG_NAME = "adapter_config.json"
+CLAMP_QUANTILE = 0.99

@@ -103,7 +103,7 @@ class BottleneckModel(torch.nn.Module):
         - **peft_config** (`BottleneckConfig`): The configuration of the Bottleneck adapter.
     """
 
-    def __init__(self, model, config, adapter_name):
+    def __init__(self, model, config, adapter_name="default"):
         super().__init__()
         self.model = model
         self.peft_config = config

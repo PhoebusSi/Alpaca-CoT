@@ -30,7 +30,7 @@ class PeftType(str, enum.Enum):
     PREFIX_TUNING = "PREFIX_TUNING"
     LORA = "LORA"
     ADALORA = "ADALORA"
-    QLORA = "QLORA"
+    # QLORA = "QLORA"
     BOTTLENECK = "BOTTLENECK"
 
 
