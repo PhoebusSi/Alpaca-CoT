@@ -21,7 +21,7 @@ from typing import Optional, Union
 from huggingface_hub import hf_hub_download
 from transformers.utils import PushToHubMixin
 
-from .mapping import CONFIG_NAME
+from .mappings import CONFIG_NAME
 
 
 class PeftType(str, enum.Enum):

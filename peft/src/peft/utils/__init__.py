@@ -31,7 +31,7 @@ from .other import (
     ModulesToSaveWrapper
 )
 from .import_utils import is_bnb_available, is_bnb_4bit_available
-from .mapping import (
+from .mappings import (
     TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING,
     TRANSFORMERS_MODELS_TO_LORA_TARGET_MODULES_MAPPING,
     TRANSFORMERS_MODELS_TO_ADALORA_TARGET_MODULES_MAPPING,
