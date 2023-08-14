@@ -25,8 +25,9 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 -  🚀7.24: LLM `ChatGLM v2` was merged.
 -  🚀7.20: LLM `Baichuan` was merged.
 -  6.25: Add model evaluation code, including belle and MMCU.
-<details><summary> more </summary>
+<details><summary> - more </summary>
 <p>
+    
 -  5.20: fixs bugs in model saving and add wandb support.
 -  5.15: more datasets like `GPT4Tools`, `Auto CoT`, `pCLUE` are add.
 -  🚀5.5: A new branch [`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm) is created to build a Tabular LLM. We collect instruction fine-tuning data for table-related tasks like table question answering and use them to fine-tune LLMs in this repo.
@@ -40,6 +41,7 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 -  4.7: Added functions `Parameter merging`, `Local chatting`, `Batch predicting` and `Web service building` by [@weberr](https://github.com/weberrr).
 -  4.4: Datasets `GPTeacher`,`Guanaco`,`HC3`,`prosocial-dialog`, `belle-chat&belle-math`, `xP3` and `natural-instructions` are collected and formatted.
 -  4.3: The Chinese CoT dataset `CoT_CN_data.json` can be found [here](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
+  
 </p>
 </details> 
 
