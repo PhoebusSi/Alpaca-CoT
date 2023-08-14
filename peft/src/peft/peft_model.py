@@ -28,7 +28,7 @@ from transformers import PreTrainedModel
 from transformers.modeling_outputs import SequenceClassifierOutput, TokenClassifierOutput
 from transformers.utils import PushToHubMixin
 
-from .tuners import AdaLoraModel, LoraModel, PrefixEncoder, PromptEmbedding, PromptEncoder
+from .tuners import AdaLoraModel, LoraModel, PrefixEncoder, PromptEmbedding, PromptEncoder, BottleneckModel# QLoraModel
 from .utils import (
     TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING,
     WEIGHTS_NAME,
@@ -45,11 +45,13 @@ from .utils import (
 
 
 PEFT_TYPE_TO_MODEL_MAPPING = {
-    PeftType.LORA: LoraModel,
-    PeftType.PROMPT_TUNING: PromptEmbedding,
-    PeftType.P_TUNING: PromptEncoder,
-    PeftType.PREFIX_TUNING: PrefixEncoder,
+    PeftType.LORA: LoraModel,  
     PeftType.ADALORA: AdaLoraModel,
+    # PeftType.QLORA: QLoraModel,
+    PeftType.BOTTLENECK: BottleneckModel,
+    # PeftType.PROMPT_TUNING: PromptEmbedding,
+    # PeftType.P_TUNING: PromptEncoder,
+    # PeftType.PREFIX_TUNING: PrefixEncoder,
 }
 
 
@@ -149,7 +151,7 @@ class PeftModel(PushToHubMixin, torch.nn.Module):
                     - A path to a directory containing a Lora configuration file saved using the `save_pretrained`
                       method (`./my_lora_config_directory/`).
         """
-        from .mapping import MODEL_TYPE_TO_PEFT_MODEL_MAPPING, PEFT_TYPE_TO_CONFIG_MAPPING
+        from .get_peft import MODEL_TYPE_TO_PEFT_MODEL_MAPPING, PEFT_TYPE_TO_CONFIG_MAPPING
 
         # load the config
         config = PEFT_TYPE_TO_CONFIG_MAPPING[
@@ -334,7 +336,7 @@ class PeftModel(PushToHubMixin, torch.nn.Module):
             _set_trainable(self, adapter_name)
 
     def load_adapter(self, model_id, adapter_name, is_trainable=False, **kwargs):
-        from .mapping import PEFT_TYPE_TO_CONFIG_MAPPING
+        from .get_peft import PEFT_TYPE_TO_CONFIG_MAPPING
 
         if adapter_name not in self.peft_config:
             # load the config

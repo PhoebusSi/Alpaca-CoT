@@ -21,7 +21,7 @@ from typing import Optional, Union
 from huggingface_hub import hf_hub_download
 from transformers.utils import PushToHubMixin
 
-from .other import CONFIG_NAME
+from .mappings import CONFIG_NAME
 
 
 class PeftType(str, enum.Enum):
@@ -30,6 +30,8 @@ class PeftType(str, enum.Enum):
     PREFIX_TUNING = "PREFIX_TUNING"
     LORA = "LORA"
     ADALORA = "ADALORA"
+    # QLORA = "QLORA"
+    BOTTLENECK = "BOTTLENECK"
 
 
 class TaskType(str, enum.Enum):

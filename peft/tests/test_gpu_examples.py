@@ -37,7 +37,7 @@ from transformers import (
     WhisperTokenizer,
 )
 
-from peft import LoraConfig, get_peft_model, prepare_model_for_int8_training
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 from .testing_utils import require_bitsandbytes, require_torch_gpu, require_torch_multi_gpu
 
@@ -126,7 +126,7 @@ class PeftInt8GPUExampleTests(unittest.TestCase):
             )
 
             tokenizer = AutoTokenizer.from_pretrained(self.causal_lm_model_id)
-            model = prepare_model_for_int8_training(model)
+            model = prepare_model_for_kbit_training(model)
 
             config = LoraConfig(
                 r=16,
@@ -187,7 +187,7 @@ class PeftInt8GPUExampleTests(unittest.TestCase):
             self.assertEqual(set(model.hf_device_map.values()), {0, 1})
 
             tokenizer = AutoTokenizer.from_pretrained(self.causal_lm_model_id)
-            model = prepare_model_for_int8_training(model)
+            model = prepare_model_for_kbit_training(model)
 
             setattr(model, "model_parallel", True)
             setattr(model, "is_parallelizable", True)
@@ -250,7 +250,7 @@ class PeftInt8GPUExampleTests(unittest.TestCase):
             self.assertEqual(set(model.hf_device_map.values()), {0})
 
             tokenizer = AutoTokenizer.from_pretrained(self.seq2seq_model_id)
-            model = prepare_model_for_int8_training(model)
+            model = prepare_model_for_kbit_training(model)
 
             config = LoraConfig(
                 r=16,
@@ -311,7 +311,7 @@ class PeftInt8GPUExampleTests(unittest.TestCase):
             self.assertEqual(set(model.hf_device_map.values()), {0, 1})
 
             tokenizer = AutoTokenizer.from_pretrained(self.seq2seq_model_id)
-            model = prepare_model_for_int8_training(model)
+            model = prepare_model_for_kbit_training(model)
 
             config = LoraConfig(
                 r=16,
@@ -402,7 +402,7 @@ class PeftInt8GPUExampleTests(unittest.TestCase):
             model.config.forced_decoder_ids = None
             model.config.suppress_tokens = []
 
-            model = prepare_model_for_int8_training(model, output_embedding_layer_name="proj_out")
+            model = prepare_model_for_kbit_training(model, output_embedding_layer_name="proj_out")
 
             config = LoraConfig(
                 r=32, lora_alpha=64, target_modules=["q_proj", "v_proj"], lora_dropout=0.05, bias="none"

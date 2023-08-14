@@ -20,9 +20,12 @@ from .peft_model import (
     PeftModelForSequenceClassification,
     PeftModelForTokenClassification,
 )
-from .tuners import AdaLoraConfig, LoraConfig, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig
-from .utils import PromptLearningConfig
-
+from .tuners import AdaLoraConfig, LoraConfig, PrefixTuningConfig, PromptEncoderConfig, PromptTuningConfig, BottleneckConfig# QLoraConfig
+from .utils import (
+    PeftConfig,
+    PromptLearningConfig,
+)
+from transformers import PreTrainedModel
 
 MODEL_TYPE_TO_PEFT_MODEL_MAPPING = {
     "SEQ_CLS": PeftModelForSequenceClassification,
@@ -37,6 +40,8 @@ PEFT_TYPE_TO_CONFIG_MAPPING = {
     "P_TUNING": PromptEncoderConfig,
     "LORA": LoraConfig,
     "ADALORA": AdaLoraConfig,
+    # "QLORA": QLoraConfig,
+    "BOTTLENECK": BottleneckConfig,
 }
 
 
@@ -93,7 +98,7 @@ def _prepare_prompt_learning_config(peft_config, model_config):
     return peft_config
 
 
-def get_peft_model(model, peft_config):
+def get_peft_model(model: PreTrainedModel, peft_config: PeftConfig, adapter_name: str = "default"):
     """
     Returns a Peft model object from a model and a config.
 
@@ -101,12 +106,14 @@ def get_peft_model(model, peft_config):
         model ([`transformers.PreTrainedModel`]): Model to be wrapped.
         peft_config ([`PeftConfig`]): Configuration object containing the parameters of the Peft model.
     """
-    model_config = model.config.to_dict() if hasattr(model.config, "to_dict") else model.config
+    model_config = getattr(model, "config", {"model_type": "custom"})
+    if hasattr(model_config, "to_dict"):
+        model_config = model_config.to_dict()
     peft_config.base_model_name_or_path = model.__dict__.get("name_or_path", None)
-    if peft_config.task_type not in MODEL_TYPE_TO_PEFT_MODEL_MAPPING.keys() and not isinstance(
-        peft_config, PromptLearningConfig
-    ):
-        return PeftModel(model, peft_config)
+    
     if isinstance(peft_config, PromptLearningConfig):
         peft_config = _prepare_prompt_learning_config(peft_config, model_config)
-    return MODEL_TYPE_TO_PEFT_MODEL_MAPPING[peft_config.task_type](model, peft_config)
+    
+    if peft_config.task_type not in MODEL_TYPE_TO_PEFT_MODEL_MAPPING.keys():
+        return PeftModel(model, peft_config, adapter_name=adapter_name)
+    return MODEL_TYPE_TO_PEFT_MODEL_MAPPING[peft_config.task_type](model, peft_config, adapter_name=adapter_name)
