@@ -21,6 +21,9 @@
 - 🚀5.5: 新建了一个分支[`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm)来构造可以处理多种表格智能任务的大型语言模型。
 - 🚀5.4: PEFT中所有parameter-efficient方法（如P-tuning）均被集成进来，可通过超参简单设置。
 - 🚀5.4: LLM `MOSS`已被集成进来。
+
+- <details><summary> 更多news </summary> 
+<p>
 - 4.21: 已收集和统一格式化数据集 `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG`. 
 - 4.15: 已收集和统一格式化数据集 `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)`. 
 - 4.12: 现在你可以在<a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>中体验Alpaca-CoT.
@@ -31,6 +34,8 @@
 - 4.3: 中文的CoT数据集`CoT_CN_data.json`已上传到[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: 在instinwild-CN(47k) + belle(1.5M)微调得到的Bloom7b的`checkpoint`已被上传到了[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: `instnwild`（收集自推特，主要是生成、开放式QA和mind-storm types）已经被统一格式化并收集.
+</p>
+</details>
 
 
 ## 0. ChatGPT背后的技术
@@ -47,7 +52,7 @@
 
 ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的潜力。基于LLaMA[1]等Large Language Models(LLMs)的instruction-tuning研究(如，Alpaca[2])大幅度加速了复现ChatGPT的进程。**Alpaca-CoT**希望在这个研究方向上做出适度的贡献，以推进LLMs的开源进程、降低LLMs研究和使用成本。
 
-具体来说，**Alpaca-CoT**项目旨在探究如何更好地通过instruction-tuning的方式来诱导LLM具备类似ChatGPT的交互和instruction-following能力。为此，我们广泛收集了不同类型的instruction（尤其是Chain-of-Thought数据集），并基于LLaMA给出了深入细致的实证研究，以供未来工作参考。据我们所知，我们是首个将CoT拓展进Alpaca的工作，因此简称为"**Alpaca-CoT**"。
+具体来说，**Alpaca-CoT**项目旨在探究如何更好地通过instruction-tuning的方式来诱导LLM具备类似ChatGPT的交互和instruction-following能力。为此，我们广泛收集了不同类型的instruction（尤其是Chain-of-Thought数据集），同时引入了多种参数效率方法（比如P-tuning，Qlora等8种）和LLM（比如bloom，baichuan，vicuna等多种）的接口，方便为不同的业务切换合适的方法和大模型以及数据。同时，我们对这三方面要素给出了深入细致的实证研究，以供未来工作参考。据我们所知，我们是首个将CoT拓展进Alpaca的工作，因此简称为"**Alpaca-CoT**"。
 
 
 热烈欢迎您向我们提供任何未被本项目收集的instruction-tuning及各类tasks数据集（或其来源）。我们将：
@@ -59,6 +64,8 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 我们希望我们的项目能够为大型语言模型的开源过程做出适度的贡献，并降低NLP研究人员上手LLM相关研究的门槛。
 
 ## 2. 概述
+
+![img](./figures/platform-zh.png)
 
 近期，[LLaMA](https://arxiv.org/abs/2302.13971v1)[1]显示出惊人的zero-shot和few-shot能力，仅需较少的参数即可和GPT-3.5性能相当（LLaMA-13B显著优于GPT-3（175B），LLaMA-65B与PaLM-540MB相当），明显降低了训练、微调和使用competitive大型语言模型的成本。最近，为了提高LLaMA的instruction-following能力，[Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca)[2]利用[self-instruct](https://arxiv.org/abs/2212.10560)[3]生成的52K Englishi nstruction-finetuning数据对LLaMA进行了微调。然而，目前该方向的研究仍然面临着以下三个挑战：
 - LLaMA-7b依然对计算资源有着较高的要求；
