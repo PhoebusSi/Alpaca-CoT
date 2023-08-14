@@ -22,7 +22,7 @@
 - 🚀5.4: PEFT中所有parameter-efficient方法（如P-tuning）均被集成进来，可通过超参简单设置。
 - 🚀5.4: LLM `MOSS`已被集成进来。
 
-- <details><summary> 更多news </summary> 
+<details><summary> 更多news </summary> 
 <p>
     
 - 4.21: 已收集和统一格式化数据集 `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG`. 
@@ -40,15 +40,7 @@
 </details>
 
 
-% ## 0. ChatGPT背后的技术
 
-% **LLM**: （ **Large Language Models**）指经过大规模预训练且体量较大的语言模型，一般是transformer-based模型。
-
-// **IFT**: （ **Instruction Fine-Tuning**）指令微调，指令是指用户传入的目的明确的输入文本，指令微调用以让模型学会遵循用户的指令。
-
-**CoT**: （ **Chain-of-Thought**）指令形式的一种特殊情况，包含step-by-step的推理过程。如下图蓝色部分所示。
-
-![cot](./figures/cot.jpg)
 
 ## 1. 定位
 
@@ -79,8 +71,9 @@ ChatGPT的出现验证了大型语言模型(LLM)在通用人工智能(AGI)上的
 - 2. 我们发布的模型 **_显著提升了CoT(reasoning)推理能力_**。
 - 3. 我们发布的模型 **_显著提升了对中文指令的响应能力_**。
 - 4. 维护了一个仍在不断扩大规模的 **_[intruction-finetuning的数据集集合](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT)_**。该集合包含了中文、英文和CoT的instruction数据。同时，我们也维护了一个训练自各种instruction数据集的模型checkpoint集合。
-- 5. 集成了 **_多种LLMs并统一了调用接口_**，可通过超参轻松切换。目前包含 **LLaMA, ChatGLM**[5]和 **Bloom**[6]，后续将持续加入更多,以供研究者们轻松调用和对比不同LLMs。
-- 6. 提供了 **_详尽透彻的实证学习和定性分析_**，这里的findings可能会对促进未来LLM探索有一定的参考价值。
+- 5. 集成了 **_多种Parameter-efficient methods并统一了调用接口_**，可通过超参轻松切换。目前包含 **P-tuning, Lora**和 **Qlora**等8种方法，后续将持续加入更多,以供研究者们轻松调用和对比不同LLMs。
+- 6. 集成了 **_多种LLMs并统一了调用接口_**，可通过超参轻松切换。目前包含 **LLaMA, ChatGLM**[5]和 **Bloom**[6]等10种LLMs，后续将持续加入更多,以供研究者们轻松调用和对比不同LLMs。
+- 7. 提供了 **_详尽透彻的实证学习和定性分析_**，这里的findings可能会对促进未来LLM探索有一定的参考价值。
 
 
 
