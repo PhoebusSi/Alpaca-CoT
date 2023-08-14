@@ -26,7 +26,7 @@ from peft import (
     PromptTuningConfig,
     get_peft_model,
     get_peft_model_state_dict,
-    prepare_model_for_int8_training,
+    prepare_model_for_kbit_training,
 )
 
 
@@ -170,9 +170,9 @@ class PeftCommonTester:
 
         self.assertTrue(not dummy_output.requires_grad)
 
-        # load with `prepare_model_for_int8_training`
+        # load with `prepare_model_for_kbit_training`
         model = self.transformers_class.from_pretrained(model_id).to(self.torch_device)
-        model = prepare_model_for_int8_training(model)
+        model = prepare_model_for_kbit_training(model)
 
         for param in model.parameters():
             self.assertTrue(not param.requires_grad)
