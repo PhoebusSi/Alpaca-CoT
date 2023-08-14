@@ -24,6 +24,7 @@
 
 - <details><summary> 更多news </summary> 
 <p>
+    
 - 4.21: 已收集和统一格式化数据集 `GAOKAO`, `camel`, `FLAN-Muffin`, `COIG`. 
 - 4.15: 已收集和统一格式化数据集 `webGPT`, `dolly`, `baize`, `hh-rlhf`, `OIG(part)`. 
 - 4.12: 现在你可以在<a href="https://colab.research.google.com/drive/1wfrKqyPkz5BGD1Gkij_cvbUeweIDdRav?usp=sharing" >Google Colab</a>中体验Alpaca-CoT.
@@ -34,15 +35,16 @@
 - 4.3: 中文的CoT数据集`CoT_CN_data.json`已上传到[这里](https://huggingface.co/datasets/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: 在instinwild-CN(47k) + belle(1.5M)微调得到的Bloom7b的`checkpoint`已被上传到了[这里](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main).
 - 4.1: `instnwild`（收集自推特，主要是生成、开放式QA和mind-storm types）已经被统一格式化并收集.
+  
 </p>
 </details>
 
 
-## 0. ChatGPT背后的技术
+% ## 0. ChatGPT背后的技术
 
-**LLM**: （ **Large Language Models**）指经过大规模预训练且体量较大的语言模型，一般是transformer-based模型。
+% **LLM**: （ **Large Language Models**）指经过大规模预训练且体量较大的语言模型，一般是transformer-based模型。
 
-**IFT**: （ **Instruction Fine-Tuning**）指令微调，指令是指用户传入的目的明确的输入文本，指令微调用以让模型学会遵循用户的指令。
+// **IFT**: （ **Instruction Fine-Tuning**）指令微调，指令是指用户传入的目的明确的输入文本，指令微调用以让模型学会遵循用户的指令。
 
 **CoT**: （ **Chain-of-Thought**）指令形式的一种特殊情况，包含step-by-step的推理过程。如下图蓝色部分所示。
 
