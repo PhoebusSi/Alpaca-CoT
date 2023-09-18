@@ -137,7 +137,7 @@ You can download all the formatted data [here](https://huggingface.co/datasets/Q
 You can download all checkpoints trained on various types of instruction data from [here](https://huggingface.co/QingyiSi/Alpaca-CoT/tree/main). Then, after setting `LoRA_WEIGHTS` (in `generate.py`) to the local path, you can directly execute the model inference.
 
 
-### Data Fomatting
+### Data Formatting
 All data in our collection is formatted into the same templates, where each sample is as follows:
 ```
 [
