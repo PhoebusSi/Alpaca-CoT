@@ -151,9 +151,24 @@ def get_data_model(args):
 
     if args.model_type in ["chatglm", "chatglm2"]:
         # chatglm can not set load_in_8bit=True: ChatGLMForConditionalGeneration does not support gradient checkpointing.
-        model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, local_files_only=True, device_map=device_map)
+        # Quantization configurations by bitsandbytes
+        quantization_config = None
+        if args.quantization_bit == 4:
+            require_version("bitsandbytes>=0.39.0", "To fix: pip install bitsandbytes>=0.39.0")
+            require_version("transformers>=4.30.1", "To fix: pip install transformers>=4.30.1")
+            require_version("accelerate>=0.20.3", "To fix: pip install accelerate>=0.20.3")
+            require_version("peft>=0.4.0.dev0", "To fix: pip install git+https://github.com/huggingface/peft.git")
+            quantization_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16 if args.compute_dtype == "bf16" else torch.float16,
+            )
+            print("Quantizing model to {} bit.".format(args.quantization_bit))
+        model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, local_files_only=True, device_map=device_map, quantization_config=quantization_config)
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, local_files_only=True, trust_remote_code=True,  add_bos_token=True)  
-        # default add_eos_token=False, trust_remote_code=True)  
+        if quantization_config is not None:
+            model = prepare_model_for_training(model) 
     elif args.model_type in ["moss"]:
         model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, load_in_8bit=True, device_map=get_device_map(model_type="moss", load_in_8bit=True))
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, trust_remote_code=True)
@@ -218,7 +233,7 @@ def get_data_model(args):
         tokenizer.pad_token_id = 0  # unk_id in llama. we want this to be different from the eos token
     if args.model_type in ['baichuan'] and tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = 0  # set as the <unk> token
-    if args.model_type not in ['baichuan']:
+    if args.model_type not in ['baichuan', 'chatglm', 'chatglm2']:
         model = prepare_model_for_int8_training(model)
 
     if args.peft_type == 'lora':
