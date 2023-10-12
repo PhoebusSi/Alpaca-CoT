@@ -574,15 +574,19 @@ From the above table, we find that:
 ## Citation
 Please cite the repo if you use the data collection, code, and experimental findings in this repo.
 ```
-@misc{alpaca-cot,
-  author = {Qingyi Si, Tong Wang, Naibin Gu, Rui Liu, Zheng Lin },
-  school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
-  title = {Alpaca-CoT: An Instruction-Tuning Platform with Unified Interface of Instruction Collection, Parameter-efficient Methods, and Large Language Models},
-  year = {2023},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
+@misc{si2023empirical,
+      title={An Empirical Study of Instruction-tuning Large Language Models in Chinese}, 
+      author={Qingyi Si and Tong Wang and Zheng Lin and Xu Zhang and Yanan Cao and Weiping Wang},
+      year={2023},
+      eprint={2310.07328},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 ```
 For data and models, please cite the original data, parameter-efficient methods and LLMs source as well.
+
+We would like to express our special gratitude to APUS AilMe Lab for sponsoring the 8 A100 GPUs for the experiments.
+
+
+
 
