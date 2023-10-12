@@ -549,13 +549,13 @@ ___实验结果：___
 ## Citation
 Please cite the repo if you use the data collection, code, and experimental findings in this repo. 
 ```
-@misc{alpaca-cot,
-  author = {Qingyi Si, Tong Wang, Naibin Gu, Rui Liu, Zheng Lin },
-  school = {Institute of Information Engineering, Chinese Academy of Sciences, Beijing, China},
-  title = {Alpaca-CoT: An Instruction Fine-Tuning Platform with Instruction Data Collection and Unified Large Lnguage Models Interface},
-  year = {2023},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/PhoebusSi/alpaca-CoT}},
+@misc{si2023empirical,
+      title={An Empirical Study of Instruction-tuning Large Language Models in Chinese}, 
+      author={Qingyi Si and Tong Wang and Zheng Lin and Xu Zhang and Yanan Cao and Weiping Wang},
+      year={2023},
+      eprint={2310.07328},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 ```
+特别鸣谢：感谢APUS AilMe研究院为我们的实验赞助的8张A100。
