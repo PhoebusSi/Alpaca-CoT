@@ -21,7 +21,7 @@ You can also choose to join our group chat (WeChat) and communicate with more pe
 -  ⚠ If you want to use other methods besides LORA, please install the edited version in our project `pip install -e ./peft`.
 
 -  🚀8.16: `4bit quantization` is available for `lora`, `qlora` and `adalora`.  
--  🚀8.16: Parameter-efficient methods `Qlora`, `Sequential adapter` and `Paralle adapter` was merged.  
+-  🚀8.16: Parameter-efficient methods `Qlora`, `Sequential adapter` and `Parallel adapter` was merged.  
 -  🚀7.24: LLM `ChatGLM v2` was merged.
 -  🚀7.20: LLM `Baichuan` was merged.
 -  6.25: Add model evaluation code, including belle and MMCU.
