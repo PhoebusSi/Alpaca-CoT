@@ -1,5 +1,7 @@
 [**中文**](./CN_README.md) | [**English**](./README.md)
 
+<div id="top"></div>
+
 ![Alpaca-CoT](./figures/Alpaca-CoT-2.jpg)
 # Alpaca-CoT: An Instruction-Tuning Platform with Unified Interface of Instruction Collection, Parameter-efficient Methods, and Large Language Models
 [![LICENSE](https://img.shields.io/github/license/PhoebusSi/Alpaca-CoT)](https://github.com/PhoebusSi/Alpaca-CoT/blob/main/LICENSE.txt)
@@ -588,5 +590,5 @@ For data and models, please cite the original data, parameter-efficient methods 
 We would like to express our special gratitude to APUS AilMe Lab for sponsoring the 8 A100 GPUs for the experiments.
 
 
-
+<p align="right">(<a href="#top">back to top</a>)</p>
 
