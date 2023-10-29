@@ -25,9 +25,9 @@ agree as follows:
 
 “Database Directive” – Means Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, as amended or succeeded.
 
-“Database Right” – Means rights resulting from the Chapter III (“sui generis”) rights in the Database Directive (as amended and as transposed by member states), which includes the Extraction and Re-utilisation of the whole or a Substantial part of the Contents, as well as any similar rights available in the relevant jurisdiction under Section 10.4.
+“Database Right” – Means rights resulting from the Chapter III (“sui generis”) rights in the Database Directive (as amended and as transposed by member states), which includes the Extraction and Re-utilization of the whole or a Substantial part of the Contents, as well as any similar rights available in the relevant jurisdiction under Section 10.4.
 
-“Derivative Database” – Means a database based upon the Database, and includes any translation, adaptation, arrangement, modification, or any other alteration of the Database or of a Substantial part of the Contents. This includes, but is not limited to, Extracting or Re-utilising the whole or a Substantial part of the Contents in a new Database.
+“Derivative Database” – Means a database based upon the Database, and includes any translation, adaptation, arrangement, modification, or any other alteration of the Database or of a Substantial part of the Contents. This includes, but is not limited to, Extracting or Re-utilizing the whole or a Substantial part of the Contents in a new Database.
 
 “Extraction” – Means the permanent or temporary transfer of all or a Substantial part of the Contents to another medium by any means or in any form.
 
@@ -41,9 +41,9 @@ agree as follows:
 
 “Publicly” – means to Persons other than You or under Your control by either more than 50% ownership or by the power to direct their activities (such as contracting with an independent consultant).
 
-“Re-utilisation” – means any form of making available to the public all or a Substantial part of the Contents by the distribution of copies, by renting, by online or other forms of transmission.
+“Re-utilization” – means any form of making available to the public all or a Substantial part of the Contents by the distribution of copies, by renting, by online or other forms of transmission.
 
-“Substantial” – Means substantial in terms of quantity or quality or a combination of both. The repeated and systematic Extraction or Re-utilisation of insubstantial parts of the Contents may amount to the Extraction or Re-utilisation of a Substantial part of the Contents.
+“Substantial” – Means substantial in terms of quantity or quality or a combination of both. The repeated and systematic Extraction or Re-utilization of insubstantial parts of the Contents may amount to the Extraction or Re-utilization of a Substantial part of the Contents.
 
 “Use” – As a verb, means doing any act that is restricted by copyright or Database Rights whether in the original medium or any other; and includes without limitation distributing, copying, publicly performing, publicly displaying, and preparing derivative works of the Database, as well as modifying the Database as may be technically necessary to use it in a different mode or format.
 
@@ -62,9 +62,9 @@ c. An agreement in contract between You and the Licensor.
 
 2.2 Legal rights covered. This License covers the legal rights in the Database, including:
 
-a. Copyright. Any copyright or neighbouring rights in the Database. The copyright licensed includes any individual elements of the Database, but does not cover the copyright over the Contents independent of this Database. See Section 2.4 for details. Copyright law varies between jurisdictions, but is likely to cover: the Database model or schema, which is the structure, arrangement, and organisation of the Database, and can also include the Database tables and table indexes; the data entry and output sheets; and the Field names of Contents stored in the Database;
+a. Copyright. Any copyright or neighbouring rights in the Database. The copyright licensed includes any individual elements of the Database, but does not cover the copyright over the Contents independent of this Database. See Section 2.4 for details. Copyright law varies between jurisdictions, but is likely to cover: the Database model or schema, which is the structure, arrangement, and organization of the Database, and can also include the Database tables and table indexes; the data entry and output sheets; and the Field names of Contents stored in the Database;
 
-b. Database Rights. Database Rights only extend to the Extraction and Re-utilisation of the whole or a Substantial part of the Contents. Database Rights can apply even when there is no copyright over the Database. Database Rights can also apply when the Contents are removed from the Database and are selected and arranged in a way that would not infringe any applicable copyright; and
+b. Database Rights. Database Rights only extend to the Extraction and Re-utilization of the whole or a Substantial part of the Contents. Database Rights can apply even when there is no copyright over the Database. Database Rights can also apply when the Contents are removed from the Database and are selected and arranged in a way that would not infringe any applicable copyright; and
 
 c. Contract. This is an agreement between You and the Licensor for access to the Database. In return you agree to certain conditions of use on this access as outlined in this License.
 
@@ -85,7 +85,7 @@ For example, if used on a Database of images (the Contents), this License would 
 
 The rights granted cover, for example:
 
-a. Extraction and Re-utilisation of the whole or a Substantial part of the Contents;
+a. Extraction and Re-utilization of the whole or a Substantial part of the Contents;
 
 b. Creation of Derivative Databases;
 
@@ -142,11 +142,11 @@ Please note that some jurisdictions do not allow for the waiver of moral rights,
 6.0 FAIR DEALING, DATABASE EXCEPTIONS, AND OTHER RIGHTS NOT AFFECTED
 6.1 This License does not affect any rights that You or anyone else may independently have under any applicable law to make any use of this Database, including without limitation:
 
-a. Exceptions to the Database Right including: Extraction of Contents from non-electronic Databases for private purposes, Extraction for purposes of illustration for teaching or scientific research, and Extraction or Re-utilisation for public security or an administrative or judicial procedure.
+a. Exceptions to the Database Right including: Extraction of Contents from non-electronic Databases for private purposes, Extraction for purposes of illustration for teaching or scientific research, and Extraction or Re-utilization for public security or an administrative or judicial procedure.
 
-b. Fair dealing, fair use, or any other legally recognised limitation or exception to infringement of copyright or other applicable laws.
+b. Fair dealing, fair use, or any other legally recognized limitation or exception to infringement of copyright or other applicable laws.
 
-6.2 This License does not affect any rights of lawful users to Extract and Re-utilise insubstantial parts of the Contents, evaluated quantitatively or qualitatively, for any purposes whatsoever, including creating a Derivative Database (subject to other rights over the Contents, see Section 2.4). The repeated and systematic Extraction or Re-utilisation of insubstantial parts of the Contents may however amount to the Extraction or Re-utilisation of a Substantial part of the Contents.
+6.2 This License does not affect any rights of lawful users to Extract and Re-utilize insubstantial parts of the Contents, evaluated quantitatively or qualitatively, for any purposes whatsoever, including creating a Derivative Database (subject to other rights over the Contents, see Section 2.4). The repeated and systematic Extraction or Re-utilization of insubstantial parts of the Contents may however amount to the Extraction or Re-utilization of a Substantial part of the Contents.
 
 7.0 WARRANTIES AND DISCLAIMER
 7.1 The Database is licensed by the Licensor “as is” and without any warranty of any kind, either express, implied, or arising by statute, custom, course of dealing, or trade usage. Licensor specifically disclaims any and all implied warranties or conditions of title, non-infringement, accuracy or completeness, the presence or absence of errors, fitness for a particular purpose, merchantability, or otherwise. Some jurisdictions do not allow the exclusion of implied warranties, so this exclusion may not apply to You.
