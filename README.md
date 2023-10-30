@@ -592,3 +592,8 @@ We would like to express our special gratitude to APUS AilMe Lab for sponsoring 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+## All Thanks To Our Contributors 
+
+<a href="https://github.com/PhoebusSi/Alpaca-CoT/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=PhoebusSi/Alpaca-CoT" />
+</a>
