@@ -519,7 +519,7 @@ The current collection of instruction-finetuning datasets consists mainly of thr
 ![ablation-cot](./figures/ablation-cot.png)
 "w/o CoT" and "w/o CN" denote models that exclude CoT data and Chinese instructions from their instruction finetuning data, respectively.
 
-The above table shows two examples (invoving with numerical calculations) that require a certain amount of reasoning ability to respond correctly.
+The above table shows two examples (involving with numerical calculations) that require a certain amount of reasoning ability to respond correctly.
 As shown in the middle column, `Ours w/o CoT` fails to generate the correct response, which shows that once the finetuning data does not contain CoT data, the model's reasoning ability significantly decreases. This further demonstrates that CoT data is essential for LLM models.
 
 ![ablation-cot](./figures/ablation-cn.png)
@@ -565,7 +565,7 @@ From the above table, several observations can be found:
 
 
 From the above table, we find that:
-- Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in genearting a better response to English instructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.
+- Finetuning with Chinese instruction data does not weaken the original English instruction–following ability, on the contrary, there is also a certain enhancement in generating a better response to English instructions. The response of `ours (w/ CN)` shows more detail than that of Alpaca, e.g. for the third example, `ours (w/ CN)` list three more provinces than Alpaca.
 
 </p>
 </details> 
