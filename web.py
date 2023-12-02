@@ -16,8 +16,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 parser = argparse.ArgumentParser(description='Process some llm info.')
 parser.add_argument('--model_type', type=str, default="chatglm", choices=AVAILABLE_MODEL,
                     help='the base structure (not the model) used for model or fine-tuned model')
-parser.add_argument('--model_path', type=str, default="7b",
-                    help='the type for base model or the absolute path for fine-tuned model')
+parser.add_argument('--model_path', type=str, default="decapoda-research/llama-7b-hf",
+                    help='the absolute or relative or huggingface path for fine-tuned model')
 parser.add_argument('--lora_dir', type=str, default="none",
                     help='the path for fine-tuned lora params, none when not in use')
 parser.add_argument('--lora_r', default=8, type=int)
@@ -86,7 +86,10 @@ async def create_item(request: Request):
     prompt = json_post_list.get("prompt")
     messages = []
     messages.append({"role": "user", "content": prompt})
-    response = model.chat(tokenizer, messages)
+    if(args.model_type=="baichuan"):
+        response = model.chat(tokenizer, messages)
+    else:
+        response = server(prompt)
 
     now = datetime.datetime.now()
     time = now.strftime("%Y-%m-%d %H:%M:%S")
