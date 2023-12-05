@@ -188,17 +188,15 @@ def get_fine_tuned_model(args):
         model_path = args.model_path
         model_class = _get_model_class(args.model_type)
     else:
-        def _get_model_class(llm_type, model_path):
+        def _get_model_class(llm_type):
             if llm_type not in AVAILABLE_MODEL:
                 llm_type = "Auto"
-                return MODEL_CLASSES[llm_type], model_path
+                return MODEL_CLASSES[llm_type]
             else:
-                load_path = llm_type + "_" + model_path
-                if llm_type in ['moss']:
-                    load_path = llm_type
-                return MODEL_CLASSES[llm_type], COMMON_PATH + MODEL_PATHS[load_path]
+                return MODEL_CLASSES[llm_type]
 
-        model_class, model_path = _get_model_class(args.model_type, args.size)
+        model_path = args.model_path
+        model_class = _get_model_class(args.model_type)
 
     if args.model_type == "chatglm":
         model = model_class.model.from_pretrained(model_path,
