@@ -11,7 +11,7 @@ from transformers import (
     BloomForCausalLM,
     BloomTokenizerFast)
 
-AVAILABLE_MODEL = ['bloom', 'llama', 'chatglm', 'moss', 'baichuan']
+AVAILABLE_MODEL = ['bloom', 'llama', 'chatglm', 'moss', 'baichuan', 'internlm']
 WORLD_SIZE = int(os.environ.get("WORLD_SIZE", 1))
 DEVICE_MAP = {"": int(os.environ.get("LOCAL_RANK") or 0)} if WORLD_SIZE != 1 else "auto"
 DEVICE_TYPE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -36,6 +36,10 @@ MODEL_CLASSES = {
         "model": AutoModelForCausalLM,
     }),
     "baichuan": ModelClass(**{
+        "tokenizer": AutoTokenizer,
+        "model": AutoModelForCausalLM,
+    }),
+    "internlm": ModelClass(**{
         "tokenizer": AutoTokenizer,
         "model": AutoModelForCausalLM,
     }),
