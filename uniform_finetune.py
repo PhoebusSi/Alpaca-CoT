@@ -61,6 +61,10 @@ _MODEL_CLASSES = {
         "tokenizer": AutoTokenizer,
         "model": AutoModelForCausalLM,
     }),
+    "internlm": ModelClass(**{
+        "tokenizer": AutoTokenizer,
+        "model": AutoModelForCausalLM,
+    }),
     "Auto": ModelClass(**{
         "tokenizer": AutoTokenizer,
         "model": AutoModel,
@@ -126,7 +130,7 @@ def generate_prompt(data_point):
 def get_data_model(args):
     def get_model_class(model_type):
 
-        if model_type not in ['bloom', 'llama', 'chatglm', 'chatglm2', 'moss', 'baichuan']:
+        if model_type not in ['bloom', 'llama', 'chatglm', 'chatglm2', 'moss', 'baichuan', 'internlm']:
             model_type = "Auto"
 
         return _MODEL_CLASSES[model_type]  # tokenizer, model
@@ -166,9 +170,9 @@ def get_data_model(args):
             )
             print("Quantizing model to {} bit.".format(args.quantization_bit))
         model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, local_files_only=True, device_map=device_map, quantization_config=quantization_config)
-        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, local_files_only=True, trust_remote_code=True,  add_bos_token=True)  
+        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, local_files_only=True, trust_remote_code=True,  add_bos_token=True)
         if quantization_config is not None:
-            model = prepare_model_for_training(model) 
+            model = prepare_model_for_training(model)
     elif args.model_type in ["moss"]:
         model = model_class.model.from_pretrained(args.model_name_or_path, trust_remote_code=True, load_in_8bit=True, device_map=get_device_map(model_type="moss", load_in_8bit=True))
         tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, trust_remote_code=True)
@@ -221,6 +225,11 @@ def get_data_model(args):
         if hasattr(baichuan_config, "auto_map") and "AutoModelForCausalLM" in baichuan_config.auto_map:
             model.__class__.register_for_auto_class()
         model = prepare_model_for_training(model)
+    elif args.model_type in ['internlm']:
+        model = model_class.model.from_pretrained(args.model_name_or_path, torch_dtype=torch.float32,
+                                    trust_remote_code=True, device_map=device_map)
+        tokenizer = model_class.tokenizer.from_pretrained(args.model_name_or_path, trust_remote_code=True)
+        model = prepare_model_for_training(model)
     else:
         model = model_class.model.from_pretrained(args.model_name_or_path,
                                                   load_in_8bit=True,
@@ -233,7 +242,7 @@ def get_data_model(args):
         tokenizer.pad_token_id = 0  # unk_id in llama. we want this to be different from the eos token
     if args.model_type in ['baichuan'] and tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = 0  # set as the <unk> token
-    if args.model_type not in ['baichuan', 'chatglm', 'chatglm2']:
+    if args.model_type not in ['baichuan', 'chatglm', 'chatglm2', 'internlm']:
         model = prepare_model_for_int8_training(model)
 
     if args.peft_type == 'lora':
@@ -308,7 +317,7 @@ def train(args):
 
         def completion_tokenize(completion):
             input_ids = tokenizer.encode(completion,
-                                         max_length=args.cutoff_len, 
+                                         max_length=args.cutoff_len,
                                          add_special_tokens=False,
                                          )
             return {
@@ -329,6 +338,14 @@ def train(args):
             return {
                 "input_ids": input_ids,
                 "labels": copy.deepcopy(input_ids),
+            }
+    elif 'internlm' in args.model_type:
+        def tokenize(prompt):
+            result = tokenizer(prompt, truncation=True, max_length=args.cutoff_len, padding=False,)
+            return {
+                "input_ids": result["input_ids"],
+                "attention_mask": result["attention_mask"],
+                "labels": copy.deepcopy(result["input_ids"])
             }
     else:
         def tokenize(prompt):
@@ -387,6 +404,8 @@ def train(args):
                 tokenized_result = prompt_tokenize(prompt_no_resp)
             elif "moss" in args.model_type:
                 prompt_no_resp = _META_INSTRUCTION.get("moss", "") + prompt_no_resp
+                tokenized_result = tokenize(prompt_no_resp)
+            elif "internlm" in args.model_type:
                 tokenized_result = tokenize(prompt_no_resp)
             else:
                 tokenized_result = tokenize(prompt_no_resp)
@@ -467,7 +486,8 @@ def train(args):
             learning_rate=args.learning_rate,
             fp16=True if args.compute_dtype == "fp16" else False,
             bf16=True if args.compute_dtype == "bf16" else False,
-            logging_steps=20,
+            # logging_steps=20,
+            logging_steps=int(saving_step / 6),
             evaluation_strategy="steps" if args.val_set_size > 0 else "no",
             save_strategy="steps",
             eval_steps=saving_step if args.val_set_size > 0 else None,
@@ -504,7 +524,7 @@ if __name__ == "__main__":
     parser.add_argument('--data', type=str, nargs="*", help='the data used for instructing tuning')
     parser.add_argument('--local_rank', '--local-rank', default=-1, type=int,
                         help='node rank for distributed training')  # alias required for PyTorch 2.x
-    parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'chatglm2', 'bloom', 'moss', 'baichuan'])
+    parser.add_argument('--model_type', default="llama", choices=['llama', 'chatglm', 'chatglm2', 'bloom', 'moss', 'baichuan', 'internlm'])
     parser.add_argument('--model_name_or_path', default="decapoda-research/llama-7b-hf", type=str)
     parser.add_argument('--per_gpu_train_batch_size', default=4, type=int, help='Batch size per GPU/CPU for training.')
     parser.add_argument('--gradient_accumulation_steps', default=32, type=int)
