@@ -399,7 +399,7 @@ def prepare_model_for_training(
         output_embedding_layer_name: Optional[str] = "lm_head",
         use_gradient_checkpointing: Optional[bool] = True,
         layer_norm_names: Optional[List[str]] = ["norm", "ln_f", "ln_attn", "ln_mlp"]
-        # for LLaMA, BLOOM and Falcon settings
+        # for LLaMA, BLOOM, internLM and Falcon settings
 ) -> PreTrainedModel:
     for name, param in model.named_parameters():
         if param.ndim == 1 and any(layer_norm_name in name for layer_norm_name in layer_norm_names):
