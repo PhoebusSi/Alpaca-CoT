@@ -210,8 +210,8 @@ python3 uniform_finetune.py   ---model_type moss --model_name_or_path fnlp/moss-
 ```
 python3 uniform_finetune.py   --model_type internlm --model_name_or_path internlm/internlm-7b \
     --data alpaca --lora_target_modules q_proj v_proj --lora_r 32 --lora_alpha 32 \
-	--lora_dropout 0.1 --per_gpu_train_batch_size 1 --learning_rate 2e-5 --epochs 1 \
-	--compute_dtype="fp32"
+    --lora_dropout 0.1 --per_gpu_train_batch_size 1 --learning_rate 2e-5 --epochs 1 \
+    --compute_dtype="fp32"
 ```
 
 Note that you can also pass the local path (where LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.
@@ -255,8 +255,8 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy \
     uniform_finetune.py   --model_type internlm --model_name_or_path internlm/internlm-7b \
     --data alpaca --lora_target_modules q_proj v_proj --lora_r 32 --lora_alpha 32 \
-	--lora_dropout 0.1 --per_gpu_train_batch_size 1 --learning_rate 2e-5 --epochs 1 \
-	--compute_dtype="fp32"
+    --lora_dropout 0.1 --per_gpu_train_batch_size 1 --learning_rate 2e-5 --epochs 1 \
+    --compute_dtype="fp32"
 ```
 
 
