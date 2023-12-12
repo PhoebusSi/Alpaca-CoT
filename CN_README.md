@@ -16,6 +16,7 @@
 您也可以选择加入我们的群聊(WeChat)，和更多的同好研究者们交流。目前群聊人数过多，需要好友邀请才能入群，请扫码加我为好友，拉您入群。
 
 ## News
+-  🚀12.8: LLM `InternLM` 已被集成进来。
 - 🚀7.24 LLM `Baichuan`和`ChatGLM v2`已被集成进来。
 - 🚀6.25: 新增模型评估代码，包括belle和MMCU。
 - 🚀5.5: 新建了一个分支[`tabular_llm`](https://github.com/PhoebusSi/Alpaca-CoT/tree/tabular_llm)来构造可以处理多种表格智能任务的大型语言模型。
@@ -197,6 +198,14 @@ python3 uniform_finetune.py   --model_type bloom --model_name_or_path bigscience
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1 
 ```
 
+- for InternLM
+```
+python3 uniform_finetune.py   --model_type internlm --model_name_or_path internlm/internlm-7b \
+    --data alpaca --lora_target_modules q_proj v_proj --lora_r 32 --lora_alpha 32 \
+    --lora_dropout 0.1 --per_gpu_train_batch_size 1 --learning_rate 2e-5 --epochs 1 \
+    --compute_dtype="fp32"
+```
+
 Note that you can also pass the local path (where the LLM weights saved) to `--model_name_or_path`. And the data type `--data` can be freely set according to your interests.
 
 **多卡**
@@ -226,6 +235,16 @@ python3 -m torch.distributed.launch --nproc_per_node 4  \
     uniform_finetune.py   --model_type bloom --model_name_or_path bigscience/bloomz-7b1-mt \
     --data alpaca-belle-cot --lora_target_modules query_key_value \
     --per_gpu_train_batch_size 4 --learning_rate 3e-4 --epochs 1  
+```
+
+- for InternLM
+```
+python3 -m torch.distributed.launch --nproc_per_node 4  \
+    --nnodes=1 --node_rank=0 --master_addr=xxx --master_port=yyy \
+    uniform_finetune.py   --model_type internlm --model_name_or_path internlm/internlm-7b \
+    --data alpaca --lora_target_modules q_proj v_proj --lora_r 32 --lora_alpha 32 \
+    --lora_dropout 0.1 --per_gpu_train_batch_size 1 --learning_rate 2e-5 --epochs 1 \
+    --compute_dtype="fp32"
 ```
 ### Inference
 ``` 
